@@ -5,6 +5,14 @@ import sys
 
 class Connector:
     def __init__(self):
+        self.connection = None
+        self.cursor = None
+        self.reconnect()
+
+    def reconnect(self):
+        if self.connection != None:
+            self.disconnect()
+
         self.connection = mysql.connector.connect(
           host='93.153.43.141',
           user="rootRemote",
@@ -15,6 +23,7 @@ class Connector:
         self.cursor = self.connection.cursor(buffered=True)
 
     def select_from_table(self, select="*", table="*"):
+        self.reconnect()
         query = f"SELECT {select} FROM {table};"
         self.cursor.execute(query)
         output=""
