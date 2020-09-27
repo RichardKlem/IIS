@@ -3,6 +3,9 @@ from flask import Flask, jsonify
 import mysql.connector
 import sys
 
+from backend import AUTH_PLUGIN, DATABASE, HOST, PASSWORD, USER
+
+
 class Connector:
     def __init__(self):
         self.connection = None
@@ -10,23 +13,23 @@ class Connector:
         self.reconnect()
 
     def reconnect(self):
-        if self.connection != None:
+        if self.connection:
             self.disconnect()
 
         self.connection = mysql.connector.connect(
-          host='93.153.43.141',
-          user="rootRemote",
-          password="rootRemote",
-          database="myDB",
-          auth_plugin="mysql_native_password"
+          host=HOST,
+          user=USER,
+          password=PASSWORD,
+          database=DATABASE,
+          auth_plugin=AUTH_PLUGIN
         )
         self.cursor = self.connection.cursor(buffered=True)
 
-    def select_from_table(self, select="*", table="*"):
+    def select_from_table(self, select='*', table='*'):
         self.reconnect()
-        query = f"SELECT {select} FROM {table};"
+        query = f'SELECT {select} FROM {table};'
         self.cursor.execute(query)
-        output=""
+        output = ''
         for description in self.cursor:
             output += str(description)
         return str(output)
@@ -36,20 +39,21 @@ class Connector:
         self.cursor.close()
 
 
-
 app = Flask(__name__)
 myDB = Connector()
+
 
 @app.route('/time')
 def get_current_time():
     return jsonify({'time': time.time()})
 
+
 @app.route('/person')
 def get_person_table():
-    return jsonify({'table': str(myDB.select_from_table("*","person"))})
+    return jsonify({'table': str(myDB.select_from_table('*', 'person'))})
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         app.run()
     except Exception as e:
