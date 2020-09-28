@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 import mysql.connector
 import sys
 
-from backend import AUTH_PLUGIN, DATABASE, HOST, PASSWORD, USER
+from . import AUTH_PLUGIN, DATABASE, HOST, PASSWORD, USER
 
 
 class Connector:
@@ -45,7 +45,7 @@ myDB = Connector()
 
 @app.route('/time')
 def get_current_time():
-    return jsonify({'time': time.time()})
+    return jsonify({'time': time.asctime( time.localtime(time.time()))})
 
 
 @app.route('/person')
