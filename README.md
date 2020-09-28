@@ -2,6 +2,8 @@
 
 Domain: [http://iis-projekt.ddns.net/](http://iis-projekt.ddns.net/)
 
+Analýza požadavků: https://www.overleaf.com/8514163942ptgczrbssszt
+
 ### MySQL server:
 IP: 93.153.43.141\
 username: rootRemote\
