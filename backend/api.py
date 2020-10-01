@@ -1,9 +1,11 @@
-import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS
+import json
 import mysql.connector
 import sys
 
-from . import AUTH_PLUGIN, DATABASE, HOST, PASSWORD, USER
+from init import AUTH_PLUGIN, DATABASE, HOST, PASSWORD, USER
 
 
 class Connector:
@@ -13,9 +15,6 @@ class Connector:
         self.reconnect()
 
     def reconnect(self):
-        if self.connection:
-            self.disconnect()
-
         self.connection = mysql.connector.connect(
           host=HOST,
           user=USER,
@@ -23,16 +22,48 @@ class Connector:
           database=DATABASE,
           auth_plugin=AUTH_PLUGIN
         )
-        self.cursor = self.connection.cursor(buffered=True)
+        self.cursor = self.connection.cursor(dictionary=True, buffered=True)
 
     def select_from_table(self, select='*', table='*'):
         self.reconnect()
         query = f'SELECT {select} FROM {table};'
         self.cursor.execute(query)
-        output = ''
+
+        output = []
         for description in self.cursor:
-            output += str(description)
-        return str(output)
+            output.append(description)
+
+        self.disconnect()
+        return jsonify(output)
+
+    #note todos requesting object not array !
+    def select_from_table_where(self, select, table, where):
+        self.reconnect()
+        query = f'SELECT {select} FROM {table} WHERE {where};'
+        self.cursor.execute(query)
+
+        for description in self.cursor:
+            return description
+
+    def delete_from_table(self, table, where):
+        self.reconnect()
+        query = f'DELETE FROM {table} WHERE {where};'
+        self.cursor.execute(query)
+        self.connection.commit()
+        self.disconnect()
+        return "OK"
+
+    def insert_into(self, table, column, value):
+        self.reconnect()
+        query = f'INSERT INTO {table} ({column}) VALUES (\"{value}\");'
+        #query = f'INSERT INTO todos (title) VALUES (\"tes3\");'
+        self.cursor.execute(query)
+        self.connection.commit()
+        where = f'{column} = \"{value}\"'
+        response = self.select_from_table_where("*", "todos", where)
+        print(response, file=sys.stdout)
+        self.disconnect()
+        return jsonify(response)
 
     def disconnect(self):
         self.connection.close()
@@ -40,22 +71,37 @@ class Connector:
 
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"*": {"origins": "*"}})
+api = Api(app)
 myDB = Connector()
-
-
-@app.route('/time')
-def get_current_time():
-    return jsonify({'time': time.asctime( time.localtime(time.time()))})
 
 
 @app.route('/person')
 def get_person_table():
-    return jsonify({'table': str(myDB.select_from_table('*', 'person'))})
+    return myDB.select_from_table('*', 'person')
+
+
+@app.route('/delTodos', methods=['POST'])
+def delTodos():
+    if request.method == 'POST':
+        print(request, file=sys.stdout)
+        data = json.loads(request.get_data().decode('utf-8'))
+        where = f'id={data.get("id")}'
+        print(data, file=sys.stdout)
+        return myDB.delete_from_table('todos', where)
+
+@app.route('/todos', methods=['GET', 'POST'])
+def todos():
+    if request.method == 'POST':
+        data = json.loads(request.get_data().decode('utf-8'))
+        return myDB.insert_into("todos", "title", data.get("title"))
+    elif request.method == 'GET':
+        return myDB.select_from_table('*', 'todos')
 
 
 if __name__ == '__main__':
     try:
-        app.run()
+        app.run(debug = True, host="127.0.0.1")
     except Exception as e:
         print(e)
     finally:
