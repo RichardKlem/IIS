@@ -25,7 +25,14 @@ class TimeDate extends Component {
     }
   
     render() {
-        var options = { year: 'numeric', month: 'long', day: 'numeric', hours: 'long', minutes: 'long', seconds: 'long'};
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hours: 'long',
+            minutes: 'long',
+            seconds: 'long'
+        };
         return (
         <div>
             <p>Current date and time:</p>
