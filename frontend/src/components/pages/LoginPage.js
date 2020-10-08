@@ -1,12 +1,15 @@
 import React, {Component} from 'react'
 import axios from "axios";
-import {FLASK_URL} from "../../init";
+import Cookies from 'universal-cookie';
 
 export class LoginPage extends Component{
     state = {
         email: '',
         password: '',
-        status: 'Log In'
+        status: 'Log In',
+        statusCode: '',
+        userId: '',
+        redirect: false,
     }
 
     onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -17,10 +20,16 @@ export class LoginPage extends Component{
     }
 
     loginUser = (email, password) => {
-        axios.post(FLASK_URL + '/login', { email: email, password: password }).then(res => {
-                console.log(res.data);
-                this.setState({ status : res.data.status});
-                console.log(this.state.status);
+        axios.post( '/login', { email: email, password: password })
+                .then(res => {
+                    this.setState({ status : res.data.status});
+                    this.setState({ statusCode : res.data.statusCode});
+                    this.setState({ userId : res.data.userId});
+                    if (this.state.statusCode === 200) {
+                        const cookies = new Cookies();
+                        cookies.set('userID', this.state.userId, { path: '/' });
+                        this.props.history.push('/account');
+                    }
             }
         );
     }
@@ -28,8 +37,9 @@ export class LoginPage extends Component{
     render() {
         return(
             <React.Fragment>
-            <form onSubmit={this.onSubmit} style={{ display: 'flex'}}>
+            <form onSubmit={this.onSubmit} style={{ display: 'block'}}>
                 <input
+                    style={{display: 'block'}}
                     type='email'
                     name='email'
                     placeholder='email'
@@ -38,6 +48,7 @@ export class LoginPage extends Component{
                     required
                 />
                 <input
+                    style={{display: 'block'}}
                     type='password'
                     name='password'
                     placeholder='password'
@@ -45,17 +56,13 @@ export class LoginPage extends Component{
                     onChange={this.onChange}
                     required
                 />
-                <input
-                    type="submit"
-                    value="Submit"
-                    className="btn"
-                    style={{flex: '1'}}
-                />
+                <button onClick={this.onSubmit}>Login</button>
             </form>
                 <p>Status: {this.state.status}</p>
             </React.Fragment>
         );
     }
+
 }
 
 export default LoginPage

@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import axios from "axios";
-import {FLASK_URL} from "../../init";
 
 export class LoginPage extends Component{
     state = {
@@ -10,6 +9,7 @@ export class LoginPage extends Component{
         birthDate: '',
         email: '',
         password: '',
+        passwordCheck: '',
         status: 'Register'
     }
 
@@ -17,19 +17,26 @@ export class LoginPage extends Component{
 
     onSubmit = (e) => {
         e.preventDefault();
-        axios.post(
-            FLASK_URL + '/registration',
-            {
+        if (this.state.password !== this.state.passwordCheck) {
+            this.setState({ status : "Passwords doesn't match!"});
+        }
+        axios.post('/registration', {
                 name: this.state.name,
                 surname: this.state.surname,
                 birthDate: this.state.birthDate,
                 email: this.state.email,
                 phoneNumber: this.state.phoneNumber,
                 password: this.state.password
-            }).then(res => {
-                this.setState({ status : res.data.status});
-            }
+                }).then(res => {
+                    this.setState({ status : res.data.status});
+                    }
         );
+        this.setState({ name: '' });
+        this.setState({ surname: '' });
+        this.setState({ birthDate: '' });
+        this.setState({ email: '' });
+        this.setState({ phoneNumber: '' });
+        this.setState({ password: '' });
     }
 
     render() {
@@ -93,13 +100,21 @@ export class LoginPage extends Component{
                 />
                 <input
                     style={{display: 'block'}}
+                    type='password'
+                    name='passwordCheck'
+                    placeholder='password again'
+                    value={this.state.passwordCheck}
+                    onChange={this.onChange}
+                    required
+                />
+                <input
+                    style={{display: 'block'}}
                     type="submit"
                     value="Submit"
                     className="btn"
-                    style={{flex: '1'}}
                 />
             </form>
-                <p>Status: {this.state.status}</p>
+                <p>Registation status: {this.state.status}</p>
             </React.Fragment>
         );
     }

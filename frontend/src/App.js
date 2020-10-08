@@ -2,7 +2,6 @@ import React, {Component, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import axios from 'axios';
-import {FLASK_URL} from "./init";
 
 import './App.css';
 
@@ -11,6 +10,7 @@ import Todos from './components/Todos.js';
 import Header from './components/layout/Header.js';
 import AddTodo from './components/AddTodo.js';
 import About from './components/pages/About.js';
+import Account from './components/pages/Account.js';
 import LoginPage from './components/pages/LoginPage.js';
 import RegistrationPage from './components/pages/RegistrationPage.js';
 
@@ -52,20 +52,20 @@ class App extends Component {
   
   // Load Todos
   componentDidMount() {
-    axios.get(FLASK_URL + '/todos')
+    axios.get( '/todos')
         .then(res => this.setState({ todos: res.data }))
   }
   
   // Delete Todo
   delTodo = (id) => {
-    axios.post(FLASK_URL + '/delTodos', { id: id }).then(() =>
+    axios.post('/delTodos', { id: id }).then(() =>
       this.setState({ todos: [...this.state.todos]
           .filter(todo =>todo.id !== id)}));
   }
 
   // Add Todo
   addTodo = (title) => {
-    axios.post(FLASK_URL + '/todos', { title: title }).then(res => {
+    axios.post('/todos', { title: title }).then(res => {
         console.log(res.data);
         this.setState({ todos: [...this.state.todos, res.data]});
       }
@@ -95,6 +95,7 @@ class App extends Component {
               <Route exact path="/tableData" component={GetTableData}/>
               <Route exact path="/login" component={LoginPage}/>
               <Route exact path="/registration" component={RegistrationPage}/>
+              <Route exact path="/account" component={Account}/>
             </Switch>
           </div>
         </div>
