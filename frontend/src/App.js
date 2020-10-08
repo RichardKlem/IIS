@@ -12,6 +12,8 @@ import Header from './components/layout/Header.js';
 import AddTodo from './components/AddTodo.js';
 import About from './components/pages/About.js';
 import LoginPage from './components/pages/LoginPage.js';
+import RegistrationPage from './components/pages/RegistrationPage.js';
+
 
 
 function GetTableData() {
@@ -92,6 +94,7 @@ class App extends Component {
               <Route exact path="/about" component={About}/>
               <Route exact path="/tableData" component={GetTableData}/>
               <Route exact path="/login" component={LoginPage}/>
+              <Route exact path="/registration" component={RegistrationPage}/>
             </Switch>
           </div>
         </div>

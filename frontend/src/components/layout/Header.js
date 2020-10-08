@@ -5,7 +5,7 @@ function Header() {
     return (
         <header style={headerStyle}>
             <h1>Test App</h1>
-            <Link style={linkStyle} to="/">Home</Link> | <Link style={linkStyle} to="/about">About</Link> | <Link style={linkStyle} to="/dateTime">DateTime</Link> |  <Link style={linkStyle} to="/tableData">TableData</Link> |  <Link style={linkStyle} to="/login">Login</Link>
+            <Link style={linkStyle} to="/">Home</Link> | <Link style={linkStyle} to="/about">About</Link> | <Link style={linkStyle} to="/dateTime">DateTime</Link> |  <Link style={linkStyle} to="/tableData">TableData</Link> |  <Link style={linkStyle} to="/login">Login</Link>  |  <Link style={linkStyle} to="/registration">Register</Link>
         </header>
     )
 }

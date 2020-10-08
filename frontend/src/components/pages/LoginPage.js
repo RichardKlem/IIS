@@ -6,10 +6,17 @@ export class LoginPage extends Component{
     state = {
         email: '',
         password: '',
-        status: 'not logged in'
+        status: 'Log In'
     }
 
-    addTodo = (email, password) => {
+    onChange = (e) => this.setState({ [e.target.name]: e.target.value });
+
+    onSubmit = (e) => {
+        e.preventDefault();
+        this.loginUser(this.state.email, this.state.password)
+    }
+
+    loginUser = (email, password) => {
         axios.post(FLASK_URL + '/login', { email: email, password: password }).then(res => {
                 console.log(res.data);
                 this.setState({ status : res.data.status});
@@ -18,24 +25,17 @@ export class LoginPage extends Component{
         );
     }
 
-
-    onChange = (e) => this.setState({ [e.target.name]: e.target.value });
-
-    onSubmit = (e) => {
-        e.preventDefault();
-        this.addTodo(this.state.email, this.state.password)
-    }
-
     render() {
         return(
             <React.Fragment>
             <form onSubmit={this.onSubmit} style={{ display: 'flex'}}>
                 <input
-                    type='text'
+                    type='email'
                     name='email'
                     placeholder='email'
                     value={this.state.email}
                     onChange={this.onChange}
+                    required
                 />
                 <input
                     type='password'
@@ -43,6 +43,7 @@ export class LoginPage extends Component{
                     placeholder='password'
                     value={this.state.password}
                     onChange={this.onChange}
+                    required
                 />
                 <input
                     type="submit"

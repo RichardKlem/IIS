@@ -54,13 +54,30 @@ def login():
     :return:
     """
     data = json.loads(request.get_data().decode('utf-8'))
-    query = f'SELECT uzivatel.jmeno FROM uzivatel WHERE (email=\"{data.get("email")}\" and password=\"{data.get("password")}\");'
+    query = f'SELECT uzivatel.name FROM uzivatel WHERE (email=\"{data.get("email")}\" and password=\"{data.get("password")}\");'
     result = Connector().query(query)
     if result:
         return jsonify({'status': 'Login OK'})
     else:
         return jsonify({'status': 'Login FAILED'})
 
+@app.route('/registration', methods=['POST'])
+def registration():
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'SELECT uzivatel.name FROM uzivatel WHERE (email=\"{data.get("email")}\");'
+    result = Connector().query(query)
+    if result:
+        return jsonify({'status': 'Given email is already registered, please login'})
+
+    query = f'INSERT INTO uzivatel(name, surname, birthDate, phoneNumber, email, password) VALUES (' \
+            f'\"{data.get("name")}\",' \
+            f'\"{data.get("surname")}\",' \
+            f'\"{data.get("birthDate")}\",' \
+            f'\"{data.get("phoneNumber")}\",' \
+            f'\"{data.get("email")}\",' \
+            f'\"{data.get("password")}\");'
+    Connector().query(query, expecting_result=False)
+    return jsonify({'status': 'Registration Successful'})
 
 if __name__ == '__main__':
     try:
