@@ -4,14 +4,24 @@ from init import HOST, USER, PASSWORD, DATABASE, AUTH_PLUGIN
 
 
 class Connector:
-    def __init__(self):
-        self.connection = mysql.connector.connect(
-            host=HOST,
-            user=USER,
-            password=PASSWORD,
-            database=DATABASE,
-            auth_plugin=AUTH_PLUGIN
-        )
+    def __init__(self, secure=False):
+        if secure:
+            # Todo add new user credentials
+            self.connection = mysql.connector.connect(
+                host=HOST,
+                user=USER,
+                password=PASSWORD,
+                database=DATABASE,
+                auth_plugin=AUTH_PLUGIN
+            )
+        else:
+            self.connection = mysql.connector.connect(
+                host=HOST,
+                user=USER,
+                password=PASSWORD,
+                database=DATABASE,
+                auth_plugin=AUTH_PLUGIN
+            )
         self.cursor = self.connection.cursor(dictionary=True, buffered=True)
 
     def query(self, query, expecting_result=True, disconnect=True):
@@ -25,7 +35,7 @@ class Connector:
             self.disconnect()
         return output
 
-    def getlastrowid(self):
+    def get_lastrow_id(self):
         return self.cursor.lastrowid
 
     def disconnect(self):

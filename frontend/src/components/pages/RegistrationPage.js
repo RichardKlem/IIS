@@ -4,45 +4,42 @@ import axios from "axios";
 export class LoginPage extends Component{
     state = {
         name : '',
-        surname : '',
-        phoneNumber : '',
-        birthDate: '',
+        phone_number : '',
+        birth_date: '',
         email: '',
         password: '',
-        passwordCheck: '',
+        password_check: '',
         status: 'Register'
     }
 
     onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
-    onSubmit = (e) => {
+    RegistrationHandler = (e) => {
         e.preventDefault();
-        if (this.state.password !== this.state.passwordCheck) {
+        if (this.state.password !== this.state.password_check) {
             this.setState({ status : "Passwords doesn't match!"});
         }
         axios.post('/registration', {
                 name: this.state.name,
-                surname: this.state.surname,
-                birthDate: this.state.birthDate,
+                birth_date: this.state.birth_date,
                 email: this.state.email,
-                phoneNumber: this.state.phoneNumber,
+                phone_number: this.state.phone_number,
                 password: this.state.password
                 }).then(res => {
                     this.setState({ status : res.data.status});
                     }
         );
         this.setState({ name: '' });
-        this.setState({ surname: '' });
-        this.setState({ birthDate: '' });
+        this.setState({ birth_date: '' });
         this.setState({ email: '' });
-        this.setState({ phoneNumber: '' });
+        this.setState({ phone_number: '' });
         this.setState({ password: '' });
     }
 
     render() {
         return(
             <React.Fragment>
-            <form onSubmit={this.onSubmit} style={{ display: 'block'}}>
+            <form onSubmit={this.RegistrationHandler} style={{ display: 'block'}}>
                 <input
                     style={{display: 'block'}}
                     type='text'
@@ -55,28 +52,19 @@ export class LoginPage extends Component{
                 <input
                     style={{display: 'block'}}
                     type='text'
-                    name='surname'
-                    placeholder='surname'
-                    value={this.state.surname}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type='tel'
-                    name='phoneNumber'
+                    name='phone_number'
                     placeholder='phone Number'
                     pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}"
-                    value={this.state.phoneNumber}
+                    value={this.state.phone_number}
                     onChange={this.onChange}
                     required
                 />
                 <input
                     style={{display: 'block'}}
                     type='date'
-                    name='birthDate'
+                    name='birth_date'
                     placeholder='birth Date'
-                    value={this.state.birthDate}
+                    value={this.state.birth_date}
                     onChange={this.onChange}
                     required
                 />
@@ -101,9 +89,9 @@ export class LoginPage extends Component{
                 <input
                     style={{display: 'block'}}
                     type='password'
-                    name='passwordCheck'
+                    name='password_check'
                     placeholder='password again'
-                    value={this.state.passwordCheck}
+                    value={this.state.password_check}
                     onChange={this.onChange}
                     required
                 />
