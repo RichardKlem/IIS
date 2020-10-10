@@ -39,70 +39,71 @@ export class LoginPage extends Component{
     render() {
         return(
             <React.Fragment>
-            <form onSubmit={this.RegistrationHandler} style={{ display: 'block'}}>
-                <input
-                    style={{display: 'block'}}
-                    type='text'
-                    name='name'
-                    placeholder='name'
-                    value={this.state.name}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type='text'
-                    name='phone_number'
-                    placeholder='phone Number'
-                    pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}"
-                    value={this.state.phone_number}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type='date'
-                    name='birth_date'
-                    placeholder='birth Date'
-                    value={this.state.birth_date}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type='email'
-                    name='email'
-                    placeholder='email'
-                    value={this.state.email}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type='password'
-                    name='password'
-                    placeholder='password'
-                    value={this.state.password}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type='password'
-                    name='password_check'
-                    placeholder='password again'
-                    value={this.state.password_check}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{display: 'block'}}
-                    type="submit"
-                    value="Submit"
-                    className="btn"
-                />
-            </form>
-                <p>Registation status: {this.state.status}</p>
+                <h2>Registration Page</h2>
+                <form onSubmit={this.RegistrationHandler} style={{ display: 'block'}}>
+                    <input
+                        style={{display: 'block'}}
+                        type='text'
+                        name='name'
+                        placeholder='name'
+                        value={this.state.name}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{display: 'block'}}
+                        type='text'
+                        name='phone_number'
+                        placeholder='phone Number'
+                        pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}"
+                        value={this.state.phone_number}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{display: 'block'}}
+                        type='date'
+                        name='birth_date'
+                        placeholder='birth Date'
+                        value={this.state.birth_date}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{display: 'block'}}
+                        type='email'
+                        name='email'
+                        placeholder='email'
+                        value={this.state.email}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{display: 'block'}}
+                        type='password'
+                        name='password'
+                        placeholder='password'
+                        value={this.state.password}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{display: 'block'}}
+                        type='password'
+                        name='password_check'
+                        placeholder='password again'
+                        value={this.state.password_check}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{display: 'block'}}
+                        type="submit"
+                        value="Submit"
+                        className="btn"
+                    />
+                </form>
+                <p>Registration status: {this.state.status}</p>
             </React.Fragment>
         );
     }

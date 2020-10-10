@@ -12,6 +12,13 @@ export class LoginPage extends Component{
         id_user: '',
         redirect: false,
     }
+    componentDidMount() {
+        const cookies = new Cookies();
+        const cookieUserID = cookies.get('CookieUserID');
+        if (typeof cookieUserID !== 'undefined') {
+            this.props.history.push('/account');
+        }
+    }
 
     onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
@@ -24,7 +31,6 @@ export class LoginPage extends Component{
                         const cookies = new Cookies();
                         let d = new Date();
                         d.setTime(d.getTime() + (60*60*1000));
-                        console.log(this.state.id_user);
                         cookies.set('CookieUserID', res.data.cookie_id, { path: '/', expires: d });
                         this.props.history.push('/account');
                     }
@@ -32,38 +38,32 @@ export class LoginPage extends Component{
         );
     }
 
-    logoutHandler = () => {
-        const cookies = new Cookies();
-        cookies.remove('CookieUserID');
-        this.setState({ status : "Logged out successfully" });
-    }
-
     render() {
         return(
             <React.Fragment>
-            <form onSubmit={ this.loginHandler } style={{ display: 'block'}}>
-                <input
-                    style={{ display: 'block' }}
-                    type='email'
-                    name='email'
-                    placeholder='email'
-                    value={this.state.email}
-                    onChange={this.onChange}
-                    required
-                />
-                <input
-                    style={{ display: 'block' }}
-                    type='password'
-                    name='password'
-                    placeholder='password'
-                    value={this.state.password}
-                    onChange={this.onChange}
-                    required
-                />
-                <button onClick={ this.loginHandler }>Login</button>
-            </form>
+                <h2>Login Page</h2>
+                <form onSubmit={ this.loginHandler } style={{ display: 'block'}}>
+                    <input
+                        style={{ display: 'block' }}
+                        type='email'
+                        name='email'
+                        placeholder='email'
+                        value={this.state.email}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <input
+                        style={{ display: 'block' }}
+                        type='password'
+                        name='password'
+                        placeholder='password'
+                        value={this.state.password}
+                        onChange={this.onChange}
+                        required
+                    />
+                    <button onClick={ this.loginHandler }>Login</button>
+                </form>
             <p>Status: { this.state.status }</p>
-                <button onClick={ this.logoutHandler }>Logout</button>
             </React.Fragment>
         );
     }

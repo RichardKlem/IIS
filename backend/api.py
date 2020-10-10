@@ -3,6 +3,7 @@ from flask_restful import Api
 from flask_cors import CORS
 import json
 import sys
+from datetime import datetime
 
 from init import FLASK_HOST
 from mysqlConnector import Connector
@@ -103,8 +104,28 @@ def account():
             f'FROM uzivatel NATURAL JOIN session_table ' \
             f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
     result = Connector().query(query)
+    #serialize date
+    result[0]["birth_date"] = result[0]["birth_date"].strftime("%Y-%m-%d")
     if result:
         return jsonify(result[0])
+
+
+@app.route('/updateAccount', methods=['POST'])
+def updateAccount():
+    db = Connector()
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'SELECT uzivatel.id_user ' \
+            f'FROM uzivatel NATURAL JOIN session_table ' \
+            f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
+    result = db.query(query, disconnect=False)
+    query = f'UPDATE uzivatel ' \
+            f'SET name = \"{data.get("name")}\", ' \
+            f'email = \"{data.get("email")}\",' \
+            f'phone_number = \"{data.get("phone_number")}\", ' \
+            f'birth_date = \"{data.get("birth_date")}\"'\
+            f'WHERE (id_user = \"{result[0].get("id_user")}\");'
+    db.query(query, expecting_result=False)
+    return "User information updated successfully."
 
 
 if __name__ == '__main__':
