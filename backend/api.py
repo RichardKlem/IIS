@@ -1,13 +1,15 @@
+import base64
+import os
+
 from flask import Flask, jsonify, request
 from flask_restful import Api
 from flask_cors import CORS
 import json
 import sys
-from datetime import datetime
 
 from init import FLASK_HOST
-from mysqlConnector import Connector
-from iisApiUtils import hash_password, verify_password, random_uuid
+from databaseConnector import Connector
+from iisUtils import hash_password, verify_password, random_uuid
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -35,16 +37,17 @@ def todos():
         db = Connector()
         data = json.loads(request.get_data().decode('utf-8'))
         # Insert new todos item with requested title
-        query = f'INSERT INTO todos (title) ' \
-                f'VALUES (\"{data.get("title")}\");'
+        query = f"""INSERT INTO todos (title) VALUES (
+                    {str(data.get("title"))});"""
         db.query(query, expecting_result=False, disconnect=False)
         # Return inserted todos
-        query = f'SELECT * FROM todos ' \
-                f'WHERE id = \"{db.get_lastrow_id()}\";'
+        query = f"""SELECT * FROM todos
+                    WHERE id = {str(db.get_last_row_id())};"""
         result = db.query(query)
         return jsonify(result[0])
     elif request.method == 'GET':
-        return jsonify(Connector().query('SELECT * FROM todos;'))
+        query = f"""SELECT * FROM todos;"""
+        return jsonify(Connector().query(query))
 
 
 @app.route('/registration', methods=['POST'])
@@ -66,7 +69,7 @@ def registration():
             db = Connector()
             db.query(query, expecting_result=False, disconnect=False)
             query = f'INSERT INTO password_table ' \
-                    f'VALUES ({db.get_lastrow_id()}, \"{hash_password(data.get("password"))}\");'
+                    f'VALUES ({db.get_last_row_id()}, \"{hash_password(data.get("password"))}\");'
             db.query(query, expecting_result=False)
         except Exception as e:
             return jsonify({'status': 'Registration Failed, please contact support'})
@@ -104,14 +107,14 @@ def account():
             f'FROM uzivatel NATURAL JOIN session_table ' \
             f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
     result = Connector().query(query)
-    #serialize date
-    result[0]["birth_date"] = result[0]["birth_date"].strftime("%Y-%m-%d")
+    # serialize date
     if result:
+        result[0]["birth_date"] = result[0]["birth_date"].strftime("%Y-%m-%d")
         return jsonify(result[0])
 
 
 @app.route('/updateAccount', methods=['POST'])
-def updateAccount():
+def update_account():
     db = Connector()
     data = json.loads(request.get_data().decode('utf-8'))
     query = f'SELECT uzivatel.id_user ' \
@@ -122,10 +125,56 @@ def updateAccount():
             f'SET name = \"{data.get("name")}\", ' \
             f'email = \"{data.get("email")}\",' \
             f'phone_number = \"{data.get("phone_number")}\", ' \
-            f'birth_date = \"{data.get("birth_date")}\"'\
+            f'birth_date = \"{data.get("birth_date")}\"' \
             f'WHERE (id_user = \"{result[0].get("id_user")}\");'
     db.query(query, expecting_result=False)
     return "User information updated successfully."
+
+
+@app.route('/getUsers', methods=['POST'])
+def get_users():
+    if request.method == 'POST':
+        db = Connector()
+        data = json.loads(request.get_data().decode('utf-8'))
+        query = f'SELECT uzivatel.role ' \
+                f'FROM uzivatel NATURAL JOIN session_table ' \
+                f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
+        result = db.query(query, disconnect=False)
+        if result and result[0]["role"] == 0:
+            result = db.query('SELECT * from uzivatel WHERE role != 0;')
+            for user in result:
+                user["birth_date"] = user["birth_date"].strftime("%Y-%m-%d")
+            return jsonify(result)
+        else:
+            return jsonify(False)
+
+
+@app.route('/upload/<id>', methods=['POST'])
+def upload_user_image(id):
+    file = request.files['file']
+    db = Connector()
+    query = f'SELECT uzivatel.id_user ' \
+            f'FROM uzivatel NATURAL JOIN session_table ' \
+            f'WHERE (session_table.id_session = \"{id}\");'
+    result = db.query(query)
+    file.save(os.getcwd() + '/static/users/' + str(result[0].get("id_user")) + ".jpg")
+    return jsonify("ok")
+
+
+@app.route('/display', methods=['POST'])
+def display_image():
+    db = Connector()
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'SELECT uzivatel.id_user ' \
+            f'FROM uzivatel NATURAL JOIN session_table ' \
+            f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
+    result = db.query(query)
+    img_file = os.getcwd() + f'/static/users/{result[0].get("id_user")}.jpg'
+    if not os.path.isfile(img_file):
+        img_file = os.getcwd() + '/static/users/default.png'
+    with open(img_file, "rb") as f:
+        im_b64 = base64.b64encode(f.read())
+    return im_b64
 
 
 if __name__ == '__main__':

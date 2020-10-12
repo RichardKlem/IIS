@@ -35,7 +35,7 @@ class Connector:
             self.disconnect()
         return output
 
-    def get_lastrow_id(self):
+    def get_last_row_id(self):
         return self.cursor.lastrowid
 
     def disconnect(self):

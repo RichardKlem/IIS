@@ -1,5 +1,5 @@
 import React, {Component, useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -38,7 +38,6 @@ class App extends Component {
   state = {
     todos: [],
   }
-  
 
   // Toggle Completed (DB not implemented)
   markComplete = (id) => {
@@ -50,10 +49,12 @@ class App extends Component {
     }) });
   }
   
-  // Load Todos
+  // Load Users
   componentDidMount() {
     axios.get( '/todos')
-        .then(res => this.setState({ todos: res.data }))
+        .then(res => {
+          this.setState({ todos: res.data });
+        })
   }
   
   // Delete Todo
@@ -66,7 +67,6 @@ class App extends Component {
   // Add Todo
   addTodo = (title) => {
     axios.post('/todos', { title: title }).then(res => {
-        console.log(res.data);
         this.setState({ todos: [...this.state.todos, res.data]});
       }
       );

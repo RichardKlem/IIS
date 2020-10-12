@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
-import Cookies from "universal-cookie";
 
 export class Header extends Component {
     render() {
@@ -13,18 +12,10 @@ export class Header extends Component {
                 <Link style={linkStyle} to="/tableData">TableData | </Link>
                 <Link style={linkStyle} to="/registration">Register | </Link>
                 <Link style={linkStyle} to="/account">Manage Account | </Link>
-                <Link style={linkStyle} to="/login">Login | </Link>
-                <button style={buttonStyle} onClick={ this.logoutHandler }>Logout</button>
+                <Link style={linkStyle} to="/login">Login</Link>
             </header>
         )
     }
-
-    logoutHandler = () => {
-        const cookies = new Cookies();
-        cookies.remove('CookieUserID');
-        this.setState({ status : "Logged out successfully" });
-    }
-
 }
 
 const headerStyle = {
@@ -38,12 +29,6 @@ const headerStyle = {
 
 const linkStyle = {
     color: '#fff',
-    textDecoration: 'none'
-}
-
-const buttonStyle = {
-    color: '#fff',
-    backgroundColor: 'transparent',
     textDecoration: 'none'
 }
 
