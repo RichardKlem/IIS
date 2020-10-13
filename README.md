@@ -26,6 +26,7 @@ Check if [http://localhost:5000/time](http://localhost:5000/time) is available
 ### React app
 ```bash
 cd ./ISS/frontend/
+npm rebuild node-sass
 npm install react
 npm start
 ```

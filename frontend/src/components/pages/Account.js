@@ -1,15 +1,18 @@
 import React, {Component} from 'react'
 import axios from "axios";
 import Cookies from 'universal-cookie';
-import Users from "./adminAction/Users";
+import Users from "./usersTable/Users";
+import { Form } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 
+const cookies = new Cookies();
 export class Account extends Component{
     state = {
         name : '',
         phone_number : '',
         birth_date: '',
         email: '',
+        address: '',
         status: '',
         image: '',
         users: false,
@@ -17,7 +20,6 @@ export class Account extends Component{
     }
 
     componentDidMount() {
-        const cookies = new Cookies();
         const cookieUserID = cookies.get('CookieUserID');
         if (typeof cookieUserID === 'undefined' ) {
             this.props.history.push('/login');
@@ -36,12 +38,63 @@ export class Account extends Component{
                 }
             );
 
-            axios.post('/display', { CookieUserID: cookies.get('CookieUserID')})
+            axios.post('/getProfileImage', { CookieUserID: cookies.get('CookieUserID')})
                 .then(res => {
                     this.setState({image : res.data});
                     }
                 );
         }
+    }
+    render() {
+        return(
+            <div className="card">
+                <div className="card-body">
+                    <h2 className="card-title">Manage Account</h2>
+                    <h3 className="card-description"> User Information </h3>
+                    <div style={{display:'flex', paddingBottom: '40px'}}>
+                        {this.imageHandler()}
+                    </div>
+                    <form className="forms-sample" onSubmit={this.InfoUpdateHandler}>
+                        <Form.Group className="row">
+                            <label htmlFor="exampleInputUsername2" className="col-sm-3 col-form-label">Full Name</label>
+                            <div className="col-sm-9">
+                                <Form.Control type="text" className="form-control" name='name' defaultValue={this.state.name} onChange={this.onChange} placeholder="Full Name" required/>
+                            </div>
+                        </Form.Group>
+                        <Form.Group className="row">
+                            <label htmlFor="exampleInputEmail2" className="col-sm-3 col-form-label">Email</label>
+                            <div className="col-sm-9">
+                                <Form.Control type="email" className="form-control" name='email' defaultValue={this.state.email} onChange={this.onChange} placeholder="Email" required/>
+                            </div>
+                        </Form.Group>
+                        <Form.Group className="row">
+                            <label htmlFor="exampleInputMobile" className="col-sm-3 col-form-label">Mobile</label>
+                            <div className="col-sm-9">
+                                <Form.Control type="tel" className="form-control" name='phone_number' pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}" defaultValue={this.state.phone_number} onChange={this.onChange} placeholder="Mobile Number" required/>
+                            </div>
+                        </Form.Group>
+                        <Form.Group className="row">
+                            <label htmlFor="exampleInputMobile" className="col-sm-3 col-form-label">Birth Date</label>
+                            <div className="col-sm-9">
+                                <Form.Control type="date" className="form-control" name='birth_date' defaultValue={this.state.birth_date} onChange={this.onChange} placeholder="Birth Date" required/>
+                            </div>
+                        </Form.Group>
+                        <Form.Group className="row">
+                            <label htmlFor="exampleInputMobile" className="col-sm-3 col-form-label">Address</label>
+                            <div className="col-sm-9">
+                                <Form.Control type="text" className="form-control" name='address' defaultValue={this.state.address} onChange={this.onChange} placeholder="Address" required/>
+                            </div>
+                        </Form.Group>
+                        <Form.Control type="submit" className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn mr-2" value="Submit Changes"/>
+                    </form>
+                    <div className="text-center mt-4 font-weight-bold">
+                        {this.state.status}
+                    </div>
+                </div>
+                <br/>
+                {this.userActions()}
+            </div>
+        );
     }
 
     onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -49,7 +102,6 @@ export class Account extends Component{
     InfoUpdateHandler = (e) => {
         // todo investigate browser's autolick on submit button
         e.preventDefault();
-        const cookies = new Cookies();
         axios.post('/updateAccount', {
             CookieUserID: cookies.get('CookieUserID'),
             name: this.state.name,
@@ -57,7 +109,7 @@ export class Account extends Component{
             email: this.state.email,
             phone_number: this.state.phone_number,
         }).then(res => {
-            this.setState({ status : res.data});
+                this.setState({ status : res.data});
             }
         );
     }
@@ -70,112 +122,54 @@ export class Account extends Component{
     adminAction() {
         if (this.state.users) {
             return(
-                <React.Fragment>
+                <div>
                     <hr style={{ borderTop: '8px solid #bbb', borderRadius: '5px', marginTop : '5px' }}></hr>
-                    <h3>User Actions:</h3>
-                    <h4>Edit user data:</h4>
-                    <Users users={this.state.users}/>
-                </React.Fragment>
+                    <div className="card">
+                        <div className="card-body">
+                            <h2 className="card-title">Actions</h2>
+                            <h4 className="card-description"> User table:</h4>
+                            <div className="table-responsive">
+                                <table className="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Full Name</th>
+                                        <th>Mobile</th>
+                                        <th>Email</th>
+                                        <th>Birth Date</th>
+                                        <th>Address</th>
+                                        <th>Role</th>
+                                        <th>Submit</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <Users users={this.state.users}/>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             );
         }
-    };
-
-    logoutHandler = () => {
-        const cookies = new Cookies();
-        cookies.remove('CookieUserID');
-        this.setState({ status : "Logged out successfully" });
-        this.props.history.push('/login');
-    };
-
-    render() {
-        return(
-            <React.Fragment>
-                <h2>Manage Account</h2>
-                <h2>User Information</h2>
-                {this.imageHandler()}
-                <form onSubmit={this.InfoUpdateHandler}>
-                    <div style={{display: 'flex', paddingTop: '5px', paddingBottom: '5px'}}>
-                        <p style={{paddingRight: '10px'}}>Name:</p>
-                        <input
-                            style={{display: 'flex'}}
-                            type='text'
-                            name='name'
-                            placeholder='name'
-                            value={this.state.name}
-                            onChange={this.onChange}
-                            required
-                        />
-                    </div>
-                    <div style={{display: 'flex', paddingTop: '5px', paddingBottom: '5px'}}>
-                        <p style={{paddingRight: '10px'}}>Phone number:</p>
-                        <input
-                            style={{display: 'block'}}
-                            type='text'
-                            name='phone_number'
-                            placeholder='phone Number'
-                            pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}"
-                            value={this.state.phone_number}
-                            onChange={this.onChange}
-                            required
-                        />
-                    </div>
-                    <div style={{display: 'flex', paddingTop: '5px', paddingBottom: '5px'}}>
-                        <p style={{paddingRight: '10px'}}>Birth date:</p>
-                        <input
-                            style={{display: 'block'}}
-                            type='date'
-                            name='birth_date'
-                            placeholder='birth Date'
-                            value={this.state.birth_date}
-                            onChange={this.onChange}
-                            required
-                        />
-                    </div>
-                    <div style={{display: 'flex', paddingTop: '5px', paddingBottom: '5px'}}>
-                        <p style={{paddingRight: '10px'}}>Email:</p>
-                        <input
-                            style={{display: 'block'}}
-                            type='email'
-                            name='email'
-                            placeholder='email'
-                            value={this.state.email}
-                            onChange={this.onChange}
-                            required
-                        />
-                    </div>
-                    <input
-                        style={{display: 'block'}}
-                        type="submit"
-                        value="Submit Changes"
-                        className="btn"
-                    />
-                </form>
-                <p>{this.state.status}</p>
-                <button onClick={this.logoutHandler}>Logout</button>
-                <br/>
-                {this.userActions()}
-            </React.Fragment>
-        );
     };
 
 
     imageHandler() {
         return <>
             <img src={`data:image/*;base64,${this.state.image}`} alt='' style={{ borderRadius: '50%', width:'100px', height:'100px'}}/>
-            <div className="container">
+            <div style={{ paddingLeft:'20px' }}>
                 <div className="row">
                     <div className="col-md-6">
                         <ToastContainer/>
                         <form method="post" action="#" id="#">
-                            <div className="form-group files">
-                                <label>Upload your photo </label>
-                                <input type="file" name="file" className="form-control"
-                                       onChange={this.onChangeHandler}/>
+                            <div style={{ paddingBottom:'10px' }}>
+                                <label>Upload your profile photo </label>
+                                <input type="file" name="file" onChange={this.onChangeHandler}/>
                             </div>
-                            <div className="col-md-6 pull-right">
-                                <button width="100%" type="button" className="btn btn-info"
-                                        onClick={this.fileUploadHandler}>Upload File
-                                </button>
+                            <div className="">
+                                <button width="100%" type="button" className="btn btn-info" onClick={this.fileUploadHandler}>Upload File</button>
                             </div>
                         </form>
                     </div>

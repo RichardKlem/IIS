@@ -38,7 +38,7 @@ def todos():
         data = json.loads(request.get_data().decode('utf-8'))
         # Insert new todos item with requested title
         query = f"""INSERT INTO todos (title) VALUES (
-                    {str(data.get("title"))});"""
+                    \"{data.get("title")}\");"""
         db.query(query, expecting_result=False, disconnect=False)
         # Return inserted todos
         query = f"""SELECT * FROM todos
@@ -130,6 +130,18 @@ def update_account():
     db.query(query, expecting_result=False)
     return "User information updated successfully."
 
+@app.route('/updateUser', methods=['POST'])
+def update_user():
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'UPDATE uzivatel ' \
+            f'SET name = \"{data.get("name")}\", ' \
+            f'email = \"{data.get("email")}\",' \
+            f'phone_number = \"{data.get("phone_number")}\", ' \
+            f'birth_date = \"{data.get("birth_date")}\"' \
+            f'WHERE (id_user = \"{data.get("id_user")}\");'
+    Connector().query(query, expecting_result=False)
+    return "User information updated successfully."
+
 
 @app.route('/getUsers', methods=['POST'])
 def get_users():
@@ -161,8 +173,8 @@ def upload_user_image(id):
     return jsonify("ok")
 
 
-@app.route('/display', methods=['POST'])
-def display_image():
+@app.route('/getProfileImage', methods=['POST'])
+def get_profile_image():
     db = Connector()
     data = json.loads(request.get_data().decode('utf-8'))
     query = f'SELECT uzivatel.id_user ' \
