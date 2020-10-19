@@ -42,3 +42,5 @@ DELIMITER ;
 # Test data
 insert into hotels_table (name, description, category, address, email, phone_number, rating)
 values ('Hotel Brno', 'Prémiový hotel v centru Brna', 3, 'Náměstí svobody 0, Brno, Česká Republika', 'info@hotel-brno.cz', '+4200000000000', 5);
+insert into hotels_table (name, description, category, address, email, phone_number, rating)
+values ('Hotel Brno', 'Prémiový hotel v centru Brna', 3, 'Náměstí svobody 0, Brno, Česká Republika', 'info@hotel-brno.cz', '+4200000000000', 5);

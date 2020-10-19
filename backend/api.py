@@ -37,16 +37,14 @@ def todos():
         db = Connector()
         data = json.loads(request.get_data().decode('utf-8'))
         # Insert new todos item with requested title
-        query = f"""INSERT INTO todos (title) VALUES (
-                    \"{data.get("title")}\");"""
+        query = f'INSERT INTO todos (title) VALUES ("{data.get("title")}\");'
         db.query(query, expecting_result=False, disconnect=False)
         # Return inserted todos
-        query = f"""SELECT * FROM todos
-                    WHERE id = {str(db.get_last_row_id())};"""
+        query = f'SELECT * FROM todos WHERE id = {str(db.get_last_row_id())};'
         result = db.query(query)
         return jsonify(result[0])
     elif request.method == 'GET':
-        query = f"""SELECT * FROM todos;"""
+        query = f'SELECT * FROM todos;'
         return jsonify(Connector().query(query))
 
 
@@ -188,6 +186,93 @@ def get_profile_image():
         im_b64 = base64.b64encode(f.read())
     return im_b64
 
+
+@app.route('/getUserName', methods=['POST'])
+def get_user_name():
+    db = Connector()
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'SELECT uzivatel.name ' \
+            f'FROM uzivatel NATURAL JOIN session_table ' \
+            f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
+    result = db.query(query)
+    return jsonify(result[0])
+
+
+@app.route('/getUserRole', methods=['POST'])
+def get_user_role():
+    db = Connector()
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'SELECT uzivatel.role ' \
+            f'FROM uzivatel NATURAL JOIN session_table ' \
+            f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
+    result = db.query(query)
+    return jsonify(result[0])
+
+@app.route('/getHotels', methods=['GET'])
+def get_hotel_by_id():
+    query = f'SELECT * FROM hotels_table;'
+    return jsonify(Connector().query(query))
+
+@app.route('/getHotel', methods=['POST'])
+def get_hotels():
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'SELECT * FROM hotels_table WHERE hotel_id = \"{data.get("hotel_id")}\";'
+    return jsonify(Connector().query(query)[0])
+
+
+@app.route('/getHotelImage', methods=['POST'])
+def get_hotel_image():
+    data = json.loads(request.get_data().decode('utf-8'))
+    img_file = os.getcwd() + f'/static/hotels/{data.get("hotel_id")}.jpg'
+    if not os.path.isfile(img_file):
+        img_file = os.getcwd() + '/static/hotels/default.png'
+    with open(img_file, "rb") as f:
+        im_b64 = base64.b64encode(f.read())
+    return im_b64
+
+
+@app.route('/removeHotel', methods=['POST'])
+def remove_hotel():
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'DELETE FROM hotels_table ' \
+            f'WHERE hotel_id={data.get("hotel_id")};'
+    return jsonify(Connector().query(query, expecting_result=False))
+
+
+@app.route('/addHotel', methods=['POST'])
+def add_hotel():
+    db = Connector()
+    data = json.loads(request.get_data().decode('utf-8'))
+    # Insert new todos item with requested title
+    query = f'INSERT INTO hotels_table (name, description, category, address, email, phone_number, rating)' \
+            f' VALUES ("{data.get("name")}\", "{data.get("description")}\", "{data.get("category")}\", "{data.get("address")}\", ' \
+            f'"{data.get("email")}\", "{data.get("phone_number")}\", "{data.get("rating")}\");'
+    db.query(query, expecting_result=False, disconnect=False)
+    # Return inserted todos
+    return jsonify(str(db.get_last_row_id()))
+
+
+@app.route('/uploadHotelImg/<id>', methods=['POST'])
+def upload_hotel_image(id):
+    file = request.files['file']
+    file.save(os.getcwd() + '/static/hotels/' + id + ".jpg")
+    return jsonify("ok")
+
+
+@app.route('/editHotel', methods=['POST'])
+def edit_hotel():
+    data = json.loads(request.get_data().decode('utf-8'))
+    query = f'UPDATE hotels_table ' \
+            f'SET name = \"{data.get("name")}\", ' \
+            f'description = \"{data.get("description")}\",' \
+            f'address = \"{data.get("address")}\", ' \
+            f'email = \"{data.get("email")}\",' \
+            f'phone_number = \"{data.get("phone_number")}\",'\
+            f'rating = \"{data.get("rating")}\", ' \
+            f'category = \"{data.get("category")}\" ' \
+            f'WHERE (hotel_id = \"{data.get("hotel_id")}\");'
+    Connector().query(query, expecting_result=False)
+    return jsonify("OK")
 
 if __name__ == '__main__':
     try:

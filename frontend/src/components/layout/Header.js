@@ -10,6 +10,7 @@ export class Header extends Component {
 
     state = {
         image: null,
+        userName: '',
     }
 
     signOut = () => {
@@ -37,12 +38,21 @@ export class Header extends Component {
                         }
                     );
             }
+            if (this.state.userName === '') {
+                axios.post('/getUserName', { CookieUserID: cookies.get('CookieUserID')})
+                    .then(res => {
+                            this.setState({userName : res.data.name});
+                        }
+                    );
+            }
             return(
                 <li className="nav-item nav-profile border-0">
                     <Dropdown>
-                        <Dropdown.Toggle className="nav-link count-indicator bg-transparent align-self-center" style={{display:'flex'}}>
-                            <h4 className="align-self-center" style={{color:'#000', paddingLeft:'10px', paddingTop:'5px'}}>User name</h4>
-                            <img className="img-xs rounded-circle" style={{marginLeft:'10px'}} src={`data:image/*;base64,${this.state.image}`} alt="Profile" />
+                        <Dropdown.Toggle className="nav-link bg-transparent" style={{display:'flex'}}>
+                            <div style={{display:'flex', textAlign: 'bottom'}}>
+                            <h4 className="align-self-center " style={{color:'#000', marginBottom: '-0.1rem', marginLeft:'10px', marginRight:'10px'}}>{this.state.userName}</h4>
+                            <img className="img-xs rounded-circle" src={`data:image/*;base64,${this.state.image}`} alt="Profile" />
+                            </div>
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="preview-list navbar-dropdown pb-3">
                             <Dropdown.Item as={Link} to={'/account'} className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">

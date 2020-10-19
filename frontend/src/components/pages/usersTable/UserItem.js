@@ -32,8 +32,8 @@ export class UserItem extends Component {
         return (
             <tr>
                 <td><input
-                    style={{ width:'125%' }}
-                    className="form-control form-control-sm"
+                    style={{ width:'auto/5' }}
+                    className="text-center form-control form-control-sm"
                     type='text'
                     name='id_user'
                     placeholder='User ID'
@@ -43,7 +43,7 @@ export class UserItem extends Component {
                 /></td>
                 <td><input
                     style={{ width:'auto' }}
-                    className="form-control form-control-lg"
+                    className="text-center form-control form-control-lg"
                     type='text'
                     name='name'
                     placeholder='Full Name'
@@ -53,7 +53,7 @@ export class UserItem extends Component {
                 /></td>
                 <td><input
                     style={{ width:'auto' }}
-                    className="form-control form-control-lg"
+                    className="text-center form-control form-control-lg"
                     type='text'
                     name='phone_number'
                     placeholder='Phone Number'
@@ -64,7 +64,7 @@ export class UserItem extends Component {
                 /></td>
                 <td><input
                     style={{ width:'auto' }}
-                    className="form-control form-control-lg"
+                    className="text-center form-control form-control-lg"
                     type='email'
                     name='email'
                     placeholder='Email'
@@ -74,7 +74,7 @@ export class UserItem extends Component {
                 /></td>
                 <td><input
                     style={{ width:'auto' }}
-                    className="form-control form-control-lg"
+                    className="text-center form-control form-control-lg"
                     type='date'
                     name='birth_date'
                     placeholder='Birth Date'
@@ -84,7 +84,7 @@ export class UserItem extends Component {
                 /></td>
                 <td><input
                     style={{ width:'auto' }}
-                    className="form-control form-control-lg"
+                    className="text-center form-control form-control-lg"
                     type='text'
                     name='address'
                     placeholder='Address'
@@ -93,10 +93,11 @@ export class UserItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{ width:'125%' }}
-                    className="form-control form-control-sm"
+                    style={{ width:'auto/5' }}
+                    className="text-center form-control form-control-sm"
                     type='text'
                     name='role'
+                    size="1"
                     placeholder='Role'
                     value={this.state.role}
                     onChange={this.onChange}

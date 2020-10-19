@@ -18,11 +18,6 @@ export class LoginPage extends Component{
     onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
     RegistrationHandler = (e) => {
-        console.log(this.state.name)
-        console.log(this.state.birth_date)
-        console.log(this.state.email)
-        console.log(this.state.phone_number)
-        console.log(this.state.password)
         e.preventDefault();
         if (this.state.password !== this.state.password_check) {
             this.setState({ status : "Passwords doesn't match!"});

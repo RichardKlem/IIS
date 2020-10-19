@@ -4,6 +4,10 @@
   width: calc(100% - 0px) !important;
 }
 
+.container {
+  max-width: 1640px !important;
+}
+
 .navbarCustom {
   left: 0 !important;
   font-family: "Roboto", sans-serif;
@@ -13,7 +17,9 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  height: 65px;
   padding: 0.5rem 1rem;
+  background-color: #ffffff;
 }
 
 body {
@@ -39,7 +45,7 @@ body {
 @import "assets/styles/functions";
 
 /* === Icon fonts === */
-@import "~@mdi/font/scss/materialdesignicons";
+//@import "~@mdi/font/scss/materialdesignicons";
 @import "~flag-icon-css/sass/flag-icon";
 
 

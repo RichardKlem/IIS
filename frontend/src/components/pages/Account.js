@@ -3,11 +3,13 @@ import axios from "axios";
 import Cookies from 'universal-cookie';
 import Users from "./usersTable/Users";
 import { Form } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import HotelsList from "./hotelsPublic/HotelsList";
 
 const cookies = new Cookies();
 export class Account extends Component{
     state = {
+        /* User data */
         name : '',
         phone_number : '',
         birth_date: '',
@@ -15,36 +17,49 @@ export class Account extends Component{
         address: '',
         status: '',
         image: '',
-        users: false,
+        role: 5,
+        /* Admin change users' data */
+        users: null,
+        /* File upload variables */
+        fileUploadErrMsg:'',
+        fileUploadAvailable:false,
         selectedFile: null
     }
 
     componentDidMount() {
         const cookieUserID = cookies.get('CookieUserID');
-        if (typeof cookieUserID === 'undefined' ) {
+        if (typeof(cookieUserID) === 'undefined') {
             this.props.history.push('/login');
         } else {
-            axios.post('/account', { CookieUserID: cookieUserID })
+            axios.post('/account', {CookieUserID: cookieUserID})
                 .then(res => {
-                    this.setState({ name : res.data.name});
-                    this.setState({ birth_date : res.data.birth_date});
-                    this.setState({ email : res.data.email});
-                    this.setState({ phone_number : res.data.phone_number});
-                }
-            );
-            axios.post('/getUsers', { CookieUserID: cookies.get('CookieUserID')})
-                .then(res => {
-                    this.setState({users : res.data});
-                }
-            );
+                        this.setState({name: res.data.name});
+                        this.setState({birth_date: res.data.birth_date});
+                        this.setState({email: res.data.email});
+                        this.setState({phone_number: res.data.phone_number});
+                    }
+                );
 
-            axios.post('/getProfileImage', { CookieUserID: cookies.get('CookieUserID')})
+            axios.post('/getUsers', {CookieUserID: cookieUserID})
                 .then(res => {
-                    this.setState({image : res.data});
+                        this.setState({users: res.data});
+                    }
+                );
+
+            axios.post('/getUserRole', {CookieUserID: cookieUserID})
+                .then(res => {
+                        this.setState({role: res.data.role});
+                    }
+                );
+
+            axios.post('/getProfileImage', {CookieUserID: cookieUserID})
+                .then(res => {
+                        this.setState({image: res.data});
                     }
                 );
         }
     }
+
     render() {
         return(
             <div className="card">
@@ -52,7 +67,7 @@ export class Account extends Component{
                     <h2 className="card-title">Manage Account</h2>
                     <h3 className="card-description"> User Information </h3>
                     <div style={{display:'flex', paddingBottom: '40px'}}>
-                        {this.imageHandler()}
+                        {this.getProfilePhoto()}
                     </div>
                     <form className="forms-sample" onSubmit={this.InfoUpdateHandler}>
                         <Form.Group className="row">
@@ -116,35 +131,85 @@ export class Account extends Component{
 
 
     userActions = () => {
-        return(this.adminAction());
+        if (this.state.role === 0) {
+            return(
+                <div>
+                    <hr style={{borderTop: '8px solid #bbb', borderRadius: '5px', marginTop: '5px'}}></hr>
+                    {this.adminUserAction()}
+                    <hr style={{borderTop: '8px solid #bbb', borderRadius: '5px', marginTop: '5px'}}></hr>
+                    <HotelsList/>
+                </div>
+            )
+        } else if (this.state.role === 1) {
+            return(
+                <div>
+                    <hr style={{borderTop: '8px solid #bbb', borderRadius: '5px', marginTop: '5px'}}></hr>
+                    <HotelsList/>
+                </div>
+            )
+        }
+
     };
 
-    adminAction() {
+    filterTableColumnFunction = () => {
+        let rowWasHidden = false;
+        const keys = ["0", "1", "2", "3", "4", "5", "6"];
+        for (let key of keys) {
+            // Declare variables
+            let input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById(key);
+            if ( input === null ){
+                return
+            }
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[key];
+                if (typeof(td) !== 'undefined') {
+                    td = td.getElementsByTagName("input")[0];
+                    if (td) {
+                        txtValue = td.value;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1 && (tr[i].style.display !== "none" || rowWasHidden === false)) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                            rowWasHidden = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Action for admin user to manipulate with other users' data */
+    adminUserAction() {
         if (this.state.users) {
             return(
                 <div>
-                    <hr style={{ borderTop: '8px solid #bbb', borderRadius: '5px', marginTop : '5px' }}></hr>
                     <div className="card">
                         <div className="card-body">
                             <h2 className="card-title">Actions</h2>
                             <h4 className="card-description"> User table:</h4>
                             <div className="table-responsive">
-                                <table className="table table-hover">
+                                <table className="table table-hover" id="myTable">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Full Name</th>
-                                        <th>Mobile</th>
-                                        <th>Email</th>
-                                        <th>Birth Date</th>
-                                        <th>Address</th>
-                                        <th>Role</th>
-                                        <th>Submit</th>
-                                        <th>Status</th>
+                                        <th>ID<input style={{ minWidth:'100px', maxWidth:'auto/5'}} className="text-center form-control form-control-sm" type="text" id="0" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Full Name<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="text" id="1" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Mobile<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="tel" pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}" id="2" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Email<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="email" id="3" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Birth Date<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="date" id="4" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Address<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="text" id="5" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Role<input style={{ minWidth:'40px', maxWidth:'auto/5' }} className="text-center form-control form-control-sm" type="text" id="6" maxLength="1" onKeyUp={this.filterTableColumnFunction}/></th>
+                                        <th>Submit<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="text" id="7" readOnly/></th>
+                                        <th>Status<input style={{ width:'auto' }} className="text-center form-control form-control-sm" type="text" id="8" readOnly/></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        <Users users={this.state.users}/>
+                                        {this.getAllUserData()}
                                     </tbody>
                                 </table>
                             </div>
@@ -155,8 +220,11 @@ export class Account extends Component{
         }
     };
 
+    getAllUserData() {
+        return <Users users={this.state.users}/>;
+    }
 
-    imageHandler() {
+    getProfilePhoto() {
         return <>
             <img src={`data:image/*;base64,${this.state.image}`} alt='' style={{ borderRadius: '50%', width:'100px', height:'100px'}}/>
             <div style={{ paddingLeft:'20px' }}>
@@ -166,10 +234,11 @@ export class Account extends Component{
                         <form method="post" action="#" id="#">
                             <div style={{ paddingBottom:'10px' }}>
                                 <label>Upload your profile photo </label>
-                                <input type="file" name="file" onChange={this.onChangeHandler}/>
+                                <input type="file" name="file" onChange={this.onChangeFileUploadHandler}/>
                             </div>
-                            <div className="">
-                                <button width="100%" type="button" className="btn btn-info" onClick={this.fileUploadHandler}>Upload File</button>
+                            <div style={{display: 'flex'}}>
+                                <p>{this.state.fileUploadErrMsg}</p>
+                                <button width="100%" style={this.getUploadButtonStyle()} type="button" className="btn btn-info" onClick={this.fileUploadHandler}>Upload File</button>
                             </div>
                         </form>
                     </div>
@@ -178,15 +247,41 @@ export class Account extends Component{
         </>;
     }
 
-    onChangeHandler=event=>{
-        var file = event.target.files[0];
-        if(this.validateSize(event)){
-            // if return true allow to setState
-            this.setState({
-                selectedFile: file
-            });
+
+    /* File Upload Functions */
+    getUploadButtonStyle = () => {
+        return {
+            display: this.state.fileUploadAvailable ?
+                'flex' : 'none'
+        }
+    }
+
+    onChangeFileUploadHandler = (e) => {
+        var file = e.target.files[0];
+        if (this.validateFileSize(e)) {
+            this.setState({ selectedFile: file, fileUploadAvailable : true, fileUploadErrMsg: '' });
 
         }
+    };
+
+    validateFileSize = (e) => {
+        let file = e.target.files[0];
+        let size = 30000;
+
+        if (!file) {
+            this.setState({selectedFile : null, fileUploadAvailable : false, fileUploadErrMsg : 'Please select a photo.'});
+            return false;
+        }
+
+        if (file.size > size) {
+            this.setState({selectedFile : null, fileUploadAvailable : false, fileUploadErrMsg : 'File is too large, please pick a smaller file.'});
+            return false;
+        }
+        if (file.type.split("/")[0] !== "image" ) {
+            this.setState({selectedFile : null, fileUploadAvailable : false, fileUploadErrMsg : 'Please select a photo.'});
+            return false;
+        }
+        return true;
     };
 
     fileUploadHandler = () => {
@@ -195,24 +290,11 @@ export class Account extends Component{
         const cookies = new Cookies();
         axios.post('/upload/'+cookies.get('CookieUserID'), data)
             .then(res => { // then print response status
-                window.location.reload();
+                window.location.reload(false);
             })
             .catch(err => { // then print response status
-                toast.error('upload fail')
+                this.setState({selectedFile : null, fileUploadAvailable : false, fileUploadErrMsg : 'Upload Failed, please try again.'});
             })
-
-    };
-
-    validateSize=(event)=>{
-        let file = event.target.files[0];
-        let size = 30000;
-        let err = '';
-        console.log(file.size);
-        if (file.size > size) {
-            err = file.type+'is too large, please pick a smaller file\n';
-            toast.error(err);
-        }
-        return true
     };
 }
 
