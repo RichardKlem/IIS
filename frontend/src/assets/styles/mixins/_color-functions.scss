@@ -8,6 +8,7 @@
     }
   }
 }
+
 // Minimal tab variations
 @mixin tab-minimal-variant($color) {
   .nav-tabs {
@@ -20,6 +21,7 @@
     }
   }
 }
+
 // Sider color variations
 @mixin slider-color-variant($color) {
   .noUi-base {
@@ -43,6 +45,7 @@
     }
   }
 }
+
 // Breadcrumb color variations
 @mixin breadcrumb-inverse-variant($color) {
   background: lighten($color, 25%);
@@ -85,6 +88,7 @@
     }
   }
 }
+
 // Pagination variations
 @mixin pagination-variants($color) {
   .page-item {
@@ -97,13 +101,14 @@
 
     .page-link {
       &:hover {
-        background: lighten($color,5%);
+        background: lighten($color, 5%);
         border-color: $color;
         color: $white;
       }
     }
   }
 }
+
 // Accordion Inverse variations
 @mixin accordion-inverse-variant($color) {
   .card {

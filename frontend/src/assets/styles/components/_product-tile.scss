@@ -200,11 +200,13 @@
           font-size: 22px;
         }
       }
+
       .product-img-outer {
         width: 100%;
         grid-area: product-image;
         overflow: hidden;
         margin-bottom: 10px;
+
         .product_image {
           width: 100%;
           max-width: 100%;
@@ -217,6 +219,7 @@
           transition-timing-function: "ease";
           transition-property: "transform", "border-radius", "box-shadow";
         }
+
         &:hover {
           .product_image {
             transform: scale(1.3);

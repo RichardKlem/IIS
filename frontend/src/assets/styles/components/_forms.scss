@@ -9,11 +9,13 @@
   color: $input-placeholder-color;
   width: auto;
   border: none;
+
   .input-group-text {
     border-color: $border-color;
     padding: 0.94rem 0.5rem 0.94rem 1rem;
     color: $input-placeholder-color;
   }
+
   button {
     padding-top: .3rem;
     padding-bottom: .3rem;
@@ -41,13 +43,16 @@ select {
     border: 0;
     outline: 1px solid $border-color;
     color: $input-placeholder-color;
+
     &:focus {
       outline: 1px solid $border-color;
     }
+
     @each $color,
     $value in $theme-colors {
       &.border-#{$color} {
         outline: 1px solid $value;
+
         &:focus {
           outline: 1px solid $value;
         }
@@ -63,27 +68,32 @@ select {
     vertical-align: top;
     margin-bottom: .5rem;
   }
+
   &.has-danger {
     .form-control {
       border-color: theme-color(danger);
     }
   }
+
   .file-upload-default {
     visibility: hidden;
     position: absolute;
   }
+
   .file-upload-info {
     background: transparent;
   }
 }
+
 .form-check-input {
   margin-left: 0;
 }
 
 .custom-file {
   .visibility-hidden {
-  visibility: hidden;
+    visibility: hidden;
   }
+
   .custom-file-label {
     background: $input-bg;;
     border: 1px solid $border-color;
@@ -92,6 +102,7 @@ select {
     font-size: 0.875rem;
     padding: 0.625rem 0.6875rem;
     border-radius: 2px;
+
     &:after {
       background-color: theme-color(primary);
       height: auto;

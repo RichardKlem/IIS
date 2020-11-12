@@ -1,225 +1,229 @@
-import React, { Component } from 'react'
-import {ToastContainer} from "react-toastify";
-import {Link} from "react-router-dom";
-import { Form } from 'react-bootstrap';
+import React, {Component} from 'react'
 import axios from "axios";
 import Cookies from "universal-cookie";
+import RoomsList from "../roomsPublic/RoomsList";
+import StarRatings from "react-star-ratings";
+
 const cookies = new Cookies();
+const cookieUserID = cookies.get('CookieUserID');
 
 export class OpenHotel extends Component {
-
-    state = {
-        name: '',
-        address: '',
-        description: '',
-        phone_number: '',
-        email: '',
-        category: '',
-        rating: '',
-        hotel_id: '',
-        role: 5,
-        /* File upload variables */
-        image: '',
-        newImageWasUploaded: false,
-        fileUploadErrMsg:'',
-        hotelUploadAvailable: true,
-        selectedFile: null
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true,
+            /* User data */
+            name: undefined,
+            address: undefined,
+            description: "",
+            phone_number: undefined,
+            email: undefined,
+            category: undefined,
+            rating: undefined,
+            hotel_id: undefined,
+            free_cancellation: true,
+            no_prepayment: true,
+            free_wifi: true,
+            gym: true,
+            spa: true,
+            swimming_pool: true,
+            /* File upload variables */
+            image: undefined,
+            newImageWasUploaded: false,
+            fileUploadErrMsg: undefined,
+            hotelUploadAvailable: true,
+            selectedFile: null,
+            /* Status */
+            status: "",
+            /* User */
+            role: 5,
+        }
     }
 
-
     componentDidMount() {
-        const { id } = this.props.match.params;
+        const id = window.location.pathname.replace("/hotel/", "");
         this.setState({hotel_id: id})
-        axios.post('/getHotel', { hotel_id: id })
+        if (typeof (cookieUserID) !== "undefined") {
+            axios.post('/getUserRole', {CookieUserID: cookieUserID})
+                .then(res => {
+                    this.setState({role: res.data.role});
+                });
+        }
+
+        axios.post('/getHotel', {hotel_id: id})
             .then((res) => {
-                    this.setState({name: res.data.name,
-                        address: res.data.address,
-                        description: res.data.description,
-                        phone_number: res.data.phone_number,
-                        email: res.data.email,
-                        category: res.data.category,
-                        rating: res.data.rating,
-                    });
-        });
+                this.setState({
+                    name: res.data.name,
+                    address: res.data.address,
+                    description: res.data.description,
+                    phone_number: res.data.phone_number,
+                    email: res.data.email,
+                    category: res.data.category,
+                    rating: res.data.rating,
+                    free_cancellation: res.data.free_cancellation ? "true" : "false",
+                    no_prepayment: res.data.no_prepayment ? "true" : "false",
+                    free_wifi: res.data.free_wifi ? "true" : "false",
+                    gym: res.data.gym ? "true" : "false",
+                    spa: res.data.spa ? "true" : "false",
+                    swimming_pool: res.data.swimming_pool ? "true" : "false"
+                });
+            });
         axios.post('/getHotelImage', {hotel_id: id})
             .then(res => {
-                    this.setState({image : res.data});
-                }
-            );
+                this.setState({image: res.data});
+                this.setState({isLoading: false});
+            });
+
     }
 
     render() {
-        return (
-            <div className="card">
-                <div className="card-body">
-                    <h4 className="card-title">Edit hotel</h4>
-                    <p className="card-description"> Please edit the form underneath </p>
-                    <div style={{display:'flex', paddingBottom: '40px'}}>
-                        {this.addHotelPhoto()}
-                    </div>
-                    <fieldset id="hotelInput" onLoad={this.getStyle}>
-                    <form className="forms-sample" onSubmit={this.EditHotelHandler}>
-                        <Form.Group>
-                            <label htmlFor="exampleInputUsername1">Name</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.name} name='name' type="text" placeholder="Name" size="lg" required />
-                        </Form.Group>
-                        <Form.Group>
-                            <label htmlFor="exampleInputUsername1">Description</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.description} name='description' type="text" placeholder="Description" size="lg" required />
-                        </Form.Group>
-                        <Form.Group>
-                            <label htmlFor="exampleInputUsername1">Address</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.address} name='address' type="text" placeholder="Address" size="lg" required />
-                        </Form.Group>
-                        <Form.Group>
-                            <label htmlFor="exampleInputUsername1">Phone Number</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.phone_number} name='phone_number' type="tel" placeholder="Phone Number" size="lg" required />
-                        </Form.Group>
-                        <Form.Group>
-                            <label htmlFor="exampleInputUsername1">Email</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.email} name='email' type="email" placeholder="Email" size="lg" required />
-                        </Form.Group>
-                        <Form.Group>
-                            <label>Rating (0-5 Stars)</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.rating} name='rating' type="number" min="0" max="5" placeholder="Rating (0-5 Stars)" size="lg" required />
-                        </Form.Group>
-                        <Form.Group>
-                            <label>Category</label>
-                            <Form.Control id="hotelInput" onChange={this.onChange} defaultValue={this.state.category} name='category' type="number" min="0" max="5" placeholder="Category" size="lg" required />
-                        </Form.Group>
-                        {this.getSubmitOption()}
-                        <div className="text-center mt-4 font-weight-bold">
-                            {this.state.status}
-                        </div>
-                    </form>
-                    </fieldset>
-                </div>
-            </div>
-        )
-    }
-
-    onChange = (e) => this.setState({ [e.target.name]: e.target.value });
-
-    EditHotelHandler = (e) => {
-        e.preventDefault();
-        axios.post('/editHotel', {
-            hotel_id: this.state.hotel_id,
-            name: this.state.name,
-            address: this.state.address,
-            description: this.state.description,
-            phone_number: this.state.phone_number,
-            category: this.state.category,
-            email: this.state.email,
-            rating: this.state.rating})
-            .then(res => {
-                if (this.state.newImageWasUploaded) {
-                    const data = new FormData()
-                    data.append('file', this.state.selectedFile)
-                    axios.post('/uploadHotelImg/'+this.state.hotel_id, data).then(res => { // then print response status
-                    })
-                        .catch(err => { // then print response status
-                            console.log(err)
-                        })
-                }
-            });
-        this.props.history.push('/account');
-    }
-
-    getStyle = () => {
-        const cookieUserID = cookies.get('CookieUserID');
-        console.log(cookieUserID)
-        if (cookieUserID !== null) {
-            axios.post('/getUserRole', {CookieUserID: cookieUserID})
-                .then(res => {
-                        this.setState({role: res.data.role});
-                        if (this.state.role > 3 || window.location.pathname.startsWith("/hotel/")) {
-                            if (document.getElementById('hotelInput') !== null) {
-                                document.getElementById('hotelInput').disabled = true;
-                            }
-                        }
-                    }
-                );
+        const {isLoading} = this.state;
+        if (isLoading) {
+            return (
+                <div className="App">Loading...</div>
+            );
         } else {
-            this.setState({role: 5});
-                if (document.getElementById('hotelInput') !== null) {
-                    document.getElementById('hotelInput').disabled = true;
-                }
-        }
-
-    }
-
-    getSubmitOption = () => {
-        const cookieUserID = cookies.get('CookieUserID');
-        axios.post('/getUserRole', {CookieUserID: cookieUserID})
-            .then(res => { this.setState({role: res.data.role});});
-        if (this.state.role < 4 && window.location.pathname.startsWith("/editHotel/")) {
-            return(<div style={{display: 'flex'}}>
-                <button style={this.getSubmitButtonStyle()} className="btn btn-block btn-primary btn-lg mr-2" type="submit">Submit changes</button>
-                <Link to="/account" className="btn btn-block btn-primary btn-lg mr-2 btn-light font-weight-medium">Cancel</Link>
-            </div>)
-        }
-    }
-
-    addHotelPhoto() {
-        return <>
-            {this.getImg()}
-            <div style={{paddingLeft: '20px'}}>
-                <div className="row">
-                    <div className="col-md-6">
-                        <ToastContainer/>
-                        <div style={{paddingBottom: '10px'}}>
-                            <label>Upload your profile photo </label>
-                            <input type="file" name="file" onChange={this.onChangeFileUploadHandler}/>
-                        </div>
-                        <div style={{display: 'flex'}}>
-                            <p>{this.state.fileUploadErrMsg}</p>
+            return (
+                <div className="d-flex align-items-center auth px-0" style={{paddingTop: "100px"}}>
+                    <div className="w-100 mx-0">
+                        <div>
+                            <div className="auth-form-light py-5 px-4 px-sm-5 border">
+                                <div className="border">
+                                    <div className="d-flex" style={{paddingLeft: "10px", paddingTop: "10px"}}>
+                                        <h2>{this.state.name}</h2>
+                                        <div style={{paddingLeft: '20px', paddingRight: '20px', paddingTop: '5px'}}>
+                                            <StarRatings
+                                                rating={this.state.rating}
+                                                starDimension="20px"
+                                                starSpacing="2px"
+                                            />
+                                        </div>
+                                        <div style={{width: "150px"}}>
+                                            <select style={{backgroundColor: "#fff", WebkitAppearance: "none"}}
+                                                    name="category" value={this.state.category}
+                                                    className="form-control form-control-lg" disabled>
+                                                <option value="1">Standard Hotel</option>
+                                                <option value="2">Business Hotel</option>
+                                                <option value="3">Airport Hotel</option>
+                                                <option value="4">B&B</option>
+                                                <option value="5">Casino Hotel</option>
+                                                <option value="6">Studio</option>
+                                                <option value="7">Conference Hotel</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex">
+                                        <div style={{paddingRight: "10px", paddingLeft: "10px"}}>
+                                            <img src={`data:image/*;base64,${this.state.image}`} alt=''
+                                                 style={{width: '200px', height: '200px'}}/>
+                                        </div>
+                                        <div>
+                                            <p className="font-weight-light">{this.state.address}</p>
+                                            <p className="font-weight-light">{this.state.phone_number}</p>
+                                            <p className="font-weight-light">{this.state.email}</p>
+                                            <p className="font-weight-light">{this.state.description}</p>
+                                            <div style={{paddingBottom: "20px"}}>
+                                                <div className="form-group">
+                                                    Offers:
+                                                </div>
+                                                <div style={{display: 'flex', marginTop: "-30px"}}>
+                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                        <label className="form-check-label">
+                                                            <input disabled="disabled" className="form-check-input"
+                                                                   name="no_prepayment"
+                                                                   checked={this.state.no_prepayment === "true" ? true : null}
+                                                                   value={this.state.no_prepayment} type="checkbox"/>
+                                                            <span className="checkmark"> </span>
+                                                            No prepayment
+                                                        </label>
+                                                    </div>
+                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                        <label className="form-check-label">
+                                                            <input disabled="disabled" className="form-check-input"
+                                                                   name="free_cancellation"
+                                                                   checked={this.state.free_cancellation === "true" ? true : null}
+                                                                   value={this.state.free_cancellation}
+                                                                   type="checkbox"/>
+                                                            <span className="checkmark"> </span>
+                                                            Free cancellation
+                                                        </label>
+                                                    </div>
+                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                        <label className="form-check-label">
+                                                            <input disabled="disabled" className="form-check-input"
+                                                                   name="free_wifi"
+                                                                   checked={this.state.free_wifi === "true" ? true : null}
+                                                                   value={this.state.free_wifi} type="checkbox"/>
+                                                            <span className="checkmark"> </span>
+                                                            Free wifi
+                                                        </label>
+                                                    </div>
+                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                        <label className="form-check-label">
+                                                            <input disabled="disabled" className="form-check-input"
+                                                                   name="spa"
+                                                                   checked={this.state.spa === "true" ? true : null}
+                                                                   value={this.state.spa} type="checkbox"/>
+                                                            <span className="checkmark"> </span>
+                                                            SPA
+                                                        </label>
+                                                    </div>
+                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                        <label className="form-check-label">
+                                                            <input disabled="disabled" className="form-check-input"
+                                                                   name="gym"
+                                                                   checked={this.state.gym === "true" ? true : null}
+                                                                   value={this.state.gym} type="checkbox"/>
+                                                            <span className="checkmark"> </span>
+                                                            Gym
+                                                        </label>
+                                                    </div>
+                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                        <label className="form-check-label">
+                                                            <input disabled="disabled" className="form-check-input"
+                                                                   name="swimming_pool"
+                                                                   checked={this.state.swimming_pool === "true" ? true : null}
+                                                                   value={this.state.swimming_pool} type="checkbox"/>
+                                                            <span className="checkmark"> </span>
+                                                            Swimming Pool
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="text-center mt-4 font-weight-bold">
+                                            {this.state.status}
+                                        </div>
+                                    </div>
+                                </div>
+                                {this.getRoomsList()}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </>;
+            )
+        }
     }
 
-
-    getImg() {
-        if (this.state.newImageWasUploaded === false){
-            return <img src={`data:image/*;base64,${this.state.image}`} alt='' style={{width: '200px', height: '200px'}}/>;
+    getRoomsList = () => {
+        if (typeof (this.props.location.searchProps) !== "undefined") {
+            return (<RoomsList hotel_id={this.state.hotel_id}
+                               start_date={this.props.location.searchProps.start_date}
+                               end_date={this.props.location.searchProps.end_date}
+                               adult_count={this.props.location.searchProps.adult_count}
+                               child_count={this.props.location.searchProps.child_count}
+                               room_count={this.props.location.searchProps.room_count}/>)
         } else {
-            return <img src={this.state.image} alt='' style={{width: '200px', height: '200px'}}/>;
+            return (<RoomsList hotel_id={this.state.hotel_id}
+                               start_date={undefined}
+                               end_date={undefined}
+                               adult_count={"2"}
+                               child_count={"0"}
+                               room_count={"1"}/>)
         }
+
     }
 
-    /* File Upload Functions */
-    getSubmitButtonStyle = () => {
-        return {
-            display: this.state.hotelUploadAvailable ?
-                'block' : 'none'
-        }
-    }
-
-    onChangeFileUploadHandler = (e) => {
-        var file = e.target.files[0];
-        if (this.validateFileSize(e)) {
-            this.setState({ selectedFile: file, fileUploadAvailable : true, fileUploadErrMsg: '' });
-
-        }
-    };
-
-    validateFileSize = (e) => {
-        let file = e.target.files[0];
-
-        if (!file) {
-            this.setState({selectedFile : null, fileUploadAvailable : false, fileUploadErrMsg : 'Please select a photo.'});
-            return false;
-        }
-
-        if (file.type.split("/")[0] !== "image" ) {
-            this.setState({selectedFile : null, fileUploadAvailable : false, fileUploadErrMsg : 'Please select a photo.'});
-            return false;
-        }
-        this.setState({image : URL.createObjectURL(e.target.files[0]), newImageWasUploaded: true})
-        return true;
-    };
 }
 
 export default OpenHotel

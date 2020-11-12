@@ -5,6 +5,7 @@
   border: 1px solid $border;
   color: $color;
 }
+
 @mixin bg-inverse-icon($color) {
   background: darken($color, 24%);
   border-color: $color;
@@ -45,4 +46,6 @@
       }
     }
   }
-}// Background Mixins //
+}
+
+// Background Mixins //

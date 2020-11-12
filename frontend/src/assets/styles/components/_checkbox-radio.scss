@@ -13,6 +13,7 @@
     margin-left: 1.75rem;
     font-size: $default-font-size;
     line-height: 1.5;
+
     .rtl & {
       margin-left: 0;
       margin-right: 1.75rem;
@@ -22,10 +23,12 @@
       position: absolute;
       top: 0;
       left: 0;
+
       .rtl & {
         left: auto;
         right: 0;
       }
+
       margin-left: 0;
       margin-top: 0;
       z-index: 1;
@@ -33,6 +36,7 @@
       opacity: 0;
       filter: alpha(opacity=0);
     }
+
     input[type="checkbox"] {
       + .input-helper {
         &:before,
@@ -40,11 +44,13 @@
           position: absolute;
           top: 0;
           left: 0;
+
           .rtl & {
             left: auto;
             right: 0;
           }
         }
+
         &:before {
           content: "";
           width: 18px;
@@ -57,7 +63,7 @@
           -webkit-transition-duration: 250ms;
           transition-duration: 250ms;
         }
-  
+
         &:after {
           @include transition(all);
           transition-duration: 0s;
@@ -76,12 +82,14 @@
           color: $white;
         }
       }
+
       &:checked {
-        +.input-helper {
+        + .input-helper {
           &:before {
             background: theme-color(primary);
             border-width: 0;
           }
+
           &:after {
             width: 18px;
             opacity: 1;
@@ -112,17 +120,20 @@
         }
       }
     }
+
     input[type="radio"] {
-      +.input-helper {
+      + .input-helper {
         &:before {
           position: absolute;
           content: "";
           top: 0;
           left: 0;
+
           .rtl & {
             left: auto;
             right: 0;
           }
+
           border: solid theme-color(primary);
           border-width: 2px;
           width: 20px;
@@ -142,10 +153,12 @@
           border-radius: 50%;
           top: 6px;
           left: 6px;
+
           .rtl & {
             left: auto;
             right: 6px;
           }
+
           -webkit-transition: all;
           -o-transition: all;
           transition: all;
@@ -163,7 +176,7 @@
       }
 
       &:checked {
-        +.input-helper {
+        + .input-helper {
           &:before {
             background: theme-color(primary);
             border-width: 0;
@@ -210,13 +223,14 @@
       label {
         input[type="checkbox"],
         input[type="radio"] {
-          +.input-helper {
+          + .input-helper {
             &:before {
               border-color: theme-color($color);
             }
           }
+
           &:checked {
-            +.input-helper {
+            + .input-helper {
               &:before {
                 background: $value;
               }

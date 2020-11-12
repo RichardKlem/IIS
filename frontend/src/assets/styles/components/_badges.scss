@@ -8,8 +8,9 @@
   font-family: $type1;
   font-weight: 600;
   letter-spacing: 0.04rem;
+
   &.badge-pill {
-    border-radius: 10rem; 
+    border-radius: 10rem;
   }
 }
 
@@ -28,6 +29,7 @@
     @include badge-outline-variations($value);
   }
 }
+
 /*Badge inverse variations*/
 
 @each $color,

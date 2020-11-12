@@ -10,10 +10,12 @@
   font-size: calc(#{$default-font-size} - 0.05rem);
   font-family: $type1;
   font-weight: 400;
+
   a {
     color: theme-color(success);
     font-size: inherit;
   }
+
   @media (max-width: 991px) {
     margin-left: 0;
     width: 100%;

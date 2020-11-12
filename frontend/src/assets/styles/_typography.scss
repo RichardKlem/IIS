@@ -7,6 +7,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+
 .h1,
 .h2,
 .h3,
@@ -72,30 +73,35 @@ p {
     font-size: 3rem;
   }
 }
+
 .display-2 {
   font-size: 3.125rem;
   @media (max-width: 991px) {
     font-size: 2.5rem;
   }
 }
+
 .display-3 {
   font-size: 2.5rem;
   @media (max-width: 991px) {
     font-size: 2rem;
   }
 }
+
 .display-4 {
   font-size: 1.875rem;
   @media (max-width: 991px) {
     font-size: 1.5rem;
   }
 }
+
 .display-5 {
   font-size: 1.25rem;
   @media (max-width: 991px) {
     font-size: 1rem;
   }
 }
+
 .blockquote {
   padding: 1.25rem;
   border: 1px solid $border-color;
@@ -113,6 +119,7 @@ address {
     @include blockquote($value);
   }
 }
+
 .error-page {
   h1 {
     font-size: 12rem;
@@ -121,12 +128,15 @@ address {
     }
   }
 }
+
 .icon-lg {
   font-size: 2.5rem;
 }
+
 .icon-md {
   font-size: 1.875rem;
 }
+
 .icon-sm {
   font-size: 1rem;
 }

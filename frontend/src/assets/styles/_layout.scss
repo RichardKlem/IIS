@@ -5,6 +5,7 @@
   @media (min-width: 992px) {
     .page-body-wrapper {
       width: calc(100% - #{$sidebar-width-mini});
+
       .navbar {
         &.navbar-mini {
           &.fixed-top {
@@ -13,14 +14,17 @@
         }
       }
     }
-    .sidebar { 
+    .sidebar {
       width: $sidebar-width-mini;
+
       .nav {
         .sidebar-category {
           text-align: center;
         }
+
         .nav-item {
           padding: 0;
+
           .nav-link {
             @include display-flex;
             @include align-items(center);
@@ -29,20 +33,24 @@
             text-align: center;
             position: relative;
             border-bottom: none;
+
             .menu-title {
               display: block;
               margin: auto;
             }
+
             .badge {
               margin-left: 5px;
               display: none;
             }
+
             i {
               &.menu-icon {
                 margin-right: auto;
                 margin-left: auto;
                 margin-bottom: 0.625rem;
               }
+
               &.menu-arrow {
                 display: inline-block;
                 margin-left: 5px;
@@ -54,7 +62,7 @@
             }
           }
         }
-    
+
       }
     }
 
@@ -62,19 +70,23 @@
       //Apply these styles only when sidebar-mini is not collapsed to icon-only mode
       .navbar {
         left: $sidebar-width-mini;
+
         .navbar-menu-wrapper {
           width: calc(100% - #{$sidebar-width-mini});
         }
       }
+
       .sidebar {
         .nav {
           &.sub-menu {
             padding: 0;
             border-top: none;
+
             .nav-item {
               &::before {
                 left: 1.562rem;
               }
+
               .nav-link {
                 padding: 0.75rem 0 0.75rem 0.5rem;
                 margin-left: auto;
@@ -96,55 +108,68 @@
   @media (min-width: 992px) {
     .navbar {
       left: $sidebar-width-icon;
+
       .rtl & {
         left: 0;
         right: 150px;
       }
+
       .navbar-menu-wrapper {
         width: calc(100% - #{$sidebar-width-icon});
       }
     }
     .sidebar {
       width: $sidebar-width-icon;
+
       .sidebar-brand-wrapper {
         width: $sidebar-width-icon;
+
         .brand-logo {
           display: none;
         }
+
         .brand-logo-mini {
           display: inline-block;
         }
       }
+
       .nav {
         overflow: visible;
+
         .nav-item {
           position: relative;
           padding: 0;
+
           .nav-link {
             display: block;
             text-align: center;
             padding: 16px 16px;
+
             .menu-title,
             .badge,
             .menu-sub-title {
               display: none;
             }
+
             .menu-title {
               @include border-radius(0 5px 5px 0px);
               @at-root #{selector-append(".rtl", &)} {
                 @include border-radius(5px 0 0 5px);
               }
             }
+
             i {
               &.menu-icon {
                 margin-right: 0;
                 margin-left: 0;
                 display: block;
               }
+
               &.menu-arrow {
                 display: none;
               }
             }
+
             &[aria-expanded] {
               .menu-title {
                 @include border-radius(0 5px 0 0px);
@@ -153,25 +178,32 @@
                 }
               }
             }
+
             &:before {
               display: none;
             }
           }
+
           &.nav-profile {
             display: none;
           }
+
           &.nav-category {
             display: none;
           }
+
           &.nav-doc {
             margin: 0;
+
             i {
               display: block;
             }
           }
+
           .collapse {
             display: none;
           }
+
           &.hover-open {
             .nav-link {
               .menu-title {
@@ -202,10 +234,12 @@
                   display: none;
                 }
               }
+
               &:before {
                 display: none;
               }
             }
+
             .collapse,
             .collapsing {
               display: block;
@@ -227,21 +261,27 @@
             }
           }
         }
+
         &.sub-menu {
           padding: $sidebar-icon-only-submenu-padding;
+
           .nav-item {
             padding: 0 1.25rem 0 1.25rem;
+
             .nav-link {
               text-align: left;
               padding-left: 20px;
             }
           }
+
           @at-root #{selector-append(".rtl", &)} {
             .nav-item {
               margin-right: auto;
               margin-left: 0;
+
               .nav-link {
                 text-align: right;
+
                 &:before {
                   left: 0;
                   right: unset;
@@ -251,6 +291,7 @@
           }
         }
       }
+
       .sidebar-actions {
         display: none;
       }
@@ -272,12 +313,14 @@
   @media (min-width: 992px) {
     .navbar {
       left: 0;
+
       .navbar-menu-wrapper {
         width: 100%;
       }
     }
     .sidebar {
       width: 0;
+
       .sidebar-brand-wrapper {
         width: $sidebar-width-icon;
       }
@@ -297,6 +340,7 @@
     .page-body-wrapper {
       position: relative;
       width: 100%;
+
       .sidebar {
         transition: none;
         height: 100%;
@@ -307,6 +351,7 @@
       .sidebar {
         position: absolute;
       }
+
       .page-body-wrapper {
         width: 100%;
       }
@@ -376,6 +421,7 @@
   .sidebar {
     .nav {
       padding-right: 0;
+
       .nav-item {
         .nav-link {
           text-align: middle;
@@ -383,22 +429,25 @@
       }
     }
   }
+
   .page-body-wrapper {
     transition: all $action-transition-duration $action-transition-timing-function;
     -webkit-transition: all $action-transition-duration $action-transition-timing-function;
     -moz-transition: all $action-transition-duration $action-transition-timing-function;
     -ms-transition: all $action-transition-duration $action-transition-timing-function;
   }
+
   .navbar {
     transition: all $action-transition-duration $action-transition-timing-function;
     -webkit-transition: all $action-transition-duration $action-transition-timing-function;
     -moz-transition: all $action-transition-duration $action-transition-timing-function;
     -ms-transition: all $action-transition-duration $action-transition-timing-function;
     right: $sidebar-width-lg;
-    @media (max-width:900px) {
+    @media (max-width: 900px) {
       right: 0;
     }
   }
+
   .product-chart-wrapper,
   .settings-panel .tab-content .tab-pane .scroll-wrapper,
   .sidebar-fixed .nav,
@@ -417,11 +466,13 @@
       outline: 1px solid slategrey;
     }
   }
+
   &.sidebar-icon-only {
     .navbar {
-    right: $sidebar-width-icon;
-    left: 0;
+      right: $sidebar-width-icon;
+      left: 0;
     }
+
     &.rtl {
       .sidebar {
         .nav {

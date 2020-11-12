@@ -1,5 +1,7 @@
 use myDB;
 
+drop table if exists reservation_table;
+drop table if exists rooms_table;
 drop table if exists hotels_table;
 
 create table hotels_table(
@@ -11,7 +13,12 @@ create table hotels_table(
     email TEXT not null,
     phone_number TEXT not null,
     rating int not null default 0,
-
+    free_cancellation bool default false,
+    no_prepayment bool default false,
+    free_wifi bool default false,
+    gym bool default false,
+    spa bool default false,
+    swimming_pool bool default false,
     primary key (hotel_id)
 );
 

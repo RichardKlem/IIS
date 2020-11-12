@@ -2,12 +2,14 @@ use myDB;
 
 drop table if exists password_table;
 drop table if exists session_table;
+drop table if exists reservation_table;
 drop table if exists uzivatel;
 
 create table uzivatel(
     id_user int auto_increment,
     name TEXT not null,
     email TEXT not null,
+    address TEXT,
     phone_number TEXT not null,
     birth_date date not null,
     role int default 3 not null,

@@ -4,14 +4,17 @@
   table {
     &.table {
       table-layout: auto;
+
       thead {
         th {
           position: relative;
           border-top: 1px solid $border-color;
           padding: $table-cell-padding 2.3rem $table-cell-padding $table-cell-padding;
+
           &:focus {
             outline: none;
           }
+
           .order-4,
           .caret-4-asc,
           .caret-4-desc {
@@ -21,9 +24,11 @@
           }
         }
       }
+
       .btn {
         padding: 0.1rem 1rem;
         vertical-align: top;
+
         i {
           font-size: .875rem;
           margin-right: .3rem;
@@ -31,13 +36,16 @@
       }
     }
   }
+
   &.orders-table {
     thead {
       tr {
         background: theme-color(primary);
+
         th {
           border: 0;
           color: #fff;
+
           &:focus {
             outline: none;
           }
@@ -50,12 +58,14 @@
 .react-bootstrap-table-pagination {
   margin-top: 15px;
   align-items: flex-end;
+
   .react-bs-table-sizePerPage-dropdown {
     .dropdown-toggle {
       padding: 0.6rem 2.5rem;
       @extend .btn-primary;
     }
   }
+
   .react-bootstrap-table-pagination-list {
     .pagination {
       margin-bottom: 0;

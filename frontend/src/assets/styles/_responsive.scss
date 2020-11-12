@@ -4,12 +4,14 @@
       .brand-logo {
         display: none;
       }
+
       .brand-logo-mini {
         display: inline-block;
       }
     }
   }
 }
+
 @media screen and (max-width: 991px) {
   .row-offcanvas {
     position: relative;
@@ -52,7 +54,7 @@
     ::ng-deep .sidebar-offcanvas {
       position: absolute;
       top: 0;
-      width: calc( 50% + 30px); // 6 columns
+      width: calc(50% + 30px); // 6 columns
     }
   }
 }

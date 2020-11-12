@@ -1,19 +1,24 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types';
 import axios from "axios";
 
 export class UserItem extends Component {
-    state = {
-        id_user : this.props.user.id_user,
-        name : this.props.user.name,
-        phone_number : this.props.user.phone_number,
-        birth_date: this.props.user.birth_date,
-        email: this.props.user.email,
-        role: this.props.user.role,
-        status: '',
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            id_user: this.props.user.id_user,
+            name: this.props.user.name,
+            phone_number: this.props.user.phone_number,
+            birth_date: this.props.user.birth_date,
+            email: this.props.user.email,
+            address: this.props.user.address,
+            role: this.props.user.role,
+            status: '',
+        }
     }
 
-    onChange = (e) => this.setState({ [e.target.name]: e.target.value });
+    onChange = (e) => this.setState({[e.target.name]: e.target.value});
 
     UserInfoUpdateHandler = () => {
         axios.post('/updateUser', {
@@ -21,18 +26,29 @@ export class UserItem extends Component {
             name: this.state.name,
             birth_date: this.state.birth_date,
             email: this.state.email,
+            address: this.state.address,
             phone_number: this.state.phone_number,
         }).then(res => {
-                this.setState({ status : res.data});
+                this.setState({status: res.data});
             }
         );
     }
+
+    UserInfoRemoveHandler = () => {
+        axios.post('/removeUser', {
+            id_user: this.state.id_user,
+        }).then(res => {
+                this.setState({status: res.data});
+            }
+        );
+    }
+
 
     render() {
         return (
             <tr>
                 <td><input
-                    style={{ width:'auto/5' }}
+                    style={{width: 'auto/5'}}
                     className="text-center form-control form-control-sm"
                     type='text'
                     name='id_user'
@@ -42,7 +58,7 @@ export class UserItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{ width:'auto' }}
+                    style={{width: 'auto'}}
                     className="text-center form-control form-control-lg"
                     type='text'
                     name='name'
@@ -52,7 +68,7 @@ export class UserItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{ width:'auto' }}
+                    style={{width: 'auto'}}
                     className="text-center form-control form-control-lg"
                     type='text'
                     name='phone_number'
@@ -63,7 +79,7 @@ export class UserItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{ width:'auto' }}
+                    style={{width: 'auto'}}
                     className="text-center form-control form-control-lg"
                     type='email'
                     name='email'
@@ -73,7 +89,7 @@ export class UserItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{ width:'auto' }}
+                    style={{width: 'auto'}}
                     className="text-center form-control form-control-lg"
                     type='date'
                     name='birth_date'
@@ -83,7 +99,7 @@ export class UserItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{ width:'auto' }}
+                    style={{width: 'auto'}}
                     className="text-center form-control form-control-lg"
                     type='text'
                     name='address'
@@ -93,7 +109,7 @@ export class UserItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{ width:'auto/5' }}
+                    style={{width: 'auto/5'}}
                     className="text-center form-control form-control-sm"
                     type='text'
                     name='role'
@@ -108,6 +124,12 @@ export class UserItem extends Component {
                     value="Submit"
                     onClick={this.UserInfoUpdateHandler}
                     className="btn btn-block btn-primary btn-sm font-weight-medium auth-form-btn "
+                /></td>
+                <td><input
+                    type="submit"
+                    value="Remove"
+                    onClick={this.UserInfoRemoveHandler}
+                    className="btn btn-danger btn-block btn-primary btn-sm font-weight-medium auth-form-btn "
                 /></td>
                 <td><p>{this.state.status}</p></td>
             </tr>
