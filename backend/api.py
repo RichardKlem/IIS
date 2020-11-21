@@ -1,17 +1,17 @@
 import base64
+import json
 import os
+import sys
+import time
 from datetime import datetime
 
 from flask import Flask, jsonify, request
-from flask_restful import Api
 from flask_cors import CORS
-import time
-import json
-import sys
+from flask_restful import Api
 
-from init import FLASK_HOST
-from databaseConnector import Connector
-from iisUtils import hash_password, verify_password, random_uuid
+from backend import FLASK_HOST
+from backend.databaseConnector import Connector
+from backend.iisUtils import hash_password, random_uuid, verify_password
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})

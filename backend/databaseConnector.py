@@ -1,6 +1,6 @@
 import mysql.connector
 
-from init import HOST, USER, PASSWORD, DATABASE, AUTH_PLUGIN
+from backend import HOST, USER, PASSWORD, DATABASE, AUTH_PLUGIN
 
 
 class Connector:
