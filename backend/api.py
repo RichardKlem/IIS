@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_restful import Api
 from flask_cors import CORS
+import time
 import json
 import sys
 
@@ -17,36 +18,10 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 api = Api(app)
 
 
-@app.route('/person', methods=['GET'])
-def get_person_table():
-    if request.method == 'GET':
-        return jsonify(Connector().query('SELECT * from person'))
+@app.route('/time')
+def get_current_time():
+    return jsonify({'time': time.asctime(time.localtime(time.time()))})
 
-
-@app.route('/delTodos', methods=['POST'])
-def delTodos():
-    if request.method == 'POST':
-        data = json.loads(request.get_data().decode('utf-8'))
-        query = f'DELETE FROM todos ' \
-                f'WHERE id={data.get("id")};'
-        return jsonify(Connector().query(query, expecting_result=False))
-
-
-@app.route('/todos', methods=['GET', 'POST'])
-def todos():
-    if request.method == 'POST':
-        db = Connector()
-        data = json.loads(request.get_data().decode('utf-8'))
-        # Insert new todos item with requested title
-        query = f'INSERT INTO todos (title) VALUES ("{data.get("title")}\");'
-        db.query(query, expecting_result=False, disconnect=False)
-        # Return inserted todos
-        query = f'SELECT * FROM todos WHERE id = {str(db.get_last_row_id())};'
-        result = db.query(query)
-        return jsonify(result[0])
-    elif request.method == 'GET':
-        query = f'SELECT * FROM todos;'
-        return jsonify(Connector().query(query))
 
 
 @app.route('/registration', methods=['POST'])
