@@ -39,32 +39,32 @@ export class BookingPubItem extends Component {
             return <div className="App">Loading...</div>;
         } else {
             return (
-                <div className="card" style={{padding: "10px"}}>
-                    <div className="border" style={{display: 'flex'}}>
-                        <div style={{display: 'block', margin: 'auto', marginLeft: '20px'}}>
+                <div className="card padding-10">
+                    <div className="d-flex border">
+                        <div className="item-list-style">
                             <img src={`data:image/*;base64,${this.state.image}`} alt="hotel"
-                                 style={{width: '225px', height: '225px'}}/>
+                                 className="item-list-style-img"/>
                         </div>
                         <div className="card-body">
-                            <div style={{display: 'flex'}}>
+                            <div className="d-flex">
                                 <h3>{this.props.booking.hotel_name}: {this.props.booking.room_name}</h3>
                             </div>
-                            <form className="forms-sample">
-                                <div style={{marginLeft: "-10px"}}>
+                            <form>
+                                <div>
                                     <Form.Group>
                                         <div className="d-flex">
-                                            <div style={{padding: "10px"}}>
+                                            <div className="padding-10">
                                                 Start Date
                                                 <input name="start_date" defaultValue={this.props.booking.start_date}
-                                                       style={{width: '150px'}} placeholder="Start date"
+                                                       placeholder="Start date"
                                                        className="text-center form-control form-control-sm" type="date"
                                                        onChange={this.props.onChange}
                                                        disabled/>
                                             </div>
-                                            <div style={{padding: "10px"}}>
+                                            <div className="padding-10">
                                                 End Date
                                                 <input name="end_date" defaultValue={this.props.booking.end_date}
-                                                       style={{width: '150px'}} placeholder="Start date"
+                                                       placeholder="Start date"
                                                        className="text-center form-control form-control-sm" type="date"
                                                        onChange={this.props.onChange}
                                                        disabled/>
@@ -73,8 +73,8 @@ export class BookingPubItem extends Component {
                                     </Form.Group>
                                 </div>
                                 <div>
-                                    <div className="justify-content-between" style={{display: 'flex'}}>
-                                        <div style={{lineHeight: "0.5px"}}>
+                                    <div className="justify-content-between d-flex">
+                                        <div className="padding-left-10 line-height-sm">
                                             <p>Status: {this.props.booking.approved === 1 ? "Approved" : "Waiting for approval"}</p>
                                             <p>Total price: {this.props.booking.total_price} Kč</p>
                                             <p>{this.props.booking.pre_price !== 0 && this.props.booking.approved === 0 ? "Needs to be paid:" + this.props.booking.pre_price + "Kč" : ""}</p>

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import UserItem from './UserItem';
+import UserListItem from './UserListItem';
 import PropTypes from 'prop-types';
 
 class Users extends Component {
 
     render() {
         return this.props.users.map((user) => (
-            <UserItem
+            <UserListItem
                 key={user.id_user}
                 user={user}
             />

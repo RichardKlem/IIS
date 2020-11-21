@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import HotelItem from "./HotelItem";
+import HotelListItem from "./HotelListItem";
 
 
 class Hotels extends Component {
 
     render() {
         return this.props.hotels.map((hotel) => (
-            <HotelItem
+            <HotelListItem
                 key={hotel.hotel_id}
                 hotel={hotel}
                 searched={this.props.searched}

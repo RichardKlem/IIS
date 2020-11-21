@@ -40,9 +40,9 @@ class BookingPubList extends Component {
             );
         } else {
             return (
-                <div style={{paddingTop: '100px'}}>
+                <div className="hotels-list-padding">
                     <h1 className="text-center">Bookings List</h1>
-                    <div className="border border-dark">
+                    <div className="border">
                         <BookingPublic
                             bookings={this.state.bookings}/>
                     </div>

@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import RoomsList from "../roomsPublic/RoomsList";
+import Required from "../../other/Required";
 
 const cookies = new Cookies();
 const cookieUserID = cookies.get('CookieUserID');
@@ -85,21 +86,21 @@ export class EditHotel extends Component {
         } else {
             return (
                 <div>
-                    <div className="d-flex align-items-center auth px-0">
+                    <div className="d-flex align-items-center">
                         <div className="w-100 mx-0">
                             <div>
-                                <div className="auth-form-light text-left py-5 px-4 px-sm-5">
+                                <div className="text-left py-5">
                                     <h4>Edit hotel.</h4>
                                     <h6 className="font-weight-light">Please edit the form underneath </h6>
-                                    <div style={{display: 'flex'}}>
+                                    <div className="d-flex">
                                         {this.addHotelPhoto()}
                                     </div>
                                     <fieldset
                                         disabled={window.location.pathname.startsWith("/hotel/") ? 'disabled' : null}>
                                         <form className="pt-3">
                                             <div className="form-group">
-                                                Name
-                                                <input type="text" className="form-control form-control-lg" name='name'
+                                                <Required text="Name"/>
+                                                <input type="text" className="form-control" name='name'
                                                        placeholder='Name' defaultValue={this.state.name}
                                                        onChange={this.onChange} required/>
                                             </div>
@@ -107,40 +108,39 @@ export class EditHotel extends Component {
                                                 Description
                                                 <textarea defaultValue={this.state.description} className="form-control"
                                                           name='description' placeholder='Description' rows="4"
-                                                          onChange={this.onChange} required/>
+                                                          onChange={this.onChange} />
                                             </div>
                                             <div className="form-group">
                                                 Address
-                                                <input type="text" className="form-control form-control-lg"
+                                                <input type="text" className="form-control"
                                                        name='address' placeholder='Address'
                                                        defaultValue={this.state.address} onChange={this.onChange}
-                                                       required/>
+                                                       />
                                             </div>
                                             <div className="form-group">
                                                 Phone number
-                                                <input type="tel" className="form-control form-control-lg"
+                                                <input type="tel" className="form-control"
                                                        name='phone_number' placeholder='Phone Number'
-                                                       pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}"
                                                        defaultValue={this.state.phone_number} onChange={this.onChange}
-                                                       required/>
+                                                       />
                                             </div>
                                             <div className="form-group">
                                                 Email
-                                                <input type="tel" className="form-control form-control-lg" name='email'
+                                                <input type="tel" className="form-control" name='email'
                                                        placeholder="Email" defaultValue={this.state.email}
-                                                       onChange={this.onChange} required/>
+                                                       onChange={this.onChange} />
                                             </div>
                                             <div className="form-group">
                                                 Rating
-                                                <input type="number" className="form-control form-control-lg"
+                                                <input type="number" className="form-control"
                                                        name='rating' placeholder='Rating (0-5 stars)' min="0" max="5"
                                                        defaultValue={this.state.rating} onChange={this.onChange}
-                                                       required/>
+                                                       />
                                             </div>
                                             <div className="form-group">
                                                 Category
                                                 <select name="category" value={this.state.category}
-                                                        className="form-control form-control-lg"
+                                                        className="form-control"
                                                         onChange={this.onChange}>
                                                     <option value="1">Standard Hotel</option>
                                                     <option value="2">Business Hotel</option>
@@ -151,14 +151,14 @@ export class EditHotel extends Component {
                                                     <option value="7">Conference Hotel</option>
                                                 </select>
                                             </div>
-                                            <div style={{paddingBottom: "20px"}}>
-                                                <div className="form-group">
+                                            <div className="padding-bottom-20">
+                                                <div className="form-group padding-bottom-20">
                                                     Other
                                                 </div>
-                                                <div style={{display: 'flex', marginTop: "-30px"}}>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                <div className="other-input d-flex">
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input className="form-check-input" name="no_prepayment"
+                                                            <input className="checkmark" name="no_prepayment"
                                                                    checked={this.state.no_prepayment === "true" ? true : null}
                                                                    value={this.state.no_prepayment} type="checkbox"
                                                                    onChange={this.onChangeCheckbox}/>
@@ -166,9 +166,9 @@ export class EditHotel extends Component {
                                                             No prepayment
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input className="form-check-input" name="free_cancellation"
+                                                            <input className="checkmark" name="free_cancellation"
                                                                    checked={this.state.free_cancellation === "true" ? true : null}
                                                                    value={this.state.free_cancellation} type="checkbox"
                                                                    onChange={this.onChangeCheckbox}/>
@@ -176,9 +176,9 @@ export class EditHotel extends Component {
                                                             Free cancellation
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input className="form-check-input" name="free_wifi"
+                                                            <input className="checkmark" name="free_wifi"
                                                                    checked={this.state.free_wifi === "true" ? true : null}
                                                                    value={this.state.free_wifi} type="checkbox"
                                                                    onChange={this.onChangeCheckbox}/>
@@ -186,9 +186,9 @@ export class EditHotel extends Component {
                                                             Free wifi
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input className="form-check-input" name="spa"
+                                                            <input className="checkmark" name="spa"
                                                                    checked={this.state.spa === "true" ? true : null}
                                                                    value={this.state.spa} type="checkbox"
                                                                    onChange={this.onChangeCheckbox}/>
@@ -196,9 +196,9 @@ export class EditHotel extends Component {
                                                             SPA
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input className="form-check-input" name="gym"
+                                                            <input className="checkmark" name="gym"
                                                                    checked={this.state.gym === "true" ? true : null}
                                                                    value={this.state.gym} type="checkbox"
                                                                    onChange={this.onChangeCheckbox}/>
@@ -206,9 +206,9 @@ export class EditHotel extends Component {
                                                             Gym
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input className="form-check-input" name="swimming_pool"
+                                                            <input className="checkmark" name="swimming_pool"
                                                                    value={this.state.swimming_pool} type="checkbox"
                                                                    checked={this.state.swimming_pool === "true" ? true : null}
                                                                    onChange={this.onChangeCheckbox}/>
@@ -219,7 +219,7 @@ export class EditHotel extends Component {
                                                 </div>
                                             </div>
                                             {this.getSubmitOption()}
-                                            <div className="text-center mt-4 font-weight-bold">
+                                            <div className="text-center font-weight-bold">
                                                 {this.state.status}
                                             </div>
                                         </form>
@@ -245,44 +245,42 @@ export class EditHotel extends Component {
     }
 
     editHotelHandler = () => {
-        if (this.state.role < 3) {
-            let id_hotel = this.state.hotel_id;
-            axios.post('/editHotel', {
-                hotel_id: this.state.hotel_id,
-                name: this.state.name,
-                address: this.state.address,
-                description: this.state.description,
-                phone_number: this.state.phone_number,
-                category: this.state.category.toString(),
-                email: this.state.email,
-                rating: this.state.rating,
-                free_cancellation: this.state.free_cancellation,
-                no_prepayment: this.state.no_prepayment,
-                free_wifi: this.state.free_wifi,
-                gym: this.state.gym,
-                spa: this.state.spa,
-                swimming_pool: this.state.swimming_pool
-            })
-                .then(res => {
+            if (this.state.role < 3) {
+                let id_hotel = this.state.hotel_id;
+                axios.post('/editHotel', {
+                    hotel_id: this.state.hotel_id,
+                    name: this.state.name,
+                    address: this.state.address,
+                    description: this.state.description,
+                    phone_number: this.state.phone_number,
+                    category: this.state.category.toString(),
+                    email: this.state.email,
+                    rating: this.state.rating,
+                    free_cancellation: this.state.free_cancellation,
+                    no_prepayment: this.state.no_prepayment,
+                    free_wifi: this.state.free_wifi,
+                    gym: this.state.gym,
+                    spa: this.state.spa,
+                    swimming_pool: this.state.swimming_pool
                 })
-                .catch(err => {
-                    this.setState({status: this.state.status + "\nERROR: Hotel wasn't inserted, please contact support!"});
-                });
-            if (this.state.image !== undefined && this.state.selectedFile !== undefined && id_hotel !== null) {
-                const data = new FormData()
-                data.append('file', this.state.selectedFile)
-                axios.post('/uploadHotelImg/' + this.state.hotel_id, data)
-                    .then(() => {
+                    .then(res => {
                     })
                     .catch(err => {
-                        this.setState({status: this.state.status + "ERROR: Image wasn't uploaded."});
+                        this.setState({status: this.state.status + "\nERROR: Hotel wasn't inserted, please contact support!"});
                     });
+                if (this.state.image !== undefined && this.state.selectedFile !== null && id_hotel !== null) {
+                    const data = new FormData()
+                    data.append('file', this.state.selectedFile)
+                    axios.post('/uploadHotelImg/' + this.state.hotel_id, data)
+                        .then(() => {
+                        })
+                        .catch(err => {
+                            this.setState({status: this.state.status + "ERROR: Image wasn't uploaded."});
+                        });
+                }
+            } else {
+                this.setState({status: this.state.status + "\nERROR: You don't have required permission to edit a hotel!"});
             }
-            this.props.history.push('/account');
-        } else {
-            this.setState({status: this.state.status + "\nERROR: You don't have required permission to edit a hotel!"});
-        }
-
     }
 
     getRoomsList = () => {
@@ -293,12 +291,13 @@ export class EditHotel extends Component {
     getSubmitOption() {
         if (this.state.role < 4 && window.location.pathname.startsWith("/editHotel/")) {
             return (
-                <div style={{display: 'flex'}}>
+                <div className="d-flex padding-bottom-20">
                     <button style={this.getSubmitButtonStyle()} onClick={this.editHotelHandler}
-                            className="btn btn-block btn-primary btn-lg mr-2" type="submit">Submit changes
+                            className="btn btn-block btn-primary padding-10" type="submit">Submit changes
                     </button>
-                    <Link to="/account"
-                          className="btn btn-block btn-primary btn-lg mr-2 btn-light font-weight-medium">Cancel</Link>
+                    <div className="padding-10"/>
+                    <Link to="/adminHotels"
+                          className="mr-2 btn btn-block btn-primary btn-warning padding-10">Cancel</Link>
                 </div>
             );
         }
@@ -306,17 +305,17 @@ export class EditHotel extends Component {
 
     addHotelPhoto = () => {
         return (
-            <div style={{display: 'flex'}}>
+            <div className="d-flex">
                 {this.getImg()}
-                <div style={{paddingLeft: '20px', paddingTop: '125px',}}>
+                <div className="padding-left-10 edit-hotel-img-offset">
                     <div className="row">
                         <div className="col-md-6">
                             <ToastContainer/>
-                            <div style={{paddingBottom: '10px'}}>
-                                <label>Upload hotel photo</label>
+                            <div className="padding-bottom-10">
+                                <label className="padding-left-10">Upload new hotel photo</label>
                                 <input type="file" name="file" onChange={this.onChangeFileUploadHandler}/>
                             </div>
-                            <div style={{display: 'flex'}}>
+                            <div className="d-flex">
                                 <p>{this.state.fileUploadErrMsg}</p>
                             </div>
                         </div>
@@ -329,10 +328,9 @@ export class EditHotel extends Component {
 
     getImg() {
         if (this.state.newImageWasUploaded === false) {
-            return <img src={`data:image/*;base64,${this.state.image}`} alt=''
-                        style={{width: '200px', height: '200px'}}/>;
+            return <img className="item-list-style-img-200" src={`data:image/*;base64,${this.state.image}`} alt=''/>;
         } else {
-            return <img src={this.state.image} alt='' style={{width: '200px', height: '200px'}}/>;
+            return <img src={this.state.image} alt='' className="item-list-style-img-200"/>;
         }
     }
 

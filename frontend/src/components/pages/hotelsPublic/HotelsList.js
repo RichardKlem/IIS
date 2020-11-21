@@ -71,8 +71,6 @@ export class HotelsList extends Component {
         }
     }
 
-    onChange = (e) => this.setState({[e.target.name]: e.target.value});
-
     render() {
         const {isLoading} = this.state;
         if (isLoading) {
@@ -81,7 +79,7 @@ export class HotelsList extends Component {
             );
         } else {
             return (
-                <div style={{paddingTop: '100px'}}>
+                <div className="hotels-list-padding">
                     <h1 className="text-center">Hotels List</h1>
                     {this.showEditOptions()}
 
@@ -89,6 +87,8 @@ export class HotelsList extends Component {
             );
         }
     }
+
+    onChange = (e) => this.setState({[e.target.name]: e.target.value});
 
 
     searchHotel = async (e) => {
@@ -99,10 +99,10 @@ export class HotelsList extends Component {
             let res = await axios.post('/searchHotels', {
                 hotel_id: hotel.hotel_id,
                 adult_count: this.state.adult_count,
-                start_range: this.state.start_range,
-                end_range: this.state.end_range
+                start_date: this.state.start_date,
+                end_date: this.state.end_date
             })
-            if (res.data) {
+            if (res.data.status === true) {
                 if (this.state.filter !== '' && (hotel.name.toUpperCase().includes(this.state.filter.toUpperCase()) || hotel.address.toUpperCase().includes(this.state.filter.toUpperCase()))) {
                     new_hotels.push(hotel)
                 } else if (this.state.filter === '') {
@@ -133,19 +133,11 @@ export class HotelsList extends Component {
                 }).filter(hotel => {
                     if ((this.state.no_prepayment === true || this.state.no_prepayment === "true") && hotel.no_prepayment === 1) {
                         return true;
-                    } else if (this.state.no_prepayment === false || this.state.no_prepayment === "false") {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    } else return this.state.no_prepayment === false || this.state.no_prepayment === "false";
                 }).filter(hotel => {
                     if ((this.state.free_cancellation === true || this.state.free_cancellation === "true") && hotel.free_cancellation === 1) {
                         return true;
-                    } else if (this.state.free_cancellation === false || this.state.free_cancellation === "false") {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    } else return this.state.free_cancellation === false || this.state.free_cancellation === "false";
                 }).filter(hotel => {
                     if ((this.state.standard_hotel === true || this.state.standard_hotel === "true") && hotel.category === 1) {
                         return true;
@@ -159,51 +151,38 @@ export class HotelsList extends Component {
                         return true;
                     } else if ((this.state.studio_hotel === true || this.state.studio_hotel === "true") && hotel.category === 6) {
                         return true;
-                    } else if ((this.state.conference_hotel === true || this.state.conference_hotel === "true") && hotel.category === 7) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    } else return (this.state.conference_hotel === true || this.state.conference_hotel === "true") && hotel.category === 7;
                 }).filter(hotel => {
                     if ((this.state.free_wifi === true || this.state.free_wifi === "true") && hotel.free_wifi === 1) {
                         return true;
-                    } else if ((this.state.free_wifi === true || this.state.free_wifi === "true") && hotel.free_wifi === 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    } else return !((this.state.free_wifi === true || this.state.free_wifi === "true") && hotel.free_wifi === 0);
                 }).filter(hotel => {
                     if ((this.state.gym === true || this.state.gym === "true") && hotel.gym === 1) {
                         return true;
-                    } else if ((this.state.gym === true || this.state.gym === "true") && hotel.gym === 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    } else return !((this.state.gym === true || this.state.gym === "true") && hotel.gym === 0);
                 }).filter(hotel => {
                     if ((this.state.spa === true || this.state.spa === "true") && hotel.spa === 1) {
                         return true;
-                    } else if ((this.state.spa === true || this.state.spa === "true") && hotel.spa === 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    } else return !((this.state.spa === true || this.state.spa === "true") && hotel.spa === 0);
                 }).filter(hotel => {
                     if ((this.state.swimming_pool === true || this.state.swimming_pool === "true") && hotel.swimming_pool === 1) {
                         return true;
-                    } else if ((this.state.swimming_pool === true || this.state.swimming_pool === "true") && hotel.swimming_pool === 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    } else return !((this.state.swimming_pool === true || this.state.swimming_pool === "true") && hotel.swimming_pool === 0);
                 }).filter(hotel => {
-                    if (this.state.start_range <= Number(hotel.price_night) && this.state.end_range >= Number(hotel.price_night)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return this.state.start_range <= Number(hotel.price_night) && this.state.end_range >= Number(hotel.price_night);
                 })
         });
+    }
+
+    filterHotelName = () => {
+        if (this.state.filter === '') {
+            this.setState({hotels: this.state.orig_hotels})
+        } else {
+            this.setState({
+                hotels: [...this.state.hotels]
+                    .filter(hotel => hotel.name.toUpperCase().includes(this.state.filter.toUpperCase()))
+            });
+        }
     }
 
     onChangeCheckbox = (e) => {
@@ -218,24 +197,27 @@ export class HotelsList extends Component {
         if (window.location.pathname === "/adminHotels") {
             return (
                 <div>
-                    <div className="justify-content-between" style={{display: 'flex'}}>
-                        <div className="table-responsive" style={{paddingBottom: "10px"}}>
-                            <table className="table table-hover" id="myTable">
-                                <thead>
-                                <tr>
-                                    <th><input name="filter" defaultValue={this.state.filter}
-                                               style={{minWidth: '100px', maxWidth: 'auto/5'}}
-                                               placeholder="Search for hotel"
-                                               className="text-center form-control form-control-sm" type="text"
-                                               onChange={this.onChange} onKeyUp={this.filterHotelName}/></th>
+                    <div className="d-flex justify-content-between">
+                        <div className="table-responsive table-no-border padding-bottom-10">
+                            <table className="table table-no-border" id="myTable">
+                                <thead className="thead-no-border">
+                                <tr className="tr-no-border">
+                                    <th className="th-no-border"><input name="filter" defaultValue={this.state.filter}
+                                                                        placeholder="Search for hotel"
+                                                                        className="input-width text-center form-control"
+                                                                        type="text"
+                                                                        onChange={this.onChange}
+                                                                        onKeyUp={this.filterHotelName}/></th>
                                 </tr>
                                 </thead>
                             </table>
                         </div>
-                        <Link to="/addHotel" className="btn btn-primary d-flex align-items-center border-0"
-                              style={{marginBottom: '10px'}}>Add Hotel</Link>
+                        <div className="padding-left-10">
+                            <Link to="/addHotel" className="btn btn-primary d-flex add-hotel text-center">Add
+                                Hotel</Link>
+                        </div>
                     </div>
-                    <div className="border border-dark">
+                    <div className="border border-gray">
                         <Hotels
                             hotels={this.state.hotels}
                             searched={this.state.searched}
@@ -249,7 +231,7 @@ export class HotelsList extends Component {
             )
         } else {
             return (
-                <div style={{display: "flex"}}>
+                <div className="d-flex">
                     <Sidebar
                         state={this.state}
                         filter={this.state.filter}
@@ -257,7 +239,7 @@ export class HotelsList extends Component {
                         onChangeCheckbox={this.onChangeCheckbox}
                         filterHotel={this.filterHotel}
                         onChange={this.onChange}/>
-                    <div className="main-panel border" style={{paddingTop: "0px"}}>
+                    <div className="main-panel border border-gray padding-top-0">
                         <Hotels hotels={this.state.hotels}
                                 searched={this.state.searched}
                                 start_date={this.state.start_date}

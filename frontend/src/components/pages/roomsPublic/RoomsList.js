@@ -3,6 +3,7 @@ import axios from "axios";
 import {Link} from "react-router-dom";
 import Rooms from "./Rooms";
 import PropTypes from "prop-types";
+import moment from "moment";
 
 const today = new Date();
 const tomorrow = new Date();
@@ -55,35 +56,44 @@ export class RoomsList extends Component {
         if (window.location.pathname.startsWith("/editHotel")) {
             return (
                 <>
-                    <div className="justify-content-between" style={{display: 'flex'}}>
+                    <div className="justify-content-between d-flex padding-top-40">
                         <h1>Rooms List</h1>
                         <Link to={"/addRoom/" + this.state.hotel_id}
-                              className="btn btn-primary d-flex align-items-center border-0"
-                              style={{marginBottom: '10px'}}>Add Room</Link>
+                              className="btn btn-primary d-flex align-items-center border-0 margin-bottom-10"
+                        >Add Room</Link>
                     </div>
-                    <div className="border border-dark">
-                        <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
-                               start_date={this.state.start_date} end_date={this.state.end_date}/>
+                    <div className="border border-gray">
+                        {this.state.rooms.length > 0 ? <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
+                                                              start_date={this.state.start_date} end_date={this.state.end_date}/> : "" }
                     </div>
                 </>
             )
         } else {
             return (
                 <>
-                    <div style={{paddingTop: '100px'}}>
+                    <div className="hotels-list-padding">
                         <h1>Rooms List</h1>
-                        <div className="" style={{paddingBottom: "10px", whiteSpace: "nowrap"}}>
+                        <div className="rooms-list">
                             <div>
                                 Start Date<input name="start_date" defaultValue={this.state.start_date}
-                                                 style={{minWidth: '100px', maxWidth: 'auto/5'}}
                                                  placeholder="Start date"
-                                                 className="text-center form-control form-control-sm" type="date" id="1"
+                                                 className="width-calc-100 text-center form-control form-control-sm"
+                                                 type="date" id="1"
+                                                 max={moment().add(1, "year").format("YYYY-MM-DD")}
+                                                 min={moment().format("YYYY-MM-DD")}
                                                  onChange={this.onChange} required/>
                             </div>
                             <div>
                                 End Date<input name="end_date" defaultValue={this.state.end_date}
-                                               style={{minWidth: '100px', maxWidth: 'auto/5'}} placeholder="End date"
-                                               className="text-center form-control form-control-sm" type="date" id="2"
+                                               placeholder="End date"
+                                               className="width-calc-100 text-center form-control form-control-sm"
+                                               type="date" id="2"
+                                               max={this.state.start_date !== "" ?
+                                                   moment(this.state.start_date).add(1, "day").add(1, "year").format("YYYY-MM-DD")
+                                                   : moment().add(1, "year").format("YYYY-MM-DD")}
+                                               min={this.state.start_date !== "" ?
+                                                   moment(this.state.start_date).add(1, "day").format("YYYY-MM-DD")
+                                                   : moment().add(1, "day").format("YYYY-MM-DD")}
                                                onChange={this.onChange} required/>
                             </div>
                             <div>
@@ -94,7 +104,7 @@ export class RoomsList extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="border border-dark ">
+                    <div className="border border-gray ">
                         <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
                                start_date={this.state.start_date} end_date={this.state.end_date}
                                adult_count={this.state.adult_count} child_count={this.state.child_count}/>

@@ -72,9 +72,10 @@ export class OpenRoom extends Component {
                 <div className="card">
                     <div className="card-body">
                         <h4 className="card-title">Room</h4>
-                        <div style={{display: 'flex', paddingBottom: '40px'}}>
+                        <div className="d-flex padding-bottom-40">
                             <img src={`data:image/*;base64,${this.state.image}`} alt=''
-                                 style={{width: '200px', height: '200px'}}/>;
+                                 className="item-list-style-img-200"
+                            />;
                         </div>
                         <fieldset disabled={window.location.pathname.startsWith("/registerRoom/") ? 'disabled' : null}>
                             <form className="forms-sample" onSubmit={this.EditHotelHandler}>
@@ -82,37 +83,38 @@ export class OpenRoom extends Component {
                                     <label htmlFor="exampleInputUsername1">Name</label>
                                     <Form.Control id="hotelInput" onChange={this.onChange}
                                                   defaultValue={this.state.name} name='name' type="text"
-                                                  placeholder="Name" size="lg" required/>
+                                                  placeholder="Name" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label htmlFor="exampleInputUsername1">Description</label>
                                     <Form.Control id="hotelInput" onChange={this.onChange}
                                                   defaultValue={this.state.description} name='description' type="text"
-                                                  placeholder="Description" size="lg" required/>
+                                                  placeholder="Description" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Category</label>
                                     <Form.Control id="hotelInput" onChange={this.onChange}
                                                   defaultValue={this.state.category} name='category' type="number"
-                                                  placeholder="Category" size="lg" required/>
+                                                  placeholder="Category" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Bed Count</label>
                                     <Form.Control id="hotelInput" onChange={this.onChange}
                                                   defaultValue={this.state.bed_count} name='bed_count' type="number"
-                                                  placeholder="Bed Count" size="lg" required/>
+                                                  min="1"
+                                                  placeholder="Bed Count" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Room Size</label>
                                     <Form.Control id="hotelInput" onChange={this.onChange}
                                                   defaultValue={this.state.room_size} name='room_size' type="number"
-                                                  placeholder="Room Size" size="lg" required/>
+                                                  placeholder="Room Size" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Price per Night</label>
                                     <Form.Control id="hotelInput" onChange={this.onChange}
                                                   defaultValue={this.state.price_night} name='price_night' type="number"
-                                                  placeholder="Price per Night" size="lg" required/>
+                                                  placeholder="Price per Night" size="lg" readOnly/>
                                 </Form.Group>
                                 {this.getSubmitOption()}
                                 <div className="text-center mt-4 font-weight-bold">
@@ -165,12 +167,12 @@ export class OpenRoom extends Component {
     getSubmitOption() {
         if (this.state.role < 4) {
             return <>
-                <div style={{display: 'flex'}}>
-                    <button style={this.getSubmitButtonStyle()} className="btn btn-block btn-primary btn-lg mr-2"
+                <div className="d-flex">
+                    <button style={this.getSubmitButtonStyle()} className="btn btn-block btn-primary mr-2"
                             type="submit">Submit changes
                     </button>
                     <Link to="/account"
-                          className="btn btn-block btn-primary btn-lg mr-2 btn-light font-weight-medium">Cancel</Link>
+                          className="btn btn-block btn-primary  mr-2 btn-light">Cancel</Link>
                 </div>
             </>;
         }

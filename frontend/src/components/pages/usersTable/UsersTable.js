@@ -47,29 +47,30 @@ class UsersTable extends Component {
                             <table className="table table-hover" id="myTable">
                                 <thead>
                                 <tr>
-                                    <th>ID<input style={{minWidth: '100px', maxWidth: 'auto/5'}}
-                                                 className="text-center form-control form-control-sm" type="text" id="0"
-                                                 onKeyUp={this.filterTableColumnFunction}/></th>
-                                    <th>Full Name<input style={{width: 'auto'}}
-                                                        className="text-center form-control form-control-sm" type="text"
-                                                        id="1" onKeyUp={this.filterTableColumnFunction}/></th>
-                                    <th>Mobile<input style={{width: 'auto'}}
-                                                     className="text-center form-control form-control-sm" type="tel"
-                                                     pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}" id="2"
-                                                     onKeyUp={this.filterTableColumnFunction}/></th>
-                                    <th>Email<input style={{width: 'auto'}}
-                                                    className="text-center form-control form-control-sm" type="email"
-                                                    id="3" onKeyUp={this.filterTableColumnFunction}/></th>
-                                    <th>Birth Date<input style={{width: 'auto'}}
-                                                         className="text-center form-control form-control-sm"
-                                                         type="date" id="4" onKeyUp={this.filterTableColumnFunction}/>
+                                    <th>ID<input
+                                        className="input-width text-center form-control form-control-sm" type="text"
+                                        id="0"
+                                        onKeyUp={this.filterTableColumnFunction}/></th>
+                                    <th>Full Name<input
+                                        className="input-width text-center form-control form-control-sm" type="text"
+                                        id="1" onKeyUp={this.filterTableColumnFunction}/></th>
+                                    <th>Mobile<input
+                                        className="input-width text-center form-control form-control-sm" type="tel"
+                                        pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}" id="2"
+                                        onKeyUp={this.filterTableColumnFunction}/></th>
+                                    <th>Email<input
+                                        className="input-width text-center form-control form-control-sm" type="email"
+                                        id="3" onKeyUp={this.filterTableColumnFunction}/></th>
+                                    <th>Birth Date<input
+                                        className="input-width text-center form-control form-control-sm"
+                                        type="date" id="4" onKeyUp={this.filterTableColumnFunction}/>
                                     </th>
-                                    <th>Address<input style={{width: 'auto'}}
-                                                      className="text-center form-control form-control-sm" type="text"
-                                                      id="5" onKeyUp={this.filterTableColumnFunction}/></th>
-                                    <th>Role<input style={{minWidth: '40px', maxWidth: 'auto/5'}}
-                                                   className="text-center form-control form-control-sm" type="text"
-                                                   id="6" maxLength="1" onKeyUp={this.filterTableColumnFunction}/></th>
+                                    <th>Address<input
+                                        className="input-width text-center form-control form-control-sm" type="text"
+                                        id="5" onKeyUp={this.filterTableColumnFunction}/></th>
+                                    <th>Role<input
+                                        className="input-role text-center form-control form-control-sm" type="text"
+                                        id="6" maxLength="1" onKeyUp={this.filterTableColumnFunction}/></th>
                                 </tr>
                                 </thead>
                                 <tbody>

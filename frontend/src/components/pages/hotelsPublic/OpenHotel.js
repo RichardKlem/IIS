@@ -84,24 +84,24 @@ export class OpenHotel extends Component {
             );
         } else {
             return (
-                <div className="d-flex align-items-center auth px-0" style={{paddingTop: "100px"}}>
+                <div className="d-flex align-items-center auth px-0 hotels-list-padding">
                     <div className="w-100 mx-0">
                         <div>
                             <div className="auth-form-light py-5 px-4 px-sm-5 border">
                                 <div className="border">
-                                    <div className="d-flex" style={{paddingLeft: "10px", paddingTop: "10px"}}>
+                                    <div className="d-flex padding-left-10 padding-top-10">
                                         <h2>{this.state.name}</h2>
-                                        <div style={{paddingLeft: '20px', paddingRight: '20px', paddingTop: '5px'}}>
+                                        <div className="rating-padding padding-top-5">
                                             <StarRatings
                                                 rating={this.state.rating}
                                                 starDimension="20px"
                                                 starSpacing="2px"
                                             />
                                         </div>
-                                        <div style={{width: "150px"}}>
-                                            <select style={{backgroundColor: "#fff", WebkitAppearance: "none"}}
-                                                    name="category" value={this.state.category}
-                                                    className="form-control form-control-lg" disabled>
+                                        <div className="width-auto">
+                                            <select
+                                                name="category" value={this.state.category}
+                                                className="form-control select-disabled white-textarea" disabled>
                                                 <option value="1">Standard Hotel</option>
                                                 <option value="2">Business Hotel</option>
                                                 <option value="3">Airport Hotel</option>
@@ -113,23 +113,23 @@ export class OpenHotel extends Component {
                                         </div>
                                     </div>
                                     <div className="d-flex">
-                                        <div style={{paddingRight: "10px", paddingLeft: "10px"}}>
-                                            <img src={`data:image/*;base64,${this.state.image}`} alt=''
-                                                 style={{width: '200px', height: '200px'}}/>
+                                        <div className="padding-left-10 padding-right-10">
+                                            <img className="item-list-style-img-200"
+                                                 src={`data:image/*;base64,${this.state.image}`} alt=''/>
                                         </div>
                                         <div>
                                             <p className="font-weight-light">{this.state.address}</p>
                                             <p className="font-weight-light">{this.state.phone_number}</p>
                                             <p className="font-weight-light">{this.state.email}</p>
                                             <p className="font-weight-light">{this.state.description}</p>
-                                            <div style={{paddingBottom: "20px"}}>
-                                                <div className="form-group">
+                                            <div className="padding-bottom-20">
+                                                <div className="form-group padding-bottom-20">
                                                     Offers:
                                                 </div>
-                                                <div style={{display: 'flex', marginTop: "-30px"}}>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                <div className="other-input d-flex">
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input disabled="disabled" className="form-check-input"
+                                                            <input disabled="disabled" className="checkmark"
                                                                    name="no_prepayment"
                                                                    checked={this.state.no_prepayment === "true" ? true : null}
                                                                    value={this.state.no_prepayment} type="checkbox"/>
@@ -137,9 +137,9 @@ export class OpenHotel extends Component {
                                                             No prepayment
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input disabled="disabled" className="form-check-input"
+                                                            <input disabled="disabled" className="checkmark"
                                                                    name="free_cancellation"
                                                                    checked={this.state.free_cancellation === "true" ? true : null}
                                                                    value={this.state.free_cancellation}
@@ -148,9 +148,9 @@ export class OpenHotel extends Component {
                                                             Free cancellation
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input disabled="disabled" className="form-check-input"
+                                                            <input disabled="disabled" className="checkmark"
                                                                    name="free_wifi"
                                                                    checked={this.state.free_wifi === "true" ? true : null}
                                                                    value={this.state.free_wifi} type="checkbox"/>
@@ -158,9 +158,9 @@ export class OpenHotel extends Component {
                                                             Free wifi
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input disabled="disabled" className="form-check-input"
+                                                            <input disabled="disabled" className="checkmark"
                                                                    name="spa"
                                                                    checked={this.state.spa === "true" ? true : null}
                                                                    value={this.state.spa} type="checkbox"/>
@@ -168,9 +168,9 @@ export class OpenHotel extends Component {
                                                             SPA
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input disabled="disabled" className="form-check-input"
+                                                            <input disabled="disabled" className="checkmark"
                                                                    name="gym"
                                                                    checked={this.state.gym === "true" ? true : null}
                                                                    value={this.state.gym} type="checkbox"/>
@@ -178,9 +178,9 @@ export class OpenHotel extends Component {
                                                             Gym
                                                         </label>
                                                     </div>
-                                                    <div className="form-check" style={{paddingRight: "10px"}}>
+                                                    <div className="form-check padding-right-10">
                                                         <label className="form-check-label">
-                                                            <input disabled="disabled" className="form-check-input"
+                                                            <input disabled="disabled" className="checkmark"
                                                                    name="swimming_pool"
                                                                    checked={this.state.swimming_pool === "true" ? true : null}
                                                                    value={this.state.swimming_pool} type="checkbox"/>

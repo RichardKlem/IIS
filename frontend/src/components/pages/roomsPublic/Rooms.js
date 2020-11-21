@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import RoomItem from "./RoomItem";
+import RoomListItem from "./RoomListItem";
 
 
 class Rooms extends Component {
@@ -13,7 +13,7 @@ class Rooms extends Component {
 
     showEditOptions(room) {
         if (window.location.pathname.startsWith("/hotel/")) {
-            return (<RoomItem
+            return (<RoomListItem
                 key={room.id_room}
                 no_prepayment={room.no_prepayment}
                 hotel_id={room.hotel_id}
@@ -25,7 +25,7 @@ class Rooms extends Component {
                 room={room}
             />)
         } else {
-            return (<RoomItem
+            return (<RoomListItem
                 key={room.id_room}
                 hotel_id={room.hotel_id}
                 start_date={this.props.start_date}
@@ -43,9 +43,6 @@ Rooms.propTypes = {
     rooms: PropTypes.array.isRequired,
     start_date: PropTypes.string.isRequired,
     end_date: PropTypes.string.isRequired,
-    adult_count: PropTypes.string.isRequired,
-    child_count: PropTypes.string.isRequired,
-
 }
 
 

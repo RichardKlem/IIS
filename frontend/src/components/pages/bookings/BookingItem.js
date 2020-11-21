@@ -61,8 +61,7 @@ export class BookingItem extends Component {
         return (
             <tr>
                 <td><input
-                    style={{width: 'auto/5'}}
-                    className="text-center form-control form-control-sm"
+                    className="width-auto text-center form-control form-control-sm"
                     type='text'
                     name='id_reservation'
                     placeholder='Reservation ID'
@@ -71,8 +70,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='text'
                     name='name'
                     placeholder='User Name'
@@ -81,19 +79,16 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='text'
                     name='phone_number'
                     placeholder='Phone Number'
-                    pattern="[+][0-9]{1,3}[0-9]{3}[0-9]{3}[0-9]{3,4}"
                     value={this.state.phone_number}
                     onChange={this.onChange}
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='email'
                     name='email'
                     placeholder='Email'
@@ -102,8 +97,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='date'
                     name='birth_date'
                     placeholder='Birth Date'
@@ -112,8 +106,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='text'
                     name='address'
                     placeholder='Address'
@@ -122,8 +115,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='text'
                     name='hotel_name'
                     placeholder='Hotel Name'
@@ -132,8 +124,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='text'
                     name='room_name'
                     placeholder='Room Name'
@@ -142,8 +133,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='date'
                     name='start_date'
                     placeholder='Start Date'
@@ -152,8 +142,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='date'
                     name='end_date'
                     placeholder='End Date'
@@ -162,8 +151,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='number'
                     name='total_price'
                     placeholder='Total price'
@@ -172,8 +160,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='number'
                     name='pre_price'
                     placeholder='Pre price'
@@ -182,8 +169,7 @@ export class BookingItem extends Component {
                     readOnly
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='checkbox'
                     name='approved'
                     placeholder='Approved'
@@ -193,8 +179,7 @@ export class BookingItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='checkbox'
                     name='check_in'
                     placeholder='Check-In'
@@ -204,8 +189,7 @@ export class BookingItem extends Component {
                     required
                 /></td>
                 <td><input
-                    style={{width: 'auto'}}
-                    className="text-center form-control form-control-lg"
+                    className="width-auto text-center form-control form-control-sm"
                     type='checkbox'
                     name='check_out'
                     placeholder='Check-Out'
@@ -218,13 +202,13 @@ export class BookingItem extends Component {
                     type="submit"
                     value="Submit"
                     onClick={this.UserInfoUpdateHandler}
-                    className="btn btn-block btn-primary btn-sm font-weight-medium auth-form-btn "
+                    className="btn btn-block btn-primary btn-sm btn-margin-top-10"
                 /></td>
                 <td><input
                     type="submit"
                     value="Remove"
                     onClick={this.RemoveBookingHandler}
-                    className="btn btn-block btn-danger btn-primary btn-sm font-weight-medium auth-form-btn "
+                    className="btn btn-block btn-danger btn-primary btn-sm btn-margin-top-10"
                 /></td>
                 <td><p>{this.state.status}</p></td>
             </tr>

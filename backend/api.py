@@ -65,6 +65,11 @@ def registration():
                     f'\"{data.get("birth_date")}\",' \
                     f'\"{data.get("phone_number")}\",' \
                     f'\"{data.get("email")}\");'
+            if data.get("birth_date") is not None:
+                query = f'INSERT INTO uzivatel(name, phone_number, email) VALUES (' \
+                        f'\"{data.get("name")}\",' \
+                        f'\"{data.get("phone_number")}\",' \
+                        f'\"{data.get("email")}\");'
             db = Connector()
             db.query(query, expecting_result=False, disconnect=False)
             query = f'INSERT INTO password_table ' \
@@ -110,7 +115,8 @@ def account():
     print(result)
     # serialize date
     if result:
-        result[0]["birth_date"] = result[0]["birth_date"].strftime("%Y-%m-%d")
+        result[0]["birth_date"] = (lambda: result[0]["birth_date"], lambda: result[0]["birth_date"].strftime("%Y-%m-%d"))[
+            result[0]["birth_date"] is not None]()
         return jsonify(result[0])
 
 
@@ -126,9 +132,17 @@ def update_account():
             f'SET name = \"{data.get("name")}\", ' \
             f'email = \"{data.get("email")}\",' \
             f'phone_number = \"{data.get("phone_number")}\", ' \
-            f'birth_date = \"{data.get("birth_date")}\",' \
             f'address = \"{data.get("address")}\"' \
             f'WHERE (id_user = \"{result[0].get("id_user")}\");'
+    if data.get("birth_date") is not None:
+        query = f'UPDATE uzivatel ' \
+                f'SET name = \"{data.get("name")}\", ' \
+                f'email = \"{data.get("email")}\",' \
+                f'phone_number = \"{data.get("phone_number")}\", ' \
+                f'birth_date = \"{data.get("birth_date")}\",' \
+                f'address = \"{data.get("address")}\"' \
+                f'WHERE (id_user = \"{result[0].get("id_user")}\");'
+
     db.query(query, expecting_result=False)
     return "User information updated successfully."
 
@@ -140,8 +154,15 @@ def update_user():
             f'email = \"{data.get("email")}\",' \
             f'phone_number = \"{data.get("phone_number")}\", ' \
             f'address = \"{data.get("address")}\", ' \
-            f'birth_date = \"{data.get("birth_date")}\"' \
             f'WHERE (id_user = \"{data.get("id_user")}\");'
+    if data.get("birth_date") is not None:
+        query = f'UPDATE uzivatel ' \
+                f'SET name = \"{data.get("name")}\", ' \
+                f'email = \"{data.get("email")}\",' \
+                f'phone_number = \"{data.get("phone_number")}\", ' \
+                f'address = \"{data.get("address")}\", ' \
+                f'birth_date = \"{data.get("birth_date")}\"' \
+                f'WHERE (id_user = \"{data.get("id_user")}\");'
     Connector().query(query, expecting_result=False)
     return "User information updated successfully."
 
@@ -167,7 +188,7 @@ def get_users():
         if result and result[0]["role"] == 0:
             result = db.query('SELECT * from uzivatel WHERE role != 0;')
             for user in result:
-                user["birth_date"] = user["birth_date"].strftime("%Y-%m-%d")
+                user["birth_date"] = (lambda: user["birth_date"], lambda: user["birth_date"].strftime("%Y-%m-%d"))[user["birth_date"] is not None]()
             return jsonify(result)
         else:
             return jsonify(False)
@@ -224,21 +245,33 @@ def get_user_role():
 
 @app.route('/getHotels', methods=['GET'])
 def get_hotel_by_id():
-    query = f'SELECT hotels_table.*, rooms_table.price_night FROM hotels_table join rooms_table where hotels_table.hotel_id = rooms_table.hotel_id;'
-    return jsonify(Connector().query(query))
+    query = f'SELECT hotels_table.*, MIN(rooms_table.price_night) AS price_night FROM hotels_table join rooms_table where hotels_table.hotel_id = rooms_table.hotel_id GROUP BY hotels_table.hotel_id;'
+    hotels = Connector().query(query)
+    for hotel in hotels:
+        for key in hotel:
+            if hotel[key] == "None":
+                hotel[key] = ""
+    return jsonify(hotels)
 
 @app.route('/getHotelsAdmin', methods=['GET'])
 def get_hotels_admin():
     query = f'SELECT * FROM hotels_table;'
-    return jsonify(Connector().query(query))
+    hotels = Connector().query(query)
+    for hotel in hotels:
+        for key in hotel:
+            if hotel[key] == "None":
+                hotel[key] = ""
+    return jsonify(hotels)
 
 @app.route('/getHotel', methods=['POST'])
 def get_hotels():
-    #Todo join with rooms table and get max price and add to result dictionary w/ price_night key
     data = json.loads(request.get_data().decode('utf-8'))
-    print(data.get("hotel_id"))
     query = f'SELECT * FROM hotels_table WHERE (hotel_id = \"{data.get("hotel_id")}\" );'
-    return jsonify(Connector().query(query)[0])
+    hotel = Connector().query(query)[0]
+    for key in hotel:
+        if hotel[key] == "None":
+            hotel[key] = ""
+    return jsonify(hotel)
 
 
 @app.route('/getHotelImage', methods=['POST'])
@@ -287,36 +320,44 @@ def update_booking():
 def add_hotel():
     db = Connector()
     data = json.loads(request.get_data().decode('utf-8'))
+    rating = 0
+    if data.get("rating") is not None:
+        rating = data.get("rating")
     # Insert new todos item with requested title
     query = f'INSERT INTO hotels_table ' \
             f'(name, description, category, address, email, phone_number, rating, free_cancellation, no_prepayment,' \
             f'free_wifi, gym, spa, swimming_pool)' \
             f' VALUES (\"{data.get("name")}\", \"{data.get("description")}\", \"{data.get("category")}\",' \
             f'\"{data.get("address")}\", \"{data.get("email")}\", \"{data.get("phone_number")}\",' \
-            f'\"{data.get("rating")}\", {data.get("free_cancellation")}, {data.get("no_prepayment")},' \
+            f'{rating}, {data.get("free_cancellation")}, {data.get("no_prepayment")},' \
             f'{data.get("free_wifi")}, {data.get("gym")}, {data.get("spa")}, {data.get("swimming_pool")});'
     db.query(query, expecting_result=False, disconnect=False)
     # Return inserted todos
     return jsonify(str(db.get_last_row_id()))
 
 
-@app.route('/uploadHotelImg/<id>', methods=['POST'])
-def upload_hotel_image(id):
+@app.route('/uploadHotelImg/<id_hotel>', methods=['POST'])
+def upload_hotel_image(id_hotel):
     file = request.files['file']
-    file.save(os.getcwd() + '/static/hotels/' + id + ".jpg")
+    if file:
+        file.save(os.getcwd() + '/static/hotels/' + id_hotel + ".jpg")
     return jsonify("ok")
 
 
 @app.route('/editHotel', methods=['POST'])
 def edit_hotel():
     data = json.loads(request.get_data().decode('utf-8'))
+    rating = 0
+    if data.get("rating") is not None:
+        rating = data.get("rating")
+
     query = f'UPDATE hotels_table ' \
             f'SET name = \"{data.get("name")}\", ' \
             f'description = \"{data.get("description")}\",' \
             f'address = \"{data.get("address")}\", ' \
             f'email = \"{data.get("email")}\",' \
             f'phone_number = \"{data.get("phone_number")}\",'\
-            f'rating = \"{data.get("rating")}\", ' \
+            f'rating = {rating}, ' \
             f'category = \"{data.get("category")}\", ' \
             f'free_cancellation = {data.get("free_cancellation")}, '\
             f'no_prepayment = {data.get("no_prepayment")}, ' \
@@ -333,15 +374,23 @@ def edit_hotel():
 def get_room_by_hotel_id():
     data = json.loads(request.get_data().decode('utf-8'))
     query = f'SELECT * from rooms_table where rooms_table.hotel_id={data.get("hotel_id")};'
-    result = Connector().query(query)
-    return jsonify(result)
+    rooms = Connector().query(query)
+    for room in rooms:
+        for key in room:
+            if room[key] == "None":
+                room[key] = ""
+    return jsonify(rooms)
 
 
 @app.route('/getRoom', methods=['POST'])
 def get_room():
     data = json.loads(request.get_data().decode('utf-8'))
     query = f'SELECT * FROM rooms_table WHERE id_room = \"{data.get("id_room")}\";'
-    return jsonify(Connector().query(query)[0])
+    room = Connector().query(query)[0]
+    for key in room:
+        if room[key] == "None":
+            room[key] = ""
+    return jsonify(room)
 
 
 @app.route('/getRoomImage', methods=['POST'])
@@ -372,13 +421,16 @@ def remove_room():
 def add_room():
     db = Connector()
     data = json.loads(request.get_data().decode('utf-8'))
+    room_size = 30
+    if data.get("room_size"):
+       room_size = data.get("room_size")
     # Insert new todos item with requested title
     query = f'insert into rooms_table (hotel_id, name, bed_count, category, description, room_size, ' \
-            f'price_night, bed_type, free_breakfast, meal, count, pre_price )' \
+            f'price_night, bed_type, free_breakfast, count, pre_price )' \
             f' VALUES ({data.get("hotel_id")},\"{data.get("name")}\",\"{data.get("bed_count")}\", ' \
-            f'\"{data.get("category")}\",\"{data.get("description")}\", \"{data.get("room_size")}\", ' \
+            f'\"{data.get("category")}\",\"{data.get("description")}\", \"{room_size}\", ' \
             f'\"{data.get("price_night")}\", \"{data.get("bed_type")}\", {data.get("free_breakfast")}, ' \
-            f'\"{data.get("meal")}\", \"{data.get("count")}\", {data.get("pre_price")});'
+            f'\"{data.get("count")}\", {data.get("pre_price")});'
     db.query(query, expecting_result=False, disconnect=False)
     # Return inserted todos
     return jsonify(str(db.get_last_row_id()))
@@ -387,10 +439,11 @@ def add_room():
 @app.route('/uploadRoomImg/<id>', methods=['POST'])
 def upload_room_image(id):
     file = request.files['file']
-    path = os.getcwd() + '/static/hotels/' + id.split("_")[0] + "/"
-    if not os.path.isdir(path):
-        os.mkdir(path);
-    file.save(path + id.split("_")[1] + ".jpg")
+    if file:
+        path = os.getcwd() + '/static/hotels/' + id.split("_")[0] + "/"
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        file.save(path + id.split("_")[1] + ".jpg")
     return jsonify("ok")
 
 
@@ -445,12 +498,18 @@ def non_reg_booking():
         return jsonify({'status': 'Given email is already registered, please login'})
     else:
         try:
-            query = f'INSERT INTO uzivatel(name, birth_date, phone_number, address, email) VALUES (' \
+            query = f'INSERT INTO uzivatel(name, phone_number, address, email) VALUES (' \
                     f'\"{data.get("name")}\",' \
-                    f'\"{data.get("birth_date")}\",' \
                     f'\"{data.get("phone_number")}\",' \
                     f'\"{data.get("address")}\",' \
                     f'\"{data.get("email")}\");'
+            if data.get("birth_date") is not None:
+                query = f'INSERT INTO uzivatel(name, birth_date, phone_number, address, email) VALUES (' \
+                        f'\"{data.get("name")}\",' \
+                        f'\"{data.get("birth_date")}\",' \
+                        f'\"{data.get("phone_number")}\",' \
+                        f'\"{data.get("address")}\",' \
+                        f'\"{data.get("email")}\");'
             db = Connector()
             db.query(query, expecting_result=False, disconnect=False)
             id_user = db.get_last_row_id()
@@ -483,12 +542,19 @@ def reg_booking():
         return jsonify({'status': 'Given email is already registered, please login'})
     else:
         try:
-            query = f'INSERT INTO uzivatel(name, birth_date, phone_number, address, email) VALUES (' \
+            query = f'INSERT INTO uzivatel(name, phone_number, address, email) VALUES (' \
                     f'\"{data.get("name")}\",' \
-                    f'\"{data.get("birth_date")}\",' \
                     f'\"{data.get("phone_number")}\",' \
                     f'\"{data.get("address")}\",' \
                     f'\"{data.get("email")}\");'
+
+            if data.get("birth_date") is not None:
+                query = f'INSERT INTO uzivatel(name, birth_date, phone_number, address, email) VALUES (' \
+                        f'\"{data.get("name")}\",' \
+                        f'\"{data.get("birth_date")}\",' \
+                        f'\"{data.get("phone_number")}\",' \
+                        f'\"{data.get("address")}\",' \
+                        f'\"{data.get("email")}\");'
             db = Connector()
             db.query(query, expecting_result=False, disconnect=False)
             id_user = db.get_last_row_id()
@@ -525,9 +591,12 @@ def get_bookings():
                 f'WHERE (session_table.id_session = \"{data.get("CookieUserID")}\");'
         result = db.query(query, disconnect=False)
         for res in result:
-            res["birth_date"] = res["birth_date"].strftime("%Y-%m-%d")
-            res["start_date"] = res["start_date"].strftime("%Y-%m-%d")
-            res["end_date"] = res["end_date"].strftime("%Y-%m-%d")
+            res["birth_date"] = (lambda: res["birth_date"], lambda: res["birth_date"].strftime("%Y-%m-%d"))[
+                res["birth_date"] is not None]()
+            res["start_date"] = (lambda: res["start_date"], lambda: res["start_date"].strftime("%Y-%m-%d"))[
+                res["start_date"] is not None]()
+            res["end_date"] = (lambda: res["end_date"], lambda: res["end_date"].strftime("%Y-%m-%d"))[
+                res["end_date"] is not None]()
         return jsonify(result)
 
 
@@ -545,9 +614,12 @@ def get_all_bookings():
                     f'FROM uzivatel NATURAL JOIN reservation_table JOIN rooms_table ON reservation_table.id_room=rooms_table.id_room JOIN hotels_table ON rooms_table.hotel_id=hotels_table.hotel_id;'
             result = db.query(query, disconnect=False)
             for res in result:
-                res["birth_date"] = res["birth_date"].strftime("%Y-%m-%d")
-                res["start_date"] = res["start_date"].strftime("%Y-%m-%d")
-                res["end_date"] = res["end_date"].strftime("%Y-%m-%d")
+                res["birth_date"] = (lambda: res["birth_date"], lambda: res["birth_date"].strftime("%Y-%m-%d"))[res["birth_date"] is not None]()
+                res["start_date"] = (lambda: res["start_date"], lambda: res["start_date"].strftime("%Y-%m-%d"))[res["start_date"] is not None]()
+                res["end_date"] = (lambda: res["end_date"], lambda: res["end_date"].strftime("%Y-%m-%d"))[res["end_date"] is not None]()
+                for key in res:
+                    if res[key] == "None":
+                        res[key] = ""
             return jsonify(result)
         else:
             return jsonify([])
@@ -576,10 +648,12 @@ def check_dates():
 @app.route('/searchHotels', methods=['POST'])
 def search_hotel():
     data = json.loads(request.get_data().decode('utf-8'))
+    print(data)
     db = Connector()
-    print(data.get("hotel_id"))
     query = f'SELECT rooms_table.id_room, rooms_table.bed_count FROM hotels_table join rooms_table where {data.get("hotel_id")} = rooms_table.hotel_id;'
     rooms = db.query(query, disconnect=False)
+    print(rooms)
+    hotel_ok = False
     for room in rooms:
         room_count = round(int(data.get("adult_count"))/int(room["bed_count"]))
         query = f'SELECT * FROM reservation_table WHERE (reservation_table.id_room = \"{room["id_room"]}\") AND ' \
@@ -587,26 +661,19 @@ def search_hotel():
                 f'reservation_table.end_date BETWEEN \"{data.get("start_date")}\" AND \"{data.get("end_date")}\" OR ' \
                 f'\"{data.get("start_date")}\" BETWEEN reservation_table.start_date AND reservation_table.end_date);'
         res_result = db.query(query, disconnect=False)
+        print(res_result)
         reserved_rooms = 0
         for reservation in res_result:
             reserved_rooms = reserved_rooms + reservation["room_count"]
         query = f'SELECT count FROM rooms_table WHERE (rooms_table.id_room = \"{room["id_room"]}\");'
-        result = db.query(query)
-
+        result = db.query(query, disconnect=False)
+        print(result, "\n")
         if result[0]["count"] >= reserved_rooms + room_count:
-            print("tu")
-            return jsonify(True)
-        else:
-            return jsonify(False)
-
-
-@app.route('/filterHotels', methods=['POST'])
-def filter_hotel():
-    data = json.loads(request.get_data().decode('utf-8'))
-    query = f'SELECT * FROM hotels_table join rooms_table where rooms_table.hotel_id = hotels_table.hotel_id'
-    print(Connector().query(query))
-    #return jsonify(Connector().query(query))
-
+            hotel_ok = True
+    if hotel_ok:
+        return jsonify({"status": True})
+    else:
+        return jsonify({"status": False})
 
 if __name__ == '__main__':
     try:

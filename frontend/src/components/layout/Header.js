@@ -10,8 +10,6 @@ const cookies = new Cookies();
 let cookieUserID = cookies.get('CookieUserID');
 
 export class Header extends Component {
-    //todo change password site
-
     state = {
         isLoading: true,
         image: null,
@@ -34,6 +32,29 @@ export class Header extends Component {
         }
     }
 
+    render() {
+        const {isLoading} = this.state;
+        if (isLoading) {
+            return (
+                <div className="App">Loading...</div>
+            );
+        } else {
+            return (
+                <header className="header-offset">
+                    <nav
+                        className="navbar border border-dark width-calc-100 align-items-center justify-content-between d-flex fixed-top">
+                        <div className="width-calc-100 align-items-center justify-content-between d-flex">
+                            {this.renderLinks()}
+                            <ul className="navbar-nav">
+                                {this.userLoginAction()}
+                            </ul>
+                        </div>
+                    </nav>
+                </header>
+            );
+        }
+    }
+
     signOut = () => {
         cookies.remove('CookieUserID');
         this.setState({status: "Logged out successfully"});
@@ -44,13 +65,13 @@ export class Header extends Component {
     userLoginAction = () => {
         if (typeof cookieUserID === 'undefined') {
             return (
-                <li className="nav-item nav-profile border-0" style={{display: 'flex'}}>
-                    <div className="navbar-toggler align-self-center">
-                        <Link className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
+                <li className="d-flex">
+                    <div className="padding-left-10 padding-right-10">
+                        <Link className="btn btn-primary"
                               to="/login">Login</Link>
                     </div>
-                    <div className="navbar-toggler align-self-center">
-                        <Link className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"
+                    <div className="padding-left-10 padding-right-10">
+                        <Link className="btn btn-primary"
                               to="/registration">Register</Link>
                     </div>
                 </li>)
@@ -70,35 +91,30 @@ export class Header extends Component {
                     );
             }
             return (
-                <li className="nav-item nav-profile border-0">
+                <li>
                     <Dropdown>
-                        <Dropdown.Toggle className="nav-link bg-transparent" style={{display: 'flex'}}>
-                            <div style={{display: 'flex', textAlign: 'bottom'}}>
-                                <h4 className="align-self-center " style={{
-                                    color: '#000',
-                                    marginBottom: '-0.1rem',
-                                    marginLeft: '10px',
-                                    marginRight: '10px'
-                                }}>{this.state.userName}</h4>
-                                <div style={{paddingRight: "10px"}}>
-                                    <img className="img-xs rounded-circle"
+                        <Dropdown.Toggle
+                            variant="toggle-arrow-hide navbar-toggler align-self-center border border-blue">
+                            <div className="d-flex">
+                                <h4 className="profile-name align-self-center">
+                                    {this.state.userName}
+                                </h4>
+                                <div className="padding-right-10">
+                                    <img className="img-xs"
                                          src={`data:image/*;base64,${this.state.image}`}
                                          alt="Profile"/>
                                 </div>
                             </div>
                         </Dropdown.Toggle>
-                        <Dropdown.Menu className="preview-list navbar-dropdown pb-3">
-                            <Dropdown.Item as={Link} to={'/account'}
-                                           className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                        <Dropdown.Menu>
+                            <Dropdown.Item as={Link} to={'/account'}>
                                 Manage Account
                             </Dropdown.Item>
-                            <Dropdown.Item as={Link} to={'/bookings'}
-                                           className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                            <Dropdown.Item as={Link} to={'/bookings'}>
                                 Bookings
                             </Dropdown.Item>
                             {this.adminSettings()}
-                            <Dropdown.Item as={Link} to={'/'} onClick={this.signOut}
-                                           className="dropdown-item preview-item d-flex align-items-center border-0  mt-2">
+                            <Dropdown.Item as={Link} to={'/'} onClick={this.signOut}>
                                 Sign Out
                             </Dropdown.Item>
                         </Dropdown.Menu>
@@ -112,32 +128,10 @@ export class Header extends Component {
         document.querySelector('.right-sidebar').classList.toggle('open');
     }
 
-    render() {
-        const {isLoading} = this.state;
-        if (isLoading) {
-            return (
-                <div className="App">Loading...</div>
-            );
-        } else {
-            return (
-                <header style={{paddingBottom: '63px'}}>
-                    <nav className="navbarCustom col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row border">
-                        <div className="navbar-menu-wrapper d-flex align-items-center justify-content-between">
-                            {this.renderLinks()}
-                            <ul className="navbar-nav navbar-nav-right">
-                                {this.userLoginAction()}
-                            </ul>
-                        </div>
-                    </nav>
-                </header>
-            );
-        }
-    }
-
     renderLinks() {
         if (window.innerWidth > 600) {
             return <>
-                <div className="navbar-nav navbar-nav-left" style={{flexDirection: 'row'}}>
+                <div className="navbar-nav navbar-nav-link">
                     <Dropdown>
                         <Dropdown.Toggle variant="toggle-arrow-hide navbar-toggler align-self-center">
                             <HomeIcon className="mdi mdi-menu"/>
@@ -146,8 +140,8 @@ export class Header extends Component {
                             <Dropdown.Item as={Link} to={'/'}>Home Page</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                    <div style={{display: 'flex'}}>
-                        <div className="navbar-toggler">
+                    <div className="d-flex">
+                        <div className="navbar-toggler link-padding">
                             <Link to="/">Home Page</Link>
                         </div>
                     </div>
@@ -156,7 +150,7 @@ export class Header extends Component {
         } else {
             return <>
                 <Dropdown>
-                    <Dropdown.Toggle variant="navbar-toggler align-self-center">
+                    <Dropdown.Toggle variant="toggle-arrow-hide navbar-toggler align-self-center">
                         <HomeIcon className="mdi mdi-menu"/>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
@@ -171,16 +165,13 @@ export class Header extends Component {
         if (this.state.role === 0) {
             return (
                 <>
-                    <Dropdown.Item as={Link} to={'/admin'}
-                                   className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                    <Dropdown.Item as={Link} to={'/admin'}>
                         Manage Users
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to={'/adminHotels'}
-                                   className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                    <Dropdown.Item as={Link} to={'/adminHotels'}>
                         Manage Hotels
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to={'/adminBookings'}
-                                   className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                    <Dropdown.Item as={Link} to={'/adminBookings'}>
                         Manage Bookings
                     </Dropdown.Item>
                 </>
@@ -189,12 +180,10 @@ export class Header extends Component {
         } else if (this.state.role === 1) {
             return (
                 <>
-                    <Dropdown.Item as={Link} to={'/adminHotels'}
-                                   className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                    <Dropdown.Item as={Link} to={'/adminHotels'}>
                         Manage Hotels
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to={'/adminBookings'}
-                                   className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                    <Dropdown.Item as={Link} to={'/adminBookings'}>
                         Manage Bookings
                     </Dropdown.Item>
                 </>
@@ -202,8 +191,7 @@ export class Header extends Component {
 
         } else if (this.state.role === 2) {
             return (
-                <Dropdown.Item as={Link} to={'/adminBookigs'}
-                               className="dropdown-item preview-item d-flex align-items-center border-0 mt-2">
+                <Dropdown.Item as={Link} to={'/adminBookings'}>
                     Manage Bookings
                 </Dropdown.Item>)
         }
