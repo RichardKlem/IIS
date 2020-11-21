@@ -20,9 +20,10 @@ Analýza požadavků: https://www.overleaf.com/8514163942ptgczrbssszt
 
 
 
-### API:
+### Flask - developer mode:
 pip requirements:
 - python-dotenv
+todo..
 
 initialize server:
 ```bash
@@ -32,10 +33,10 @@ flask run
 Check if [http://localhost:5000/time](http://localhost:5000/time) is available
 
 
-### React app
+### React app - developer mode
 ```bash
 cd ./ISS/frontend/
-npm install react
+npm i
 npm start
 ```
 Check if [http://localhost:3000/](http://localhost:3000/) is available

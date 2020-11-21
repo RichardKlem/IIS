@@ -1,38 +1,384 @@
-.App {
-  text-align: center;
+.dropdown-toggle::after {
+    display: none !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.width-calc-100 {
+    width: calc(100% - 0px) !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+    background-color: #ffffff !important;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.popup-box {
+    position: fixed;
+    background: #00000050;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
 }
 
-.App-link {
-  color: #61dafb;
+#page-content-wrapper {
+    min-width: 0;
+    width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.close-icon {
+    content: 'x';
+    cursor: pointer;
+    position: fixed;
+    right: calc(15% - 30px);
+    top: calc(100vh - 85vh - 33px);
+    background: #ededed;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    line-height: 20px;
+    text-align: center;
+    border: 1px solid #999;
+    font-size: 20px;
+}
+
+
+.container {
+    max-width: 1640px !important;
+}
+
+.container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.container .checkmark:after {
+    left: 8px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.padding-10 {
+    padding: 10px !important;
+}
+
+.padding-left-10 {
+    padding-left: 10px !important;
+}
+
+.padding-left-20 {
+    padding-left: 20px !important;
+}
+
+.padding-right-10 {
+    padding-right: 10px !important;
+}
+
+.padding-top-0 {
+    padding-top: 0px !important;
+}
+
+
+.padding-top-10 {
+    padding-top: 10px !important;
+}
+
+.padding-top-10-neg {
+    padding-top: -10px !important;
+}
+
+.padding-top-20 {
+    padding-top: 20px !important;
+}
+
+.padding-top-40 {
+    padding-top: 40px !important;
+}
+
+
+.padding-bottom-5 {
+    padding-bottom: 5px !important;
+}
+
+.padding-bottom-10 {
+    padding-bottom: 10px !important;
+}
+
+.padding-bottom-20 {
+    padding-bottom: 20px !important;
+}
+
+.padding-bottom-40 {
+    padding-bottom: 40px !important;
+}
+
+.padding-top-5 {
+    padding-top: 5px !important;
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px !important;
+}
+
+.bg-transparent {
+    background-color: transparent !important;
+}
+
+.img-xs {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50% !important;
+}
+
+.profile-name {
+    color: #000;
+    margin-bottom: -0.1rem;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.header-offset {
+    padding-bottom: 63px;
+}
+
+.navbar-nav-link {
+    flex-direction: row;
+}
+
+.navbar {
+    background-color: white !important;
+}
+
+.required-margin {
+    margin-bottom: -10px;
+}
+
+.required-margin-indicator {
+    margin-top: 15px;
+}
+
+.required-color {
+    color: rgb(255, 99, 71);
+    margin-left: .15rem;
+}
+
+.sidebar {
+    min-height: calc(100vh - 63px);
+    font-family: "Roboto", sans-serif;
+    width: 270px;
+    background: none;
+    padding: 10px;
+    transition: width 0.25s ease, background 0.25s ease;
+    -webkit-transition: width 0.25s ease, background 0.25s ease;
+    -moz-transition: width 0.25s ease, background 0.25s ease;
+    -ms-transition: width 0.25s ease, background 0.25s ease;
+}
+
+.input-width {
+    min-width: 100px;
+}
+
+.filter-price-other {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: rgb(203, 211, 227);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.form-check-label {
+    padding-left: 10px;
+}
+
+.horizontal-line {
+    border-top: 3px solid #bbb;
+    margin-top: 5px;
+    padding-top: 10px;
+}
+
+.border-blue {
+    border-color: dodgerblue !important;
+}
+
+.card-description {
+    color: #76838f;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+}
+
+.img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+.width-auto {
+    width: auto;
+}
+
+.btn-margin-top-10 {
+    margin-top: 10px;
+}
+
+.booking-without-input-padding {
+    padding-bottom: 45px;
+}
+
+.item-list-style {
+    display: block;
+    margin: auto;
+    margin-left: 20px;
+}
+
+.item-list-style-img {
+    width: 225px;
+    height: 225px;
+}
+
+.item-list-style-img-200 {
+    width: 200px;
+    height: 200px;
+}
+
+.line-height-sm {
+    line-height: 1px;
+}
+
+.other-input {
+    margin-top: -30px;
+}
+
+.add-img-lower {
+    padding-left: 20px;
+    padding-top: 125px;
+}
+
+.edit-hotel-img-offset {
+    padding-top: 125px;
+}
+
+.rating-padding {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.margin-top-5-neg {
+    margin-top: -5px;
+}
+
+.line-height-2 {
+    line-height: 2px;
+}
+
+.select-disabled {
+    background-color: #fff;
+    -webkit-appearance: none;
+}
+
+.white-textarea {
+    background-color: #fff !important;
+
+    border-color: #ced4da !important;
+    overflow: auto !important;
+    outline: none !important;
+
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+
+    resize: none !important;
+}
+
+
+.color-green {
+    color: #008000;
+}
+
+.link-padding {
+    padding-top: 8px;
+}
+
+.main-panel {
+    width: calc(100% - 270px);
+    min-height: calc(100vh - 63px);
+    padding-top: 63px;
+    display: flex;
+    flex-direction: column;
+}
+
+.border-gray {
+    border-color: #808080 !important;
+}
+
+.hotels-list-padding {
+    padding-top: 100px;
+}
+
+.table-no-border, .th-no-border, .tr-no-border, .thead-no-border {
+    border: none !important;
+    border-bottom: none !important;
+    border-top: none !important;
+}
+
+.height-10 {
+    height: 10px;
+}
+
+.box {
+    position: relative;
+    width: 70%;
+    margin: 0 auto;
+    height: auto;
+    max-height: 70vh;
+    margin-top: calc(100vh - 85vh - 20px);
+    background: #fff;
+    border-radius: 4px;
+    padding: 20px;
+    border: 1px solid #999;
+    overflow: auto;
+}
+
+.input-role {
+    min-width: 40px;
+}
+
+.add-hotel {
+    width: 100px;
+    height: 40px;
+    margin-top: 11px;
+}
+
+.width-150 {
+    width: 150px;
+}
+
+.rooms-list {
+    padding-bottom: 10px;
+    white-space: nowrap;
+}
+
+.btn {
+  text-align: center !important;
 }
