@@ -1,9 +1,5 @@
 # IIS
 
-Use-case diagram: https://drive.google.com/file/d/10WyiL_HB3pbiTa2HMv3fZNqQORZNQ4wx/edit
-
-ER diagram: https://drive.google.com/file/d/1wWJhj_QhujWPHo8_2SxbvJtclrpbcoSz/edit
-
 Domain: [http://iis-projekt.ddns.net/](http://iis-projekt.ddns.net/)
 
 Analýza požadavků: https://www.overleaf.com/8514163942ptgczrbssszt
