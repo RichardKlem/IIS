@@ -84,7 +84,6 @@ create table reservation_table(
     id_reservation int auto_increment,
     id_user int not null,
     id_room int not null,
-    id_approved_by int,
     start_date date not null,
     end_date date not null,
     adult_count int default 1,
@@ -99,7 +98,6 @@ create table reservation_table(
 
     foreign key (id_room) REFERENCES rooms_table(id_room) on delete cascade,
     foreign key (id_user) REFERENCES uzivatel(id_user) on delete cascade,
-    foreign key (id_approved_by) REFERENCES uzivatel(id_user) on delete cascade,
     primary key (id_reservation)
 );
 
