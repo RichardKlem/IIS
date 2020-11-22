@@ -1,6 +1,0 @@
-AUTH_PLUGIN = 'mysql_native_password'
-DATABASE = 'myDB'
-HOST = '192.168.1.109'
-PASSWORD = 'rootRemote'
-USER = 'rootRemote'
-FLASK_HOST = '127.0.0.1'

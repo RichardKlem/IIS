@@ -1,6 +1,6 @@
 import mysql.connector
 
-from init import HOST, USER, PASSWORD, DATABASE, AUTH_PLUGIN
+from backend import HOST, USER, PASSWORD, DATABASE, AUTH_PLUGIN
 
 
 class Connector:
@@ -12,7 +12,7 @@ class Connector:
                 user=USER,
                 password=PASSWORD,
                 database=DATABASE,
-                auth_plugin=AUTH_PLUGIN
+                auth_plugin=AUTH_PLUGIN,
             )
         else:
             self.connection = mysql.connector.connect(
@@ -20,7 +20,7 @@ class Connector:
                 user=USER,
                 password=PASSWORD,
                 database=DATABASE,
-                auth_plugin=AUTH_PLUGIN
+                auth_plugin=AUTH_PLUGIN,
             )
         self.cursor = self.connection.cursor(dictionary=True, buffered=True)
 

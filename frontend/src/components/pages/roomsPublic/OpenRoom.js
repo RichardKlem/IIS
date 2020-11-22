@@ -75,48 +75,47 @@ export class OpenRoom extends Component {
                         <div className="d-flex padding-bottom-40">
                             <img src={`data:image/*;base64,${this.state.image}`} alt=''
                                  className="item-list-style-img-200"
-                            />;
+                            />
                         </div>
-                        <fieldset disabled={window.location.pathname.startsWith("/registerRoom/") ? 'disabled' : null}>
-                            <form className="forms-sample" onSubmit={this.EditHotelHandler}>
+                        <fieldset disabled>
+                            <form className="forms-sample">
                                 <Form.Group>
                                     <label htmlFor="exampleInputUsername1">Name</label>
-                                    <Form.Control id="hotelInput" onChange={this.onChange}
+                                    <Form.Control id="hotelInput"
                                                   defaultValue={this.state.name} name='name' type="text"
                                                   placeholder="Name" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label htmlFor="exampleInputUsername1">Description</label>
-                                    <Form.Control id="hotelInput" onChange={this.onChange}
+                                    <Form.Control id="hotelInput"
                                                   defaultValue={this.state.description} name='description' type="text"
                                                   placeholder="Description" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Category</label>
-                                    <Form.Control id="hotelInput" onChange={this.onChange}
+                                    <Form.Control id="hotelInput"
                                                   defaultValue={this.state.category} name='category' type="number"
                                                   placeholder="Category" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Bed Count</label>
-                                    <Form.Control id="hotelInput" onChange={this.onChange}
+                                    <Form.Control id="hotelInput"
                                                   defaultValue={this.state.bed_count} name='bed_count' type="number"
                                                   min="1"
                                                   placeholder="Bed Count" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Room Size</label>
-                                    <Form.Control id="hotelInput" onChange={this.onChange}
+                                    <Form.Control id="hotelInput"
                                                   defaultValue={this.state.room_size} name='room_size' type="number"
                                                   placeholder="Room Size" size="lg" readOnly/>
                                 </Form.Group>
                                 <Form.Group>
                                     <label>Price per Night</label>
-                                    <Form.Control id="hotelInput" onChange={this.onChange}
+                                    <Form.Control id="hotelInput"
                                                   defaultValue={this.state.price_night} name='price_night' type="number"
                                                   placeholder="Price per Night" size="lg" readOnly/>
                                 </Form.Group>
-                                {this.getSubmitOption()}
                                 <div className="text-center mt-4 font-weight-bold">
                                     {this.state.status}
                                 </div>
@@ -125,56 +124,6 @@ export class OpenRoom extends Component {
                     </div>
                 </div>
             )
-        }
-    }
-
-    onChange = (e) => this.setState({[e.target.name]: e.target.value});
-
-    EditHotelHandler = (e) => {
-        e.preventDefault();
-        axios.post('/editRoom', {
-            id_room: this.state.id_room,
-            name: this.state.name,
-            description: this.state.description,
-            bed_count: this.state.bed_count,
-            category: this.state.category,
-            room_size: this.state.room_size,
-            price_night: this.state.price_night
-        })
-            .then(res => {
-                if (this.state.newImageWasUploaded) {
-                    const data = new FormData()
-                    data.append('file', this.state.selectedFile)
-                    axios.post('/uploadRoomImg/' + this.state.hotel_id + "_" + this.state.id_room, data).then(res => { // then print response status
-                    })
-                        .catch(err => { // then print response status
-                        })
-                }
-            });
-        this.props.history.push('/account');
-    }
-
-
-    getStyle = () => {
-        if (this.state.role > 3 || window.location.pathname.startsWith("/hotel/")) {
-            if (document.getElementById('hotelInput') !== null) {
-                document.getElementById('hotelInput').disabled = true;
-            }
-        }
-
-    }
-
-    getSubmitOption() {
-        if (this.state.role < 4) {
-            return <>
-                <div className="d-flex">
-                    <button style={this.getSubmitButtonStyle()} className="btn btn-block btn-primary mr-2"
-                            type="submit">Submit changes
-                    </button>
-                    <Link to="/account"
-                          className="btn btn-block btn-primary  mr-2 btn-light">Cancel</Link>
-                </div>
-            </>;
         }
     }
 }

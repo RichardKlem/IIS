@@ -102,7 +102,7 @@ export class HotelsList extends Component {
                 start_date: this.state.start_date,
                 end_date: this.state.end_date
             })
-            if (res.data.status === true) {
+            if (res.data.available === true) {
                 if (this.state.filter !== '' && (hotel.name.toUpperCase().includes(this.state.filter.toUpperCase()) || hotel.address.toUpperCase().includes(this.state.filter.toUpperCase()))) {
                     new_hotels.push(hotel)
                 } else if (this.state.filter === '') {

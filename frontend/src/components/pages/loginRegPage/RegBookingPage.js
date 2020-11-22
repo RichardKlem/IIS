@@ -43,7 +43,14 @@ export class RegBookingPage extends Component {
                 room_count: this.props.room_count,
                 approved: this.props.approved,
             }).then(res => {
-                    this.setState({status: res.data.status, isBooked: true});
+                    this.setState({status: res.data.status});
+                    if (res.data.statusCode === 200 ) {
+                        this.setState({isBooked: true})
+                        this.setState({status_code: res.data.statusCode})
+                    } else {
+                        this.setState({isBooked: false})
+                        this.setState({status_code: res.data.statusCode})
+                    }
                 }
             );
         } else {

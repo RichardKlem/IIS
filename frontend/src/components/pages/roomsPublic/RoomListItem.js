@@ -172,7 +172,7 @@ export class RoomListItem extends Component {
                 room_count: this.props.room_count
             })
                 .then(res => {
-                    this.setState({isAvailable: res.data})
+                    this.setState({isAvailable: res.data.available})
                 });
         }
     }
