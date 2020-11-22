@@ -69,7 +69,7 @@ create table rooms_table(
     category int default 0,
     bed_count int default 2,
     description TEXT default null,
-    room_size int default 30,
+    room_size int default 0,
     pre_price int default 0,
     price_night int not null,
     bed_type int default 0,
@@ -92,9 +92,9 @@ create table reservation_table(
     total_price int not null,
     pre_price int default 0,
     room_count int default 0,
-    approved boolean not null default 1,
-    check_in boolean not null default 0,
-    check_out boolean not null default 0,
+    approved boolean default 1,
+    check_in boolean default 0,
+    check_out boolean default 0,
 
 
     foreign key (id_room) REFERENCES rooms_table(id_room) on delete cascade,
