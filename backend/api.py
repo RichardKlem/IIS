@@ -27,7 +27,10 @@ from backend.ituUtils import (
     HOTELS_PATH,
     IMG_EXTENSION,
     DEFAULT_IMG,
-    USERS_PATH, update_user, BABYSITTERS_PATH, check_babysitter_availability,
+    USERS_PATH,
+    update_user,
+    BABYSITTERS_PATH,
+    check_babysitter_availability,
 )
 
 app = Flask(__name__)
@@ -358,7 +361,9 @@ def get_room_image():
     hotel_id = data.get("hotel_id")
     if not data.get("hotel_id"):
         hotel_id = hotel_id_by_room(data.get("id_room"))
-    img_file = HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    img_file = (
+        HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    )
     if not os.path.isfile(img_file):
         img_file = DEFAULT_IMG
     with open(img_file, "rb") as f:
@@ -372,7 +377,9 @@ def remove_room():
     hotel_id = data.get("hotel_id")
     if not data.get("hotel_id"):
         hotel_id = hotel_id_by_room(data.get("id_room"))
-    img_file = HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    img_file = (
+        HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    )
     if os.path.exists(img_file):
         os.remove(img_file)
     query = f'DELETE FROM rooms_table WHERE id_room={data.get("id_room")};'
@@ -620,9 +627,7 @@ def search_hotel():
 
 @app.route("/getBabysitters", methods=["GET"])
 def get_babysitters():
-    query = (
-        f'SELECT * FROM babysitter_table '
-    )
+    query = f"SELECT * FROM babysitter_table "
     return jsonify(Connector().query(query))
 
 
@@ -630,7 +635,7 @@ def get_babysitters():
 def get_babysitter():
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
-        f'SELECT * FROM babysitter_table '
+        f"SELECT * FROM babysitter_table "
         f'WHERE id_babysitter = {data.get("id_babysitter")}'
     )
     return jsonify(Connector().query(query)[0])
@@ -704,7 +709,13 @@ def upload_babysitter_image(id_babysitter):
 @app.route("/checkDatesBabysitters", methods=["POST"])
 def check_dates_babysitter():
     data = json.loads(request.get_data().decode("utf-8"))
-    return jsonify({"available": check_babysitter_availability(data.get("id_babysitter"), data.get("start_date"), data.get("end_date"))})
+    return jsonify(
+        {
+            "available": check_babysitter_availability(
+                data.get("id_babysitter"), data.get("start_date"), data.get("end_date")
+            )
+        }
+    )
 
 
 @app.route("/bookBabysitter", methods=["POST"])
@@ -716,16 +727,16 @@ def book_babysitter():
         f'"{data.get("end_date")}", {data.get("total_price")});'
     )
     Connector().query(query, expecting_result=False, disconnect=False)
-    return jsonify({"status": "Babysitter booked successfully","statusCode": 200})
+    return jsonify({"status": "Babysitter booked successfully", "statusCode": 200})
 
 
 @app.route("/checkBabysitterOnBooking", methods=["POST"])
 def check_babysitter_on_booking():
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
-        f'SELECT * FROM babysitting_table JOIN babysitter_table '
+        f"SELECT * FROM babysitting_table JOIN babysitter_table "
         f'WHERE babysitting_table.reservation = {data.get("id_reservation")} '
-        f'AND babysitting_table.babysitter = babysitter_table.id_babysitter;'
+        f"AND babysitting_table.babysitter = babysitter_table.id_babysitter;"
     )
     return jsonify(Connector().query(query))
 

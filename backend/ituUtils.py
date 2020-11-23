@@ -52,6 +52,8 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None, id_babysitter=No
         path = BABYSITTERS_PATH + str(id_babysitter)
     else:
         path = HOTELS_PATH + str(hotel_id)
+    if not os.path.isdir(path):
+        os.makedirs(path)
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 
@@ -84,7 +86,7 @@ def check_babysitter_availability(id_babysitter, start_date, end_date):
     if not id_babysitter or not start_date or not end_date:
         return False
     query = (
-        f'SELECT babysitting_table.id_babysitting FROM babysitting_table WHERE '
+        f"SELECT babysitting_table.id_babysitting FROM babysitting_table WHERE "
         f'(babysitting_table.babysitter = "{id_babysitter}") AND '
         f'(babysitting_table.start_date BETWEEN "{start_date}" AND "{end_date}" OR '
         f'babysitting_table.end_date BETWEEN "{start_date}" AND "{end_date}" OR '
