@@ -30,12 +30,7 @@ class App extends Component {
                         <Header/>
                         <Switch>
                             <Route exact path="/" component={HotelsList}/>
-                            <Route exact path="/login" component={LoginPage}/>
-                            <Route exact path="/registration" component={RegistrationPage}/>
-                            <Route exact path="/account" component={Account}/>
-                            <Route exact path="/admin" component={UsersListPage}/>
                             <Route exact path="/adminHotels" component={HotelsList}/>
-                            <Route exact path="/adminBookings" component={BookingTable}/>
                             <Route exact path="/addHotel" component={AddHotel}/>
                             <Route exact path="/editHotel/:id" component={EditHotel}/>
                             <Route exact path="/hotel/:id" component={OpenHotel}/>
@@ -43,6 +38,11 @@ class App extends Component {
                             <Route exact path="/editRoom/:id" component={EditRoom}/>
                             <Route exact path="/room/:id" component={OpenRoom}/>
                             <Route exact path="/bookings" component={BookingPubList}/>
+                            <Route exact path="/adminBookings" component={BookingTable}/>
+                            <Route exact path="/admin" component={UsersListPage}/>
+                            <Route exact path="/account" component={Account}/>
+                            <Route exact path="/login" component={LoginPage}/>
+                            <Route exact path="/registration" component={RegistrationPage}/>
                         </Switch>
                     </div>
                 </div>

@@ -10,7 +10,7 @@ from backend.databaseConnector import Connector
 
 HOTELS_PATH = os.getcwd() + "/static/hotels/"
 USERS_PATH = os.getcwd() + "/static/users/"
-DEFAULT_IMG = os.getcwd() + "/static/hotels/0/default.png"
+DEFAULT_IMG = os.getcwd() + "/static/default.png"
 IMG_EXTENSION = ".jpg"
 IMG_FORMAT = "JPEG"
 COLOR_FILTER = "RGB"
@@ -44,11 +44,13 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None):
     im.thumbnail(IMG_SIZE, Image.ANTIALIAS)
     im = im.convert(COLOR_FILTER)
     if room_id:
-        path = HOTELS_PATH + hotel_id + "/" + room_id
+        path = HOTELS_PATH + str(hotel_id) + "/" + str(room_id)
     elif user_id:
-        path = USERS_PATH + user_id
+        path = USERS_PATH + str(user_id)
     else:
-        path = HOTELS_PATH + hotel_id
+        path = HOTELS_PATH + str(hotel_id)
+    if not os.path.isdir(path):
+        os.makedirs(path)
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 

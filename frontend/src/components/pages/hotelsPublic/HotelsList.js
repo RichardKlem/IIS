@@ -9,6 +9,7 @@ export class HotelsList extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             hotels: [],
             orig_hotels: [],
             /* Filter */
@@ -48,6 +49,7 @@ export class HotelsList extends Component {
             spa: "false",
             swimming_pool: "false",
             searched: false,
+            status: "",
         }
     }
 
@@ -59,7 +61,9 @@ export class HotelsList extends Component {
                         this.setState({orig_hotels: res.data})
                         this.setState({isLoading: false});
                     }
-                );
+                ).catch(() => {
+                this.setState({status: "ERROR, please reload page", isLoadingError: true})
+            });
         } else {
             axios.get('/getHotels')
                 .then(res => {
@@ -67,7 +71,9 @@ export class HotelsList extends Component {
                         this.setState({orig_hotels: res.data})
                         this.setState({isLoading: false});
                     }
-                );
+                ).catch(() => {
+                this.setState({status: "ERROR, please reload page", isLoadingError: true})
+            });
         }
     }
 
@@ -76,6 +82,10 @@ export class HotelsList extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (

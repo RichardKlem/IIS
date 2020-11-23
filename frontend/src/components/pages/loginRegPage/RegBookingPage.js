@@ -44,7 +44,7 @@ export class RegBookingPage extends Component {
                 approved: this.props.approved,
             }).then(res => {
                     this.setState({status: res.data.status});
-                    if (res.data.statusCode === 200 ) {
+                    if (res.data.statusCode === 200) {
                         this.setState({isBooked: true})
                         this.setState({status_code: res.data.statusCode})
                     } else {
@@ -119,20 +119,20 @@ export class RegBookingPage extends Component {
                                             <input type="tel" className="form-control"
                                                    name='phone_number' placeholder='Phone Number'
                                                    defaultValue={this.state.phone_number} onChange={this.onChange}
-                                                   />
+                                            />
                                         </div>
                                         <div className="form-group">
                                             Birth Date
                                             <input type="date" className="form-control"
                                                    name='birth_date' placeholder='Birth Date'
                                                    defaultValue={this.state.birth_date} onChange={this.onChange}
-                                                   />
+                                            />
                                         </div>
                                         <div className="form-group">
                                             Address
                                             <input type="text" className="form-control" name='address'
                                                    placeholder='Address' defaultValue={this.state.address}
-                                                   onChange={this.onChange} />
+                                                   onChange={this.onChange}/>
                                             <Required end="true"/>
                                         </div>
                                         {this.passwordInput()}

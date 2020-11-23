@@ -27,7 +27,8 @@ from backend.iisUtils import (
     HOTELS_PATH,
     IMG_EXTENSION,
     DEFAULT_IMG,
-    USERS_PATH, update_user,
+    USERS_PATH,
+    update_user,
 )
 
 app = Flask(__name__)
@@ -358,7 +359,9 @@ def get_room_image():
     hotel_id = data.get("hotel_id")
     if not data.get("hotel_id"):
         hotel_id = hotel_id_by_room(data.get("id_room"))
-    img_file = HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    img_file = (
+        HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    )
     if not os.path.isfile(img_file):
         img_file = DEFAULT_IMG
     with open(img_file, "rb") as f:
@@ -372,7 +375,9 @@ def remove_room():
     hotel_id = data.get("hotel_id")
     if not data.get("hotel_id"):
         hotel_id = hotel_id_by_room(data.get("id_room"))
-    img_file = HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    img_file = (
+        HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    )
     if os.path.exists(img_file):
         os.remove(img_file)
     query = f'DELETE FROM rooms_table WHERE id_room={data.get("id_room")};'
@@ -473,8 +478,8 @@ def register_before_booking(data, register):
             if register:
                 register_password(id_user, data.get("password"))
             calculate_price_and_book(data, id_user)
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            print(ex)
             return jsonify(
                 {"status": "Booking Failed, please contact support", "statusCode": 500}
             )

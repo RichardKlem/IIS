@@ -6,6 +6,7 @@ import {ToastContainer} from 'react-toastify';
 import Required from "../../other/Required";
 
 const cookies = new Cookies();
+let cookieUserID = cookies.get('CookieUserID');
 
 export class Account extends Component {
 
@@ -13,6 +14,7 @@ export class Account extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             /* User data */
             name: undefined,
             phone_number: undefined,
@@ -27,12 +29,12 @@ export class Account extends Component {
             /* File upload variables */
             fileUploadErrMsg: '',
             fileUploadAvailable: false,
-            selectedFile: null
+            selectedFile: null,
         }
     }
 
     componentDidMount() {
-        const cookieUserID = cookies.get('CookieUserID');
+        cookieUserID = cookies.get('CookieUserID');
         if (typeof (cookieUserID) === 'undefined') {
             this.props.history.push('/login');
         } else {
@@ -51,15 +53,26 @@ export class Account extends Component {
                                     }
                                 );
                         }
+                        axios.post('/getProfileImage', {CookieUserID: cookieUserID})
+                            .then(res => {
+                                    this.setState({image: res.data});
+                                    this.setState({isLoading: false})
+                                }
+                            ).catch(() => {
+                            this.setState({status: "ERROR, please reload page", isLoadingError: true})
+                        });
                     }
-                );
+                ).catch(() => {
+                this.setState({status: "ERROR, please reload page", isLoadingError: true})
+            });
         }
-        axios.post('/getProfileImage', {CookieUserID: cookieUserID})
-            .then(res => {
-                    this.setState({image: res.data});
-                    this.setState({isLoading: false})
-                }
-            );
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        cookieUserID = cookies.get('CookieUserID');
+        if (typeof (cookieUserID) === "undefined") {
+            this.props.history.push('/login');
+        }
     }
 
 
@@ -68,6 +81,10 @@ export class Account extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (

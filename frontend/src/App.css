@@ -1,3 +1,9 @@
+input[type="time"].form-control::-webkit-calendar-picker-indicator {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: none !important;
+}
+
 .dropdown-toggle::after {
     display: none !important;
 }
@@ -74,6 +80,10 @@ body {
     padding-left: 10px !important;
 }
 
+.padding-left-10-neg {
+    padding-left: -10px !important;
+}
+
 .padding-left-20 {
     padding-left: 20px !important;
 }
@@ -136,6 +146,13 @@ body {
     width: 32px;
     min-width: 32px;
     height: 32px;
+    border-radius: 50% !important;
+}
+
+.img-xl {
+    width: 200px;
+    min-width: 200px;
+    height: 200px;
     border-radius: 50% !important;
 }
 
@@ -250,6 +267,12 @@ body {
     display: block;
     margin: auto;
     margin-left: 20px;
+}
+
+.item-list-style-round {
+    display: block;
+    margin: auto;
+    margin-left: 10px;
 }
 
 .item-list-style-img {
@@ -380,5 +403,5 @@ body {
 }
 
 .btn {
-  text-align: center !important;
+    text-align: center !important;
 }

@@ -31,7 +31,7 @@ export class AddHotel extends Component {
             /* File upload variables */
             image: undefined,
             fileUploadErrMsg: '',
-            selectedFile: null,
+            selectedFile: undefined,
             /* User */
             role: null,
         }
@@ -73,13 +73,13 @@ export class AddHotel extends Component {
                                             <textarea value={this.state.description} className="form-control"
                                                       name='description' placeholder='Description' rows="4"
                                                       onChange={this.onChange}
-                                                      >{this.state.description}</textarea>
+                                            >{this.state.description}</textarea>
                                         </div>
                                         <div className="form-group">
                                             <Required text="Room size"/>
                                             <input type="number" className="form-control" name='room_size'
                                                    placeholder="Room Size" defaultValue={this.state.room_size}
-                                                   onChange={this.onChange} required />
+                                                   onChange={this.onChange} required/>
                                         </div>
                                         <div className="form-group">
                                             Category
@@ -200,12 +200,12 @@ export class AddHotel extends Component {
                         })
                             .then(res => {
                                 room_id = res.data
-                                if (this.state.image !== undefined || room_id !== null) {
+                                if (this.state.image !== undefined && this.state.selectedFile !== undefined && room_id !== null) {
                                     const data = new FormData()
                                     data.append('file', this.state.selectedFile)
                                     axios.post('/uploadRoomImg/' + this.state.hotel_id + "_" + room_id, data)
                                         .then(() => {
-                                            })
+                                        })
                                         .catch(err => { // then print response status
                                             this.setState({status: this.state.status + "ERROR: Image wasn't uploaded."});
                                         })
@@ -246,8 +246,21 @@ export class AddHotel extends Component {
         );
     }
 
+    prePrice() {
+        if (this.state.no_prepayment === 0) {
+            return (<div className="form-group">
+                <Required text="Pre-price"/>
+                <input type="number" className="form-control" name='pre_price'
+                       min="0"
+                       placeholder='Required prepay' defaultValue={this.state.pre_price} onChange={this.onChange}
+                       required/>
+            </div>)
+        } else {
+            return (<></>)
+        }
+    }
 
-    /* File Upload Functions */
+
     onChangeFileUploadHandler = (e) => {
         let file = e.target.files[0];
         if (this.validateFile(e)) {
@@ -264,21 +277,6 @@ export class AddHotel extends Component {
         this.setState({image: URL.createObjectURL(e.target.files[0])})
         return true;
     };
-
-    prePrice() {
-        //todo in api create get_no_prepayment for hotel
-        if (this.state.no_prepayment === 0) {
-            return (<div className="form-group">
-                <Required text="Pre-price"/>
-                <input type="number" className="form-control" name='pre_price'
-                       min="0"
-                       placeholder='Required prepay' defaultValue={this.state.pre_price} onChange={this.onChange}
-                       required/>
-            </div>)
-        } else {
-            return (<></>)
-        }
-    }
 }
 
 export default AddHotel

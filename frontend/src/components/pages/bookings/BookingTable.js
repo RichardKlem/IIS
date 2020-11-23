@@ -190,9 +190,9 @@ class BookingTable extends Component {
                                                 type="number" id="11"
                                                 onKeyUp={this.filterTableColumnFunction}/>
                                         </th>
-                                        <th className="input-width" style={{paddingBottom:"45px"}}>Approved</th>
-                                        <th className="input-width" style={{paddingBottom:"45px"}}>Check-In</th>
-                                        <th style={{paddingBottom:"45px", minWidth: "120px"}}>Check-Out</th>
+                                        <th className="input-width" style={{paddingBottom: "45px"}}>Approved</th>
+                                        <th className="input-width" style={{paddingBottom: "45px"}}>Check-In</th>
+                                        <th style={{paddingBottom: "45px", minWidth: "120px"}}>Check-Out</th>
                                     </tr>
                                     </thead>
                                     <tbody>

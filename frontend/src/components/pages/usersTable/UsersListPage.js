@@ -4,6 +4,7 @@ import Cookies from 'universal-cookie';
 import UsersTable from "./UsersTable";
 
 const cookies = new Cookies();
+let cookieUserID = cookies.get('CookieUserID');
 
 export class UsersListPage extends Component {
 
@@ -11,6 +12,7 @@ export class UsersListPage extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             /* User data */
             name: undefined,
             phone_number: undefined,
@@ -30,7 +32,7 @@ export class UsersListPage extends Component {
     }
 
     componentDidMount() {
-        const cookieUserID = cookies.get('CookieUserID');
+        cookieUserID = cookies.get('CookieUserID');
         if (typeof (cookieUserID) === 'undefined') {
             this.props.history.push('/login');
         } else {
@@ -57,7 +59,16 @@ export class UsersListPage extends Component {
                     this.setState({image: res.data});
                     this.setState({isLoading: false})
                 }
-            );
+            ).catch(() => {
+            this.setState({status: "WARNING: User image not found, please upload new image", isLoadingError: true});
+        });
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        cookieUserID = cookies.get('CookieUserID');
+        if (typeof (cookieUserID) === "undefined") {
+            this.props.history.push('/login');
+        }
     }
 
 
@@ -66,6 +77,10 @@ export class UsersListPage extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (
@@ -76,8 +91,6 @@ export class UsersListPage extends Component {
         }
     }
 
-
-    /* Action for admin user to manipulate with other users' data */
     renderUsersTable() {
         if (this.state.users) {
             return (<UsersTable users={this.state.users}/>);

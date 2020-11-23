@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
+let cookieUserID = cookies.get('CookieUserID');
 
 class BookingPubList extends Component {
 
@@ -11,12 +12,13 @@ class BookingPubList extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             bookings: [],
         }
     }
 
     componentDidMount() {
-        const cookieUserID = cookies.get('CookieUserID');
+        cookieUserID = cookies.get('CookieUserID');
         if (typeof (cookieUserID) === "undefined") {
             this.props.history.push('/login');
         } else {
@@ -26,8 +28,17 @@ class BookingPubList extends Component {
                             this.setState({bookings: res.data});
                             this.setState({isLoading: false})
                         }
-                    );
+                    ).catch(() => {
+                    this.setState({status: "ERROR, please reload page", isLoadingError: true})
+                });
             }
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        cookieUserID = cookies.get('CookieUserID');
+        if (typeof (cookieUserID) === "undefined") {
+            this.props.history.push('/login');
         }
     }
 
@@ -37,6 +48,10 @@ class BookingPubList extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (

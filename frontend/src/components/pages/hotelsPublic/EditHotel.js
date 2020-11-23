@@ -7,14 +7,15 @@ import RoomsList from "../roomsPublic/RoomsList";
 import Required from "../../other/Required";
 
 const cookies = new Cookies();
-const cookieUserID = cookies.get('CookieUserID');
+let cookieUserID = cookies.get('CookieUserID');
 
 export class EditHotel extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            /* User data */
+            isLoadingError: false,
+            /* Hotels data */
             name: undefined,
             address: undefined,
             description: "",
@@ -32,9 +33,8 @@ export class EditHotel extends Component {
             /* File upload variables */
             image: undefined,
             newImageWasUploaded: false,
-            fileUploadErrMsg: undefined,
-            hotelUploadAvailable: true,
-            selectedFile: null,
+            fileUploadErrMsg: '',
+            selectedFile: undefined,
             /* Status */
             status: "",
             /* User */
@@ -45,14 +45,16 @@ export class EditHotel extends Component {
     componentDidMount() {
         const id = window.location.pathname.replace("/editHotel/", "");
         this.setState({hotel_id: id})
+        cookieUserID = cookies.get('CookieUserID');
         if (typeof (cookieUserID) !== "undefined") {
             axios.post('/getUserRole', {CookieUserID: cookieUserID})
                 .then(res => {
                     this.setState({role: res.data.role});
-                });
-
+                }).catch(() => {
+                this.setState({status: "ERROR please log-out and log-in again."});
+            });
             axios.post('/getHotel', {hotel_id: id})
-                .then((res) => {
+                .then(res => {
                     this.setState({
                         name: res.data.name,
                         address: res.data.address,
@@ -68,12 +70,32 @@ export class EditHotel extends Component {
                         spa: res.data.spa ? "true" : "false",
                         swimming_pool: res.data.swimming_pool ? "true" : "false"
                     });
+                    axios.post('/getHotelImage', {hotel_id: id})
+                        .then(res => {
+                            this.setState({image: res.data});
+                            this.setState({isLoading: false});
+                        }).catch(() => {
+                        this.setState({
+                            status: "WARNING: Hotel image not found, please upload new image",
+                            isLoadingError: true
+                        });
+                    });
+                }).catch(() => {
+                this.setState({
+                    status: "ERROR: please reload page or try different hotel." +
+                        "\nIf the issue persists, please contact support!"
                 });
-            axios.post('/getHotelImage', {hotel_id: id})
-                .then(res => {
-                    this.setState({image: res.data});
-                    this.setState({isLoading: false});
-                });
+            });
+        } else {
+            this.setState({status: "ERROR: Please login!"});
+            this.props.history.push('/login');
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        cookieUserID = cookies.get('CookieUserID');
+        if (typeof (cookieUserID) === "undefined") {
+            this.props.history.push('/login');
         }
     }
 
@@ -83,15 +105,19 @@ export class EditHotel extends Component {
             return (
                 <div className="App">Loading...</div>
             );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
+            );
         } else {
             return (
                 <div>
                     <div className="d-flex align-items-center">
-                        <div className="w-100 mx-0">
+                        <div className="w-100">
                             <div>
-                                <div className="text-left py-5">
-                                    <h4>Edit hotel.</h4>
-                                    <h6 className="font-weight-light">Please edit the form underneath </h6>
+                                <div className="text-left">
+                                    <h4>Edit hotel</h4>
+                                    <h6 className="font-weight-light">Please edit the form underneath</h6>
                                     <div className="d-flex">
                                         {this.addHotelPhoto()}
                                     </div>
@@ -108,34 +134,34 @@ export class EditHotel extends Component {
                                                 Description
                                                 <textarea defaultValue={this.state.description} className="form-control"
                                                           name='description' placeholder='Description' rows="4"
-                                                          onChange={this.onChange} />
+                                                          onChange={this.onChange}/>
                                             </div>
                                             <div className="form-group">
                                                 Address
                                                 <input type="text" className="form-control"
                                                        name='address' placeholder='Address'
                                                        defaultValue={this.state.address} onChange={this.onChange}
-                                                       />
+                                                />
                                             </div>
                                             <div className="form-group">
                                                 Phone number
                                                 <input type="tel" className="form-control"
                                                        name='phone_number' placeholder='Phone Number'
                                                        defaultValue={this.state.phone_number} onChange={this.onChange}
-                                                       />
+                                                />
                                             </div>
                                             <div className="form-group">
                                                 Email
                                                 <input type="tel" className="form-control" name='email'
                                                        placeholder="Email" defaultValue={this.state.email}
-                                                       onChange={this.onChange} />
+                                                       onChange={this.onChange}/>
                                             </div>
                                             <div className="form-group">
                                                 Rating
                                                 <input type="number" className="form-control"
                                                        name='rating' placeholder='Rating (0-5 stars)' min="0" max="5"
                                                        defaultValue={this.state.rating} onChange={this.onChange}
-                                                       />
+                                                />
                                             </div>
                                             <div className="form-group">
                                                 Category
@@ -219,11 +245,11 @@ export class EditHotel extends Component {
                                                 </div>
                                             </div>
                                             {this.getSubmitOption()}
-                                            <div className="text-center font-weight-bold">
-                                                {this.state.status}
-                                            </div>
                                         </form>
                                     </fieldset>
+                                    <div className="text-center font-weight-bold">
+                                        {this.state.status}
+                                    </div>
                                     {this.getRoomsList()}
                                 </div>
                             </div>
@@ -244,9 +270,10 @@ export class EditHotel extends Component {
         }
     }
 
-    editHotelHandler = () => {
-            if (this.state.role < 3) {
-                let id_hotel = this.state.hotel_id;
+    editHotelHandler = (e) => {
+        if (this.state.name !== "") {
+            if (this.state.role < 2) {
+                e.preventDefault()
                 axios.post('/editHotel', {
                     hotel_id: this.state.hotel_id,
                     name: this.state.name,
@@ -262,25 +289,25 @@ export class EditHotel extends Component {
                     gym: this.state.gym,
                     spa: this.state.spa,
                     swimming_pool: this.state.swimming_pool
-                })
-                    .then(res => {
-                    })
-                    .catch(err => {
-                        this.setState({status: this.state.status + "\nERROR: Hotel wasn't inserted, please contact support!"});
-                    });
-                if (this.state.image !== undefined && this.state.selectedFile !== null && id_hotel !== null) {
-                    const data = new FormData()
-                    data.append('file', this.state.selectedFile)
-                    axios.post('/uploadHotelImg/' + this.state.hotel_id, data)
-                        .then(() => {
-                        })
-                        .catch(err => {
-                            this.setState({status: this.state.status + "ERROR: Image wasn't uploaded."});
+                }).then(() => {
+                    this.setState({status: "Hotel successfully updated."});
+                    if (this.state.image !== undefined && this.state.selectedFile !== undefined && this.state.newImageWasUploaded) {
+                        const data = new FormData()
+                        data.append('file', this.state.selectedFile)
+                        axios.post('/uploadHotelImg/' + this.state.hotel_id, data)
+                            .then(() => {
+                                this.setState({status: this.state.status + "\nImage successfully uploaded."});
+                            }).catch(() => {
+                            this.setState({status: this.state.status + "\nERROR: Image wasn't uploaded."});
                         });
-                }
+                    }
+                }).catch(() => {
+                    this.setState({status: this.state.status + "\nERROR: Hotel wasn't updated, please try again or contact support!"});
+                });
             } else {
                 this.setState({status: this.state.status + "\nERROR: You don't have required permission to edit a hotel!"});
             }
+        }
     }
 
     getRoomsList = () => {
@@ -289,15 +316,15 @@ export class EditHotel extends Component {
     }
 
     getSubmitOption() {
-        if (this.state.role < 4 && window.location.pathname.startsWith("/editHotel/")) {
+        if (this.state.role < 2 && window.location.pathname.startsWith("/editHotel/")) {
             return (
                 <div className="d-flex padding-bottom-20">
-                    <button style={this.getSubmitButtonStyle()} onClick={this.editHotelHandler}
-                            className="btn btn-block btn-primary padding-10" type="submit">Submit changes
+                    <button onClick={this.editHotelHandler}
+                            className="btn btn-block btn-primary padding-10 d-block" type="submit">Submit changes
                     </button>
                     <div className="padding-10"/>
-                    <Link to="/adminHotels"
-                          className="mr-2 btn btn-block btn-primary btn-warning padding-10">Cancel</Link>
+                    <Link to={"/adminHotels"}
+                          className="mr-2 btn btn-block btn-primary btn-warning padding-10">Back to Hotels List</Link>
                 </div>
             );
         }
@@ -328,20 +355,13 @@ export class EditHotel extends Component {
 
     getImg() {
         if (this.state.newImageWasUploaded === false) {
-            return <img className="item-list-style-img-200" src={`data:image/*;base64,${this.state.image}`} alt=''/>;
+            return (<img className="item-list-style-img-200" src={`data:image/*;base64,${this.state.image}`}
+                         alt='hotel'/>);
         } else {
-            return <img src={this.state.image} alt='' className="item-list-style-img-200"/>;
+            return (<img className="item-list-style-img-200" src={this.state.image} alt='hotel'/>);
         }
     }
 
-    getSubmitButtonStyle = () => {
-        return {
-            display: this.state.hotelUploadAvailable ?
-                'block' : 'none'
-        }
-    }
-
-    /* File Upload Functions */
     onChangeFileUploadHandler = (e) => {
         let file = e.target.files[0];
         if (this.validateFile(e)) {
@@ -352,7 +372,11 @@ export class EditHotel extends Component {
     validateFile = (e) => {
         let file = e.target.files[0];
         if (!file || file.type.split("/")[0] !== "image") {
-            this.setState({selectedFile: undefined, image: undefined, fileUploadErrMsg: 'Please select a photo.'});
+            this.setState({
+                selectedFile: undefined,
+                image: undefined,
+                fileUploadErrMsg: 'Provided file isn\'t a photo. \nPlease select new file!'
+            });
             return false;
         }
         this.setState({image: URL.createObjectURL(e.target.files[0]), newImageWasUploaded: true})

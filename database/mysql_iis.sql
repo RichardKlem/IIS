@@ -95,7 +95,6 @@ create table reservation_table(
     check_in boolean default 0,
     check_out boolean default 0,
 
-
     foreign key (id_room) REFERENCES rooms_table(id_room) on delete cascade,
     foreign key (id_user) REFERENCES uzivatel(id_user) on delete cascade,
     primary key (id_reservation)

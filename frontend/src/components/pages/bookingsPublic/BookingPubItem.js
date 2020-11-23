@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types';
 import {Form} from "react-bootstrap";
 import axios from "axios";
+import {Redirect} from "react-router";
+import moment from "moment";
 
 export class BookingPubItem extends Component {
 
@@ -21,6 +23,7 @@ export class BookingPubItem extends Component {
             check_in: this.props.booking.check_in,
             check_out: this.props.booking.check_out,
             isLoading: true,
+            isBookingOpen: false
         }
     }
 
@@ -79,9 +82,9 @@ export class BookingPubItem extends Component {
                                             <p>Total price: {this.props.booking.total_price} Kč</p>
                                             <p>{this.props.booking.pre_price !== 0 && this.props.booking.approved === 0 ? "Needs to be paid:" + this.props.booking.pre_price + "Kč" : ""}</p>
                                         </div>
-                                        <div>
+                                        <div className="d-flex">
                                             <button className="align-self-center btn btn-danger"
-                                                    onClick={this.removeReservation}>{this.props.booking.free_cancellation === 1 ? "Cancel Reservation (free)" : "Cancel Reservation"}</button>
+                                                    onClick={this.removeReservation}>{this.props.booking.free_cancellation === 1 ? "Cancel Booking (free)" : "Cancel Booking"}</button>
                                         </div>
                                     </div>
                                 </div>
