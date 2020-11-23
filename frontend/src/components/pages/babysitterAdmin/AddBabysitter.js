@@ -21,7 +21,7 @@ export class AddBabysitter extends Component {
             /* File upload variables */
             image: undefined,
             fileUploadErMsg: '',
-            selectedFile: null,
+            selectedFile: undefined,
             /* User */
             role: 5,
         }
@@ -29,66 +29,66 @@ export class AddBabysitter extends Component {
 
 
     render() {
-            return (
-                <div>
-                    <div className="d-flex align-items-center px-0">
-                        <div className="w-100 mx-0">
-                            <div>
-                                <div className="auth-form-light text-left py-5 px-4 px-sm-5">
-                                    <h4>Add new Babysitter</h4>
-                                    <h6 className="font-weight-light">Please fill the form underneath </h6>
-                                    <div className="d-flex">
-                                        {this.addBabysitterPhoto()}
-                                    </div>
-                                    <form className="pt-3" onSubmit={this.AddBabysitterHandler}>
-                                        <div className="form-group">
-                                            <Required text="Name"/>
-                                            <input type="text" className="form-control" name='name'
-                                                   placeholder='Name' defaultValue={this.state.name}
-                                                   onChange={this.onChange} required/>
-                                        </div>
-                                        <div className="form-group">
-                                            <Required text="Age"/>
-                                            <input type="text" className="form-control" name='age'
-                                                   placeholder='Age' defaultValue={this.state.age}
-                                                   onChange={this.onChange} required/>
-                                        </div>
-                                        <div className="form-group">
-                                            <Required text="Phone Number"/>
-                                            <input type="text" className="form-control" name='phone_number'
-                                                   placeholder="Phone Number" defaultValue={this.state.phone_number}
-                                                   onChange={this.onChange} required/>
-                                        </div>
-                                        <div className="form-group">
-                                            Description
-                                            <textarea value={this.state.description} className="form-control"
-                                                      name='description' placeholder='Description' rows="4"
-                                                      onChange={this.onChange}>{this.state.description}</textarea>
-                                        </div>
-                                        <div className="form-group">
-                                            <Required text="Price per hour"/>
-                                            <input type="number" className="form-control"
-                                                   name='price_hour' placeholder='Price per hour'
-                                                   defaultValue={this.state.price_hour} onChange={this.onChange}
-                                                   required/>
-                                        </div>
-                                        <div className="form-group">
-                                            <input
-                                                type="submit"
-                                                value="Add Babysitter"
-                                                className="btn btn-block btn-primary "
-                                            />
-                                        </div>
-                                        <div className="text-center mt-4">
-                                            {this.state.status}
-                                        </div>
-                                    </form>
+        return (
+            <div>
+                <div className="d-flex align-items-center px-0">
+                    <div className="w-100 mx-0">
+                        <div>
+                            <div className="auth-form-light text-left py-5 px-4 px-sm-5">
+                                <h4>Add new Babysitter</h4>
+                                <h6 className="font-weight-light">Please fill the form underneath </h6>
+                                <div className="d-flex">
+                                    {this.addBabysitterPhoto()}
                                 </div>
+                                <form className="pt-3" onSubmit={this.AddBabysitterHandler}>
+                                    <div className="form-group">
+                                        <Required text="Name"/>
+                                        <input type="text" className="form-control" name='name'
+                                               placeholder='Name' defaultValue={this.state.name}
+                                               onChange={this.onChange} required/>
+                                    </div>
+                                    <div className="form-group">
+                                        <Required text="Age"/>
+                                        <input type="text" className="form-control" name='age'
+                                               placeholder='Age' defaultValue={this.state.age}
+                                               onChange={this.onChange} required/>
+                                    </div>
+                                    <div className="form-group">
+                                        <Required text="Phone Number"/>
+                                        <input type="text" className="form-control" name='phone_number'
+                                               placeholder="Phone Number" defaultValue={this.state.phone_number}
+                                               onChange={this.onChange} required/>
+                                    </div>
+                                    <div className="form-group">
+                                        Description
+                                        <textarea value={this.state.description} className="form-control"
+                                                  name='description' placeholder='Description' rows="4"
+                                                  onChange={this.onChange}>{this.state.description}</textarea>
+                                    </div>
+                                    <div className="form-group">
+                                        <Required text="Price per hour"/>
+                                        <input type="number" className="form-control"
+                                               name='price_hour' placeholder='Price per hour'
+                                               defaultValue={this.state.price_hour} onChange={this.onChange}
+                                               required/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input
+                                            type="submit"
+                                            value="Add Babysitter"
+                                            className="btn btn-block btn-primary "
+                                        />
+                                    </div>
+                                    <div className="text-center mt-4">
+                                        {this.state.status}
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            )
+            </div>
+        )
     }
 
     onChange = (e) => this.setState({[e.target.name]: e.target.value});
@@ -118,7 +118,7 @@ export class AddBabysitter extends Component {
                         })
                             .then(res => {
                                 id_babysitter = res.data
-                                if (this.state.image !== undefined || id_babysitter !== null) {
+                                if (this.state.image !== undefined && this.state.selectedFile !== undefined && id_babysitter !== null) {
                                     const data = new FormData()
                                     data.append('file', this.state.selectedFile)
                                     axios.post('/uploadBabysitterImg/' + id_babysitter, data).then(() => {

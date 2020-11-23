@@ -12,6 +12,7 @@ let cookieUserID = cookies.get('CookieUserID');
 export class Header extends Component {
     state = {
         isLoading: true,
+        isLoadingError: false,
         image: null,
         userName: '',
         isOpenLogin: false,
@@ -20,13 +21,16 @@ export class Header extends Component {
     }
 
     componentDidMount() {
+        cookieUserID = cookies.get('CookieUserID');
         if (typeof (cookieUserID) !== 'undefined') {
             axios.post('/account', {CookieUserID: cookieUserID})
                 .then(res => {
                         this.setState({role: res.data.role});
                         this.setState({isLoading: false})
                     }
-                );
+                ).catch(() => {
+                this.setState({isLoadingError: true})
+            });
         } else {
             this.setState({isLoading: false})
         }
@@ -37,6 +41,10 @@ export class Header extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please reload page</div>
             );
         } else {
             return (

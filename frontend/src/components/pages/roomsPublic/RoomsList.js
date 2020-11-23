@@ -15,6 +15,7 @@ export class RoomsList extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             no_prepayment: 0,
             hotel_id: undefined,
             rooms: [],
@@ -34,7 +35,9 @@ export class RoomsList extends Component {
                     this.setState({hotel_id: this.props.hotel_id})
                     this.setState({isLoading: false});
                 }
-            );
+            ).catch(() => {
+            this.setState({status: "ERROR, please reload page", isLoadingError: true})
+        });
     }
 
     render() {
@@ -42,6 +45,10 @@ export class RoomsList extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (
@@ -64,7 +71,8 @@ export class RoomsList extends Component {
                     </div>
                     <div className="border border-gray">
                         {this.state.rooms.length > 0 ? <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
-                                                              start_date={this.state.start_date} end_date={this.state.end_date}/> : "" }
+                                                              start_date={this.state.start_date}
+                                                              end_date={this.state.end_date}/> : ""}
                     </div>
                 </>
             )
@@ -106,8 +114,10 @@ export class RoomsList extends Component {
                     </div>
                     <div className="border border-gray ">
                         {this.state.rooms.length > 0 ? <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
-                                                              start_date={this.state.start_date} end_date={this.state.end_date}
-                                                              adult_count={this.state.adult_count} child_count={this.state.child_count}/> : "" }
+                                                              start_date={this.state.start_date}
+                                                              end_date={this.state.end_date}
+                                                              adult_count={this.state.adult_count}
+                                                              child_count={this.state.child_count}/> : ""}
                     </div>
                 </>
             )

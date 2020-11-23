@@ -27,7 +27,7 @@ export class AddHotel extends Component {
             swimming_pool: false,
             /* File upload variables */
             image: undefined,
-            fileUploadErrMsg: undefined,
+            fileUploadErrMsg: '',
             selectedFile: undefined,
             /* Status */
             status: "",
@@ -59,32 +59,32 @@ export class AddHotel extends Component {
                                         Description
                                         <textarea defaultValue={this.state.description} className="form-control"
                                                   name='description' placeholder='Description' rows="4"
-                                                  onChange={this.onChange} >{this.state.description}</textarea>
+                                                  onChange={this.onChange}>{this.state.description}</textarea>
                                     </div>
                                     <div className="form-group">
                                         Address
                                         <input type="text" className="form-control" name='address'
                                                placeholder='Address' defaultValue={this.state.address}
-                                               onChange={this.onChange} />
+                                               onChange={this.onChange}/>
                                     </div>
                                     <div className="form-group">
                                         Phone number
                                         <input type="tel" className="form-control" name='phone_number'
                                                placeholder='Phone Number'
                                                defaultValue={this.state.phone_number} onChange={this.onChange}
-                                               />
+                                        />
                                     </div>
                                     <div className="form-group">
                                         Email
                                         <input type="tel" className="form-control" name='email'
                                                placeholder="Email" defaultValue={this.state.email}
-                                               onChange={this.onChange} />
+                                               onChange={this.onChange}/>
                                     </div>
                                     <div className="form-group">
                                         Rating
                                         <input type="number" className="form-control" name='rating'
                                                placeholder='Rating (0-5 stars)' min="0" max="5"
-                                               defaultValue={this.state.rating} onChange={this.onChange} />
+                                               defaultValue={this.state.rating} onChange={this.onChange}/>
                                     </div>
                                     <div className="form-group">
                                         Category
@@ -269,7 +269,6 @@ export class AddHotel extends Component {
     }
 
 
-    /* File Upload Functions */
     onChangeFileUploadHandler = (e) => {
         let file = e.target.files[0];
         if (this.validateFile(e)) {

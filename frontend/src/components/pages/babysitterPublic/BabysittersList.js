@@ -11,6 +11,7 @@ export class BabysittersList extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             babysitters: [],
             /* Date */
             start_date: "",
@@ -27,7 +28,9 @@ export class BabysittersList extends Component {
                     this.setState({babysitters: res.data});
                     this.setState({isLoading: false});
                 }
-            );
+            ).catch(() => {
+            this.setState({status: "ERROR, please reload page", isLoadingError: true})
+        });
     }
 
     render() {
@@ -35,6 +38,10 @@ export class BabysittersList extends Component {
         if (isLoading) {
             return (
                 <div className="App">Loading...</div>
+            );
+        } else if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (
@@ -61,7 +68,7 @@ export class BabysittersList extends Component {
                                          start_date={this.state.start_date}
                                          start_time={this.state.start_time}
                                          end_date={this.state.end_date}
-                                         end_time={this.state.end_time}/> : "" }
+                                         end_time={this.state.end_time}/> : ""}
                     </div>
                 </>
             )
@@ -82,7 +89,7 @@ export class BabysittersList extends Component {
                                        min={moment(this.props.location.state.res_start_date).format("YYYY-MM-DD")}
                                        max={this.state.end_date === "" ?
                                            moment(this.props.location.state.res_end_date).format("YYYY-MM-DD")
-                                            :
+                                           :
                                            moment(this.state.end_date).format("YYYY-MM-DD")
                                        }
                                        onChange={this.onChange} required/>
@@ -102,7 +109,7 @@ export class BabysittersList extends Component {
                                        placeholder="End date"
                                        className="width-calc-100 text-center form-control form-control-sm"
                                        type="date"
-                                       min={this.state.start_date === ""  ?
+                                       min={this.state.start_date === "" ?
                                            moment(this.props.location.state.res_start_date).format("YYYY-MM-DD")
                                            :
                                            moment(this.state.start_date).format("YYYY-MM-DD")

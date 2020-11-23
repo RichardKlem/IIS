@@ -93,7 +93,8 @@ export class BookingPubItem extends Component {
                                         </div>
                                         <div className="d-flex">
                                             <button className="align-self-center btn btn-success"
-                                                    onClick={this.reserveBabysitterHandler}>Reserve Babysitter</button>
+                                                    onClick={this.reserveBabysitterHandler}>Reserve Babysitter
+                                            </button>
                                             <div className="padding-10"/>
                                             <button className="align-self-center btn btn-danger"
                                                     onClick={this.removeReservation}>{this.props.booking.free_cancellation === 1 ? "Cancel Booking (free)" : "Cancel Booking"}</button>
@@ -127,7 +128,7 @@ export class BookingPubItem extends Component {
 
     bookBabysitter = () => {
         if (this.state.isBookingOpen) {
-            return(
+            return (
                 <Redirect to={{
                     pathname: "/babysitters",
                     state: {

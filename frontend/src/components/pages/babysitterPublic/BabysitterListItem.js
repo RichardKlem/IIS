@@ -23,7 +23,7 @@ export class BabysitterListItem extends Component {
         axios.post('/getBabysitterImg', {id_babysitter: this.props.babysitter.id_babysitter})
             .then(res => {
                     this.setState({image: res.data});
-                    if (window.location.pathname.startsWith("/babysitters")){
+                    if (window.location.pathname.startsWith("/babysitters")) {
                         this.checkAvailability();
                     }
                     this.setState({isLoading: false})
@@ -71,7 +71,7 @@ export class BabysitterListItem extends Component {
                                     </Form.Group>
                                     <div className="d-flex justify-content-between">
                                         <div className="line-height-sm">
-                                            <p>{(this.props.start_date !== "" && this.props.end_date !== "") ?  "Price per hour: " + this.props.babysitter.price_hour + "Kč" : "" }</p>
+                                            <p>{(this.props.start_date !== "" && this.props.end_date !== "") ? "Price per hour: " + this.props.babysitter.price_hour + "Kč" : ""}</p>
                                         </div>
                                         {this.setUrl()}
                                     </div>
@@ -87,15 +87,22 @@ export class BabysitterListItem extends Component {
     setUrl() {
         if (window.location.pathname === "/babysitters") {
             if (this.calculateHours() < 1) {
-                return(<button className="align-self-center btn btn-primary btn-danger" disabled>Please select VALID dates and times</button>)
+                return (
+                    <button className="align-self-center btn btn-primary btn-danger" disabled>Please select VALID dates
+                        and times</button>)
             } else if (this.calculateHours() > 24) {
-                return(<button className="align-self-center btn btn-primary btn-danger" disabled>Maximum babysitting time (24 Hours) exceeded</button>)
+                return (
+                    <button className="align-self-center btn btn-primary btn-danger" disabled>Maximum babysitting time
+                        (24 Hours) exceeded</button>)
             } else if (this.props.start_date === "" || this.props.start_time === "" ||
-                this.props.end_date === "" || this.props.end_time === "" ) {
-                return(<button className="align-self-center btn btn-primary btn-warning" disabled>Please choose dates and times</button>)
+                this.props.end_date === "" || this.props.end_time === "") {
+                return (
+                    <button className="align-self-center btn btn-primary btn-warning" disabled>Please choose dates and
+                        times</button>)
             } else {
                 return (
-                    <button className="align-self-center btn btn-primary" onClick={this.reserveBabysitter}>Reserve babysitter for {this.calculateHours()} hour(s) for {this.calculatePrice()} </button>)
+                    <button className="align-self-center btn btn-primary" onClick={this.reserveBabysitter}>Reserve
+                        babysitter for {this.calculateHours()} hour(s) for {this.calculatePrice()} </button>)
             }
 
         } else {
@@ -121,7 +128,7 @@ export class BabysitterListItem extends Component {
 
 
     calculateHours() {
-        const start_date = new Date(this.props.start_date + " " +  this.props.start_time);
+        const start_date = new Date(this.props.start_date + " " + this.props.start_time);
         const end_date = new Date(this.props.end_date + " " + this.props.end_time);
         return Math.ceil((end_date.getTime() - start_date.getTime()) / (100000 * 36))
     }
@@ -131,7 +138,7 @@ export class BabysitterListItem extends Component {
             axios.post('/checkDatesBabysitters', {
                 id_babysitter: this.props.babysitter.id_babysitter,
                 start_date: this.props.start_date + " " + this.props.start_time + ":00",
-                end_date: this.props.end_date  + " " + this.props.end_date + ":00",
+                end_date: this.props.end_date + " " + this.props.end_date + ":00",
             })
                 .then(res => {
                     this.setState({isAvailable: res.data.available})
@@ -154,7 +161,7 @@ export class BabysitterListItem extends Component {
                     babysitter: this.props.babysitter.id_babysitter,
                     reservation: this.props.id_reservation,
                     start_date: this.props.start_date + " " + this.props.start_time + ":00",
-                    end_date: this.props.end_date  + " " + this.props.end_time + ":00",
+                    end_date: this.props.end_date + " " + this.props.end_time + ":00",
                     total_price: this.calculateHours() * this.props.babysitter.price_hour,
                 }
             ).then(res => {

@@ -96,7 +96,7 @@ export class RoomListItem extends Component {
                                         <div className="line-height-sm">
                                             <p className="color-green">{this.props.room.free_breakfast === 1 ? "Offered with free breakfast" : ""}</p>
                                             <p>Beds count: {this.props.room.bed_count}</p>
-                                            <p>{(this.props.start_date !== "" && this.props.end_date !== "") ?  "Price per night: " + this.props.room.price_night + "Kč" : "" }</p>
+                                            <p>{(this.props.start_date !== "" && this.props.end_date !== "") ? "Price per night: " + this.props.room.price_night + "Kč" : ""}</p>
                                             <p>{this.props.room.pre_price === 0 ? "" : "Pre-price per night: " + this.props.room.pre_price + "Kč"}</p>
                                             {this.prepaymentFields()}
                                         </div>
@@ -121,7 +121,8 @@ export class RoomListItem extends Component {
                     <p>{
                         (this.props.start_date !== "" && this.props.end_date !== "") ?
                             "Price for  " + this.props.room_count.toString() + " room(s) for " + this.calculateNights() + " night(s): " + this.calculatePrice() : "Please select date of your stay to see price."}</p>
-                    {this.props.start_date !== "" && this.props.end_date !== "" ? <button className="btn btn-primary mr-2" onClick={this.handleBookingPopUp}>Reserve</button>:
+                    {this.props.start_date !== "" && this.props.end_date !== "" ?
+                        <button className="btn btn-primary mr-2" onClick={this.handleBookingPopUp}>Reserve</button> :
                         <button className="btn btn-primary btn-warning mr-2" disabled>Please select date</button>}
 
                 </div>
@@ -267,7 +268,7 @@ export class RoomListItem extends Component {
                             </div>
                             <div>
                                 <button className="btn btn-primary mr-2"
-                                        onClick={this.reservationHandle}>{this.props.no_prepayment === 1 ? (typeof cookieUserID !== "undefined" ? "Book" : "Register & Book") : (typeof cookieUserID !== "undefined" ? "Book (pay: " + this.calculatePrePrice() +")" : "Register & Book (pay: " + this.calculatePrePrice() + ")")}</button>
+                                        onClick={this.reservationHandle}>{this.props.no_prepayment === 1 ? (typeof cookieUserID !== "undefined" ? "Book" : "Register & Book") : (typeof cookieUserID !== "undefined" ? "Book (pay: " + this.calculatePrePrice() + ")" : "Register & Book (pay: " + this.calculatePrePrice() + ")")}</button>
                             </div>
                         </div>
                     </div>
