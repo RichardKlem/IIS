@@ -1,4 +1,4 @@
-use myDB;
+use ituDB;
 
 drop table if exists reservation_table;
 drop table if exists rooms_table;
@@ -80,11 +80,25 @@ create table rooms_table(
     primary key (id_room)
 );
 
+
+create table babysitter_table(
+    id_babysitter int auto_increment,
+    name TEXT not null,
+    phone_number TEXT not null,
+    age int default 18,
+    description TEXT default null,
+    price_hour int not null,
+
+    primary key (id_babysitter)
+);
+
+insert into babysitter_table(name, phone_number, age, description, price_hour)
+values ("Bára", "+420000000000", 20, "studentka", 250);
+
 create table reservation_table(
     id_reservation int auto_increment,
     id_user int not null,
     id_room int not null,
-    id_approved_by int,
     start_date date not null,
     end_date date not null,
     adult_count int default 1,
@@ -96,11 +110,22 @@ create table reservation_table(
     check_in boolean default 0,
     check_out boolean default 0,
 
-
     foreign key (id_room) REFERENCES rooms_table(id_room) on delete cascade,
     foreign key (id_user) REFERENCES uzivatel(id_user) on delete cascade,
-    foreign key (id_approved_by) REFERENCES uzivatel(id_user) on delete cascade,
     primary key (id_reservation)
+);
+
+create table babysitting_table(
+    id_babysitting int auto_increment,
+    reservation int,
+    babysitter int,
+    start_date datetime not null,
+    end_date datetime not null,
+    total_price int not null,
+
+    foreign key (babysitter) REFERENCES babysitter_table(id_babysitter) on delete cascade,
+    foreign key (reservation) REFERENCES reservation_table(id_reservation) on delete cascade,
+    primary key (id_babysitting)
 );
 
 
@@ -136,13 +161,13 @@ DELIMITER ;
 
 # auto delete sessions
 SET GLOBAL event_scheduler = ON;
-CREATE EVENT IF NOT EXISTS myDB.sessionsHandler
+CREATE EVENT IF NOT EXISTS ituDB.sessionsHandler
 ON SCHEDULE
 EVERY 2 HOUR
 COMMENT 'Delete active sessions every 2 hours'
 DO
 BEGIN
-DELETE FROM myDB.session_table WHERE (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timestamp)) > 7200;
+DELETE FROM ituDB.session_table WHERE (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timestamp)) > 7200;
 END;
 
 #Test data

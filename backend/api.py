@@ -11,7 +11,7 @@ import sys
 
 from backend import FLASK_HOST
 from backend.databaseConnector import Connector
-from backend.iisUtils import (
+from backend.ituUtils import (
     verify_password,
     random_uuid,
     save_image,
@@ -27,7 +27,7 @@ from backend.iisUtils import (
     HOTELS_PATH,
     IMG_EXTENSION,
     DEFAULT_IMG,
-    USERS_PATH, update_user,
+    USERS_PATH, update_user, BABYSITTERS_PATH, check_babysitter_availability,
 )
 
 app = Flask(__name__)
@@ -473,8 +473,8 @@ def register_before_booking(data, register):
             if register:
                 register_password(id_user, data.get("password"))
             calculate_price_and_book(data, id_user)
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            print(ex)
             return jsonify(
                 {"status": "Booking Failed, please contact support", "statusCode": 500}
             )
@@ -616,6 +616,118 @@ def search_hotel():
         return jsonify({"available": True})
     else:
         return jsonify({"available": False})
+
+
+@app.route("/getBabysitters", methods=["GET"])
+def get_babysitters():
+    query = (
+        f'SELECT * FROM babysitter_table '
+    )
+    return jsonify(Connector().query(query))
+
+
+@app.route("/getBabysitter", methods=["POST"])
+def get_babysitter():
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = (
+        f'SELECT * FROM babysitter_table '
+        f'WHERE id_babysitter = {data.get("id_babysitter")}'
+    )
+    return jsonify(Connector().query(query)[0])
+
+
+@app.route("/addBabysitter", methods=["POST"])
+def add_babysitter():
+    db = Connector()
+    data = json.loads(request.get_data().decode("utf-8"))
+    age = 18
+    if data.get("age") is not None:
+        age = data.get("age")
+    query = (
+        f"INSERT INTO babysitter_table"
+        f"(name, phone_number, age, description, price_hour) "
+        f'VALUES ("{data.get("name")}", "{data.get("phone_number")}", "{age}", '
+        f'"{data.get("description")}", "{data.get("price_hour")}");'
+    )
+    db.query(query, expecting_result=False, disconnect=False)
+    return jsonify(str(db.get_last_row_id()))
+
+
+@app.route("/removeBabysitter", methods=["POST"])
+def remove_babysitter():
+    data = json.loads(request.get_data().decode("utf-8"))
+    img_file = BABYSITTERS_PATH + str(data.get("id_babysitter")) + IMG_EXTENSION
+    if os.path.exists(img_file):
+        os.remove(img_file)
+    query = f'DELETE FROM babysitter_table WHERE id_babysitter = "{data.get("id_babysitter")}";'
+    return jsonify(Connector().query(query, expecting_result=False))
+
+
+@app.route("/editBabysitter", methods=["POST"])
+def edit_babysitter():
+    data = json.loads(request.get_data().decode("utf-8"))
+    age = 18
+    if data.get("age") is not None:
+        age = data.get("age")
+    query = (
+        f"UPDATE babysitter_table "
+        f'SET name = "{data.get("name")}", '
+        f'description = "{data.get("description")}", '
+        f'phone_number = "{data.get("phone_number")}", '
+        f'age = "{age}", '
+        f'price_hour = "{data.get("price_hour")}" '
+        f'WHERE (id_babysitter = "{data.get("id_babysitter")}");'
+    )
+    Connector().query(query, expecting_result=False)
+    return jsonify("OK")
+
+
+@app.route("/getBabysitterImg", methods=["POST"])
+def get_babysitter_img():
+    data = json.loads(request.get_data().decode("utf-8"))
+    img_file = BABYSITTERS_PATH + str(data.get("id_babysitter")) + IMG_EXTENSION
+    if not os.path.isfile(img_file):
+        img_file = DEFAULT_IMG
+    with open(img_file, "rb") as f:
+        im_b64 = base64.b64encode(f.read())
+    return im_b64
+
+
+@app.route("/uploadBabysitterImg/<id_babysitter>", methods=["POST"])
+def upload_babysitter_image(id_babysitter):
+    file = request.files["file"]
+    if file:
+        save_image(file, id_babysitter=id_babysitter)
+    return jsonify("ok")
+
+
+@app.route("/checkDatesBabysitters", methods=["POST"])
+def check_dates_babysitter():
+    data = json.loads(request.get_data().decode("utf-8"))
+    return jsonify({"available": check_babysitter_availability(data.get("id_babysitter"), data.get("start_date"), data.get("end_date"))})
+
+
+@app.route("/bookBabysitter", methods=["POST"])
+def book_babysitter():
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = (
+        f"INSERT INTO babysitting_table (reservation, babysitter, start_date, end_date, total_price) "
+        f'VALUES ({data.get("reservation")}, "{data.get("babysitter")}", "{data.get("start_date")}", '
+        f'"{data.get("end_date")}", {data.get("total_price")});'
+    )
+    Connector().query(query, expecting_result=False, disconnect=False)
+    return jsonify({"status": "Babysitter booked successfully","statusCode": 200})
+
+
+@app.route("/checkBabysitterOnBooking", methods=["POST"])
+def check_babysitter_on_booking():
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = (
+        f'SELECT * FROM babysitting_table JOIN babysitter_table '
+        f'WHERE babysitting_table.reservation = {data.get("id_reservation")} '
+        f'AND babysitting_table.babysitter = babysitter_table.id_babysitter;'
+    )
+    return jsonify(Connector().query(query))
 
 
 if __name__ == "__main__":

@@ -19,6 +19,9 @@ import OpenHotel from "./components/pages/hotelsPublic/OpenHotel";
 import OpenRoom from "./components/pages/roomsPublic/OpenRoom";
 import BookingPubList from "./components/pages/bookingsPublic/BookingPubList";
 import UsersListPage from "./components/pages/usersTable/UsersListPage";
+import BabysittersList from "./components/pages/babysitterPublic/BabysittersList";
+import EditBabysitter from "./components/pages/babysitterPublic/EditBabysitter";
+import AddBabysitter from "./components/pages/babysitterAdmin/AddBabysitter";
 
 class App extends Component {
 
@@ -30,19 +33,23 @@ class App extends Component {
                         <Header/>
                         <Switch>
                             <Route exact path="/" component={HotelsList}/>
-                            <Route exact path="/login" component={LoginPage}/>
-                            <Route exact path="/registration" component={RegistrationPage}/>
-                            <Route exact path="/account" component={Account}/>
-                            <Route exact path="/admin" component={UsersListPage}/>
                             <Route exact path="/adminHotels" component={HotelsList}/>
-                            <Route exact path="/adminBookings" component={BookingTable}/>
                             <Route exact path="/addHotel" component={AddHotel}/>
                             <Route exact path="/editHotel/:id" component={EditHotel}/>
                             <Route exact path="/hotel/:id" component={OpenHotel}/>
                             <Route exact path="/addRoom/:id" component={AddRoom}/>
                             <Route exact path="/editRoom/:id" component={EditRoom}/>
                             <Route exact path="/room/:id" component={OpenRoom}/>
+                            <Route exact path="/adminBabysitters" component={BabysittersList}/>
+                            <Route exact path="/babysitters" component={BabysittersList}/>
+                            <Route exact path="/addBabysitter" component={AddBabysitter}/>
+                            <Route exact path="/editBabysitter/:id" component={EditBabysitter}/>
                             <Route exact path="/bookings" component={BookingPubList}/>
+                            <Route exact path="/adminBookings" component={BookingTable}/>
+                            <Route exact path="/admin" component={UsersListPage}/>
+                            <Route exact path="/account" component={Account}/>
+                            <Route exact path="/login" component={LoginPage}/>
+                            <Route exact path="/registration" component={RegistrationPage}/>
                         </Switch>
                     </div>
                 </div>

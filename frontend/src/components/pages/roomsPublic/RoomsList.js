@@ -105,9 +105,9 @@ export class RoomsList extends Component {
                         </div>
                     </div>
                     <div className="border border-gray ">
-                        <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
-                               start_date={this.state.start_date} end_date={this.state.end_date}
-                               adult_count={this.state.adult_count} child_count={this.state.child_count}/>
+                        {this.state.rooms.length > 0 ? <Rooms rooms={this.state.rooms} hotel_id={this.state.hotel_id}
+                                                              start_date={this.state.start_date} end_date={this.state.end_date}
+                                                              adult_count={this.state.adult_count} child_count={this.state.child_count}/> : "" }
                     </div>
                 </>
             )

@@ -168,6 +168,9 @@ export class Header extends Component {
                     <Dropdown.Item as={Link} to={'/admin'}>
                         Manage Users
                     </Dropdown.Item>
+                    <Dropdown.Item as={Link} to={'/adminBabysitters'}>
+                        Manage Babysitters
+                    </Dropdown.Item>
                     <Dropdown.Item as={Link} to={'/adminHotels'}>
                         Manage Hotels
                     </Dropdown.Item>
@@ -180,6 +183,9 @@ export class Header extends Component {
         } else if (this.state.role === 1) {
             return (
                 <>
+                    <Dropdown.Item as={Link} to={'/adminBabysitters'}>
+                        Manage Babysitters
+                    </Dropdown.Item>
                     <Dropdown.Item as={Link} to={'/adminHotels'}>
                         Manage Hotels
                     </Dropdown.Item>
@@ -191,9 +197,15 @@ export class Header extends Component {
 
         } else if (this.state.role === 2) {
             return (
-                <Dropdown.Item as={Link} to={'/adminBookings'}>
-                    Manage Bookings
-                </Dropdown.Item>)
+                <>
+                    <Dropdown.Item as={Link} to={'/adminBabysitters'}>
+                        Manage Babysitters
+                    </Dropdown.Item>
+                    <Dropdown.Item as={Link} to={'/adminBookings'}>
+                        Manage Bookings
+                    </Dropdown.Item>
+                </>
+            )
         }
     }
 }

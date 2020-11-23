@@ -10,7 +10,8 @@ from backend.databaseConnector import Connector
 
 HOTELS_PATH = os.getcwd() + "/static/hotels/"
 USERS_PATH = os.getcwd() + "/static/users/"
-DEFAULT_IMG = os.getcwd() + "/static/hotels/0/default.png"
+BABYSITTERS_PATH = os.getcwd() + "/static/babysitters/"
+DEFAULT_IMG = os.getcwd() + "/static/default.png"
 IMG_EXTENSION = ".jpg"
 IMG_FORMAT = "JPEG"
 COLOR_FILTER = "RGB"
@@ -39,16 +40,18 @@ def random_uuid():
     return str(uuid.uuid1())
 
 
-def save_image(file, hotel_id=None, room_id=None, user_id=None):
+def save_image(file, hotel_id=None, room_id=None, user_id=None, id_babysitter=None):
     im = Image.open(file)
     im.thumbnail(IMG_SIZE, Image.ANTIALIAS)
     im = im.convert(COLOR_FILTER)
     if room_id:
-        path = HOTELS_PATH + hotel_id + "/" + room_id
+        path = HOTELS_PATH + str(hotel_id) + "/" + str(room_id)
     elif user_id:
-        path = USERS_PATH + user_id
+        path = USERS_PATH + str(user_id)
+    elif id_babysitter:
+        path = BABYSITTERS_PATH + str(id_babysitter)
     else:
-        path = HOTELS_PATH + hotel_id
+        path = HOTELS_PATH + str(hotel_id)
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 
@@ -75,6 +78,23 @@ def get_room_reservation_count(id_room, start_date, end_date):
     for reservation in reservations:
         r_rooms_count = r_rooms_count + reservation["room_count"]
     return int(r_rooms_count)
+
+
+def check_babysitter_availability(id_babysitter, start_date, end_date):
+    if not id_babysitter or not start_date or not end_date:
+        return False
+    query = (
+        f'SELECT babysitting_table.id_babysitting FROM babysitting_table WHERE '
+        f'(babysitting_table.babysitter = "{id_babysitter}") AND '
+        f'(babysitting_table.start_date BETWEEN "{start_date}" AND "{end_date}" OR '
+        f'babysitting_table.end_date BETWEEN "{start_date}" AND "{end_date}" OR '
+        f'"{start_date}" BETWEEN babysitting_table.start_date AND babysitting_table.end_date);'
+    )
+    available = Connector().query(query)
+    if not available:
+        return True
+    else:
+        return False
 
 
 def get_total_room_count(id_room):

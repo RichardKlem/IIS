@@ -1,5 +1,5 @@
 AUTH_PLUGIN = "mysql_native_password"
-DATABASE = "myDB"
+DATABASE = "ituDB"
 HOST = "93.153.43.141"
 PASSWORD = "rootRemote"
 USER = "rootRemote"
