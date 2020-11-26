@@ -12,6 +12,7 @@ export class HotelsList extends Component {
             isLoadingError: false,
             hotels: [],
             orig_hotels: [],
+            main_hotels: [],
             /* Filter */
             filter: '',
             start_date: '',
@@ -69,6 +70,7 @@ export class HotelsList extends Component {
                 .then(res => {
                         this.setState({hotels: res.data});
                         this.setState({orig_hotels: res.data})
+                        this.setState({main_hotels: res.data})
                         this.setState({isLoading: false});
                     }
                 ).catch(() => {
@@ -103,9 +105,10 @@ export class HotelsList extends Component {
 
     searchHotel = async (e) => {
         e.preventDefault();
+        let resHotel = await axios.get('/getHotels', {})
         let new_hotels;
         new_hotels = []
-        for (const hotel of this.state.hotels) {
+        for (const hotel of resHotel.data) {
             let res = await axios.post('/searchHotels', {
                 hotel_id: hotel.hotel_id,
                 adult_count: this.state.adult_count,
@@ -113,10 +116,12 @@ export class HotelsList extends Component {
                 end_date: this.state.end_date
             })
             if (res.data.available === true) {
-                if (this.state.filter !== '' && (hotel.name.toUpperCase().includes(this.state.filter.toUpperCase()) || hotel.address.toUpperCase().includes(this.state.filter.toUpperCase()))) {
+                if (this.state.filter === '') {
                     new_hotels.push(hotel)
-                } else if (this.state.filter === '') {
-                    new_hotels.push(hotel)
+                } else {
+                    if (hotel.name.toUpperCase().includes(this.state.filter.toUpperCase()) || hotel.address.toUpperCase().includes(this.state.filter.toUpperCase())) {
+                        new_hotels.push(hotel)
+                    }
                 }
                 this.setState({searched: true})
             }
@@ -245,6 +250,7 @@ export class HotelsList extends Component {
                     <Sidebar
                         state={this.state}
                         filter={this.state.filter}
+                        searched={this.state.searched}
                         searchHotel={this.searchHotel}
                         onChangeCheckbox={this.onChangeCheckbox}
                         filterHotel={this.filterHotel}

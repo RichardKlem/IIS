@@ -39,7 +39,7 @@ export class HotelListItem extends Component {
             );
         } else {
             return (
-                <div className="card padding-10">
+                <div className="card padding-10 card-width-700">
                     <div className="border d-flex">
                         <div className="item-list-style">
                             <Link to={{

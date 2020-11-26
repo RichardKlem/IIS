@@ -65,6 +65,7 @@ class Sidebar extends Component {
                         </div>
                     </form>
                     <hr className="horizontal-line"/>
+                    {this.props.searched === true ?
                     <form onSubmit={this.props.filterHotel}>
                         <h4 className="text-center">Filter</h4>
                         <div className="form-group font-weight-light">
@@ -296,7 +297,7 @@ class Sidebar extends Component {
                                 className="btn btn-block btn-primary"
                             />
                         </div>
-                    </form>
+                    </form> : <></> }
                 </div>
             </div>
         )
