@@ -49,8 +49,12 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None):
         path = USERS_PATH + str(user_id)
     else:
         path = HOTELS_PATH + str(hotel_id)
-    if not os.path.isdir(path.split["/"][:-1]):
-        os.makedirs(path.split["/"][:-1])
+    
+    folder_path = ""
+    for folder in path.split("/")[:-1]:
+        folder_path = folder_path + "/" + folder
+    if not os.path.isdir(folder_path):
+        os.makedirs(folder_path)
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 
