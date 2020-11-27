@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from "axios";
 import Cookies from 'universal-cookie';
 import Required from "../../other/Required";
 
 const cookies = new Cookies();
-let cookieUserID = cookies.get('CookieUserID');
 
 export class LoginPage extends Component {
 

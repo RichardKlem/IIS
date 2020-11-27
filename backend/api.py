@@ -333,7 +333,6 @@ def edit_hotel():
     rating = 0
     if data.get("rating") is not None:
         rating = data.get("rating")
-    print(data.get("is_available"))
     query = (
         f"UPDATE hotels_table "
         f'SET name = "{data.get("name")}", '
@@ -665,10 +664,8 @@ def search_hotel():
         if total_room_count >= reserved_rooms_count + wanted_room_count:
             hotel_available = True
     if hotel_available:
-        print("tu")
         return jsonify({"available": True})
     else:
-        print("tu2")
         return jsonify({"available": False})
 
 
