@@ -225,7 +225,8 @@ def get_role():
 def get_hotel_by_id():
     query = (
         f"SELECT hotels_table.*, MIN(rooms_table.price_night) AS price_night FROM "
-        f"hotels_table JOIN rooms_table WHERE hotels_table.hotel_id = rooms_table.hotel_id "
+        f"hotels_table JOIN rooms_table WHERE hotels_table.hotel_id = rooms_table.hotel_id AND "
+        f"hotels_table.is_available = 1 and rooms_table.is_available = 1 "
         f"GROUP BY hotels_table.hotel_id;"
     )
     hotels = Connector().query(query)
@@ -269,11 +270,33 @@ def get_hotel_image():
 @app.route("/removeHotel", methods=["POST"])
 def remove_hotel():
     data = json.loads(request.get_data().decode("utf-8"))
-    img_file = HOTELS_PATH + data.get("hotel_id") + IMG_EXTENSION
+    img_file = HOTELS_PATH + str(data.get("hotel_id")) + IMG_EXTENSION
     if os.path.exists(img_file):
         os.remove(img_file)
     query = f'DELETE FROM hotels_table WHERE hotel_id = "{data.get("hotel_id")}";'
     return jsonify(Connector().query(query, expecting_result=False))
+
+
+@app.route("/isHotelReserved", methods=["POST"])
+def is_hotel_reserved():
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = f'SELECT reservation_table.* FROM reservation_table JOIN rooms_table ON reservation_table.id_room = rooms_table.id_room JOIN hotels_table ON rooms_table.hotel_id = hotels_table.hotel_id WHERE hotels_table.hotel_id = "{data.get("hotel_id")}" AND reservation_table.end_date > NOW();'
+    reserved = Connector().query(query)
+    if not reserved:
+        return jsonify({"status": False})
+    else:
+        return jsonify({"status": True})
+
+
+@app.route("/isRoomReserved", methods=["POST"])
+def is_room_reserved():
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = f'SELECT reservation_table.* FROM reservation_table JOIN rooms_table ON reservation_table.id_room = rooms_table.id_room WHERE rooms_table.hotel_id = "{data.get("id_room")}" AND reservation_table.end_date > NOW();'
+    reserved = Connector().query(query)
+    if not reserved:
+        return jsonify({"status": False})
+    else:
+        return jsonify({"status": True})
 
 
 @app.route("/addHotel", methods=["POST"])
@@ -286,11 +309,11 @@ def add_hotel():
     query = (
         f"INSERT INTO hotels_table "
         f"(name, description, category, address, email, phone_number, rating, free_cancellation, no_prepayment, "
-        f"free_wifi, gym, spa, swimming_pool) "
+        f"free_wifi, gym, spa, swimming_pool, is_available) "
         f'VALUES ("{data.get("name")}", "{data.get("description")}", "{data.get("category")}", '
         f'"{data.get("address")}", "{data.get("email")}", "{data.get("phone_number")}", '
         f'{rating}, {data.get("free_cancellation")}, {data.get("no_prepayment")}, '
-        f'{data.get("free_wifi")}, {data.get("gym")}, {data.get("spa")}, {data.get("swimming_pool")});'
+        f'{data.get("free_wifi")}, {data.get("gym")}, {data.get("spa")}, {data.get("swimming_pool")}, {data.get("is_available")});'
     )
     db.query(query, expecting_result=False, disconnect=False)
     return jsonify(str(db.get_last_row_id()))
@@ -310,7 +333,7 @@ def edit_hotel():
     rating = 0
     if data.get("rating") is not None:
         rating = data.get("rating")
-
+    print(data.get("is_available"))
     query = (
         f"UPDATE hotels_table "
         f'SET name = "{data.get("name")}", '
@@ -325,7 +348,8 @@ def edit_hotel():
         f'free_wifi = {data.get("free_wifi")}, '
         f'gym = {data.get("gym")}, '
         f'spa = {data.get("spa")}, '
-        f'swimming_pool = {data.get("swimming_pool")} '
+        f'swimming_pool = {data.get("swimming_pool")}, '
+        f'is_available = {data.get("is_available")} '
         f'WHERE (hotel_id = "{data.get("hotel_id")}");'
     )
     Connector().query(query, expecting_result=False)
@@ -334,6 +358,17 @@ def edit_hotel():
 
 @app.route("/getHotelRooms", methods=["POST"])
 def get_room_by_hotel_id():
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = f'SELECT * FROM rooms_table WHERE rooms_table.hotel_id = "{data.get("hotel_id")}" and rooms_table.is_available = 1;'
+    rooms = Connector().query(query)
+    for room in rooms:
+        for key in room:
+            room[key] = sanitize_string(room[key])
+    return jsonify(rooms)
+
+
+@app.route("/getHotelRoomsAdmin", methods=["POST"])
+def get_room_by_hotel_id_admin():
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT * FROM rooms_table WHERE rooms_table.hotel_id = "{data.get("hotel_id")}";'
     rooms = Connector().query(query)
@@ -393,10 +428,11 @@ def add_room():
         room_size = data.get("room_size")
     query = (
         f"INSERT INTO rooms_table (hotel_id, name, bed_count, category, description, room_size, "
-        f"price_night, bed_type, free_breakfast, count, pre_price) "
+        f"price_night, bed_type, free_breakfast, is_available, count, pre_price) "
         f'VALUES ({data.get("hotel_id")}, "{data.get("name")}", "{data.get("bed_count")}", '
         f'"{data.get("category")}", "{data.get("description")}", "{room_size}", '
-        f'"{data.get("price_night")}", "{data.get("bed_type")}", {data.get("free_breakfast")}, '
+        f'"{data.get("price_night")}", "{data.get("bed_type")}", "{data.get("free_breakfast")}", '
+        f'"{data.get("is_available")}", '
         f'"{data.get("count")}", {data.get("pre_price")});'
     )
     db.query(query, expecting_result=False, disconnect=False)
@@ -425,6 +461,7 @@ def edit_room():
         f'room_size = "{data.get("room_size")}", '
         f'price_night = "{data.get("price_night")}", '
         f'free_breakfast = "{data.get("free_breakfast")}", '
+        f'is_available = "{data.get("is_available")}", '
         f'pre_price = "{data.get("pre_price")}" '
         f'WHERE (id_room = "{data.get("id_room")}");'
     )
@@ -510,9 +547,9 @@ def calculate_price_and_book(data, id_user):
     )
     query = (
         f"INSERT INTO reservation_table (id_user, id_room, start_date, end_date, "
-        f"adult_count, child_count, room_count, total_price, approved, pre_price) "
+        f"adult_count, room_count, total_price, approved, pre_price) "
         f'VALUES ({id_user}, {data.get("id_room")}, "{data.get("start_date")}", "{data.get("end_date")}", '
-        f'{data.get("adult_count")}, {data.get("child_count")}, {data.get("room_count")}, {total_price}, '
+        f'{data.get("adult_count")}, {data.get("room_count")}, {total_price}, '
         f'{data.get("approved")}, {total_pre_price});'
     )
     db.query(query, expecting_result=False, disconnect=False)
@@ -525,7 +562,7 @@ def get_bookings():
         data = json.loads(request.get_data().decode("utf-8"))
         # quotes around session_key are required!
         query = (
-            f"SELECT hotels_table.free_cancellation, uzivatel.*, reservation_table.*, "
+            f"SELECT hotels_table.hotel_id, hotels_table.free_cancellation, uzivatel.*, reservation_table.*, "
             f"rooms_table.name as room_name, hotels_table.name as hotel_name "
             f"FROM session_table NATURAL JOIN uzivatel NATURAL JOIN reservation_table "
             f"JOIN rooms_table ON reservation_table.id_room=rooms_table.id_room "
@@ -603,10 +640,20 @@ def check_dates():
 @app.route("/searchHotels", methods=["POST"])
 def search_hotel():
     data = json.loads(request.get_data().decode("utf-8"))
-    query = (
-        f"SELECT rooms_table.id_room, rooms_table.bed_count FROM hotels_table JOIN rooms_table "
-        f'WHERE "{data.get("hotel_id")}" = rooms_table.hotel_id;'
-    )
+    if data.get("filter") == "":
+        query = (
+            f"SELECT rooms_table.id_room, rooms_table.bed_count FROM "
+            f"hotels_table JOIN rooms_table ON hotels_table.hotel_id = rooms_table.hotel_id "
+            f'WHERE rooms_table.hotel_id = "{data.get("hotel_id")}";'
+        )
+    else:
+        query = (
+            f"SELECT hotels_table.name, rooms_table.id_room, rooms_table.bed_count FROM "
+            f"hotels_table JOIN rooms_table ON hotels_table.hotel_id = rooms_table.hotel_id "
+            f'WHERE rooms_table.hotel_id = "{data.get("hotel_id")}" AND (LOWER(hotels_table.name) '
+            f'LIKE LOWER("%{data.get("filter")}%") OR LOWER(hotels_table.address) '
+            f'LIKE LOWER("%{data.get("filter")}%"));'
+        )
     rooms = Connector().query(query)
     hotel_available = False
     for count, room in enumerate(rooms):
@@ -618,8 +665,10 @@ def search_hotel():
         if total_room_count >= reserved_rooms_count + wanted_room_count:
             hotel_available = True
     if hotel_available:
+        print("tu")
         return jsonify({"available": True})
     else:
+        print("tu2")
         return jsonify({"available": False})
 
 

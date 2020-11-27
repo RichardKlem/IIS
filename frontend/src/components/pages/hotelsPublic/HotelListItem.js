@@ -11,11 +11,17 @@ export class HotelListItem extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isReserved: true,
             image: undefined,
         }
     }
 
     componentDidMount() {
+        axios.post('/isHotelReserved', {hotel_id: this.props.hotel.hotel_id})
+            .then( res => {
+                this.setState({isReserved: res.data.status});
+            });
+
         axios.post('/getHotelImage', {hotel_id: this.props.hotel.hotel_id})
             .then(res => {
                     this.setState({image: res.data});
@@ -27,6 +33,7 @@ export class HotelListItem extends Component {
     removeHotel = () => {
         axios.post('/removeHotel', {hotel_id: this.props.hotel.hotel_id})
             .then((res) => {
+                console.log(res.data.status)
                 }
             );
     }
@@ -39,8 +46,8 @@ export class HotelListItem extends Component {
             );
         } else {
             return (
-                <div className="card padding-10 card-width-700">
-                    <div className="border d-flex">
+                <div className="card border border-info rounded padding-10 card-width-700 margin-10">
+                    <div className="d-flex">
                         <div className="item-list-style">
                             <Link to={{
                                 pathname: `/hotel/${this.props.hotel.hotel_id}`,
@@ -75,6 +82,7 @@ export class HotelListItem extends Component {
                                 <div className="rating-padding">
                                     <StarRatings
                                         rating={this.props.hotel.rating}
+                                        starRatedColor="#FFD700"
                                         starDimension="20px"
                                         starSpacing="2px"
                                     />
@@ -128,7 +136,7 @@ export class HotelListItem extends Component {
         if (window.location.pathname === "/") {
             if (this.props.searched === false) {
                 return (
-                    <button className="align-self-center btn btn-primary btn-danger" disabled>Search to see
+                    <button className="align-self-center btn btn-primary btn-success" disabled>Search first to see
                         rooms</button>
                 )
             } else {
@@ -153,11 +161,19 @@ export class HotelListItem extends Component {
                     <Link to={{
                         pathname: `/editHotel/${this.props.hotel.hotel_id}`,
                         query: {hotel_id: this.props.hotel.hotel_id}
-                    }} className="btn btn-block btn-primary">Edit Hotel</Link>
+                    }} className="btn btn-primary"><div>Edit Hotel</div></Link>
                     <div className="padding-10"/>
-                    <button className="btn btn-block btn-danger" onClick={this.removeHotel}>Remove</button>
+                    {this.getButton()}
                 </div>
             )
+        }
+    }
+
+    getButton() {
+        if (this.state.isReserved === true) {
+            return <button className="btn btn-block bg-transparent disabled border" disabled>This hotel is reserved and cannot be removed.</button>;
+        } else {
+            return <button className="btn btn-block btn-danger" onClick={this.removeHotel}>Remove</button>;
         }
     }
 }

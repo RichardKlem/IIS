@@ -41,8 +41,8 @@ class UsersTable extends Component {
             <div>
                 <div className="card">
                     <div className="card-body">
-                        <h2 className="card-title">Actions</h2>
-                        <h4 className="card-description"> User table:</h4>
+                        <h2 className="card-title">Manage Users</h2>
+                        <h4 className="card-description">Users table</h4>
                         <div className="table-responsive">
                             <table className="table table-hover" id="myTable">
                                 <thead>

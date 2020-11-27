@@ -78,19 +78,19 @@ export class Account extends Component {
 
     render() {
         const {isLoading} = this.state;
-        if (isLoading) {
+     if (this.state.isLoadingError) {
+         return (
+             <div className="App">ERROR, please log-out and log-in</div>
+         );
+     }else if (isLoading) {
             return (
                 <div className="App">Loading...</div>
-            );
-        } else if (this.state.isLoadingError) {
-            return (
-                <div className="App">ERROR, please log-out and log-in</div>
             );
         } else {
             return (
                 <div className="card">
                     <div className="card-body">
-                        <h2 className="card-title">Manage Account</h2>
+                        <h2 className="card-title">My Account</h2>
                         <h3 className="card-description"> User Information </h3>
                         <div className="d-flex padding-bottom-40">
                             <img src={`data:image/*;base64,${this.state.image}`} alt=''
@@ -100,8 +100,8 @@ export class Account extends Component {
                                     <div className="col-md-6">
                                         <ToastContainer/>
                                         <form method="post" action="#" id="#">
-                                            <div className="padding-left-10 padding-bottom-10">
-                                                <label className="">Upload your profile photo</label>
+                                            <div className="padding-left-10 padding-bottom-10 padding-top-25">
+                                                <label>Upload your profile photo</label>
                                                 <input type="file" name="file"
                                                        onChange={this.onChangeFileUploadHandler}/>
                                             </div>
@@ -208,21 +208,12 @@ export class Account extends Component {
 
     validateFileSize = (e) => {
         let file = e.target.files[0];
-        let size = 30000;
 
         if (!file) {
             this.setState({selectedFile: null, fileUploadAvailable: false, fileUploadErrMsg: 'Please select a photo.'});
             return false;
         }
 
-        if (file.size > size) {
-            this.setState({
-                selectedFile: null,
-                fileUploadAvailable: false,
-                fileUploadErrMsg: 'File is too large, please pick a smaller file.'
-            });
-            return false;
-        }
         if (file.type.split("/")[0] !== "image") {
             this.setState({selectedFile: null, fileUploadAvailable: false, fileUploadErrMsg: 'Please select a photo.'});
             return false;

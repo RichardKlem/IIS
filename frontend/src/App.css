@@ -1,3 +1,7 @@
+* {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
 input[type="time"].form-control::-webkit-calendar-picker-indicator {
     -webkit-appearance: none !important;
     appearance: none !important;
@@ -13,17 +17,16 @@ input[type="time"].form-control::-webkit-calendar-picker-indicator {
 }
 
 body {
-    background-color: #ffffff !important;
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: white !important;
 }
 
 .popup-box {
-    position: fixed;
-    background: #00000050;
-    width: 100%;
-    height: 100vh;
-    top: 0;
-    left: 0;
+    position: fixed !important;
+    background: #00000050 !important;
+    width: 100%  !important;
+    height: 100vmax  !important;
+    top: 0 !important;
+    left: 0 !important;
 }
 
 #page-content-wrapper {
@@ -80,6 +83,14 @@ body {
     padding-left: 10px !important;
 }
 
+.padding-left-5 {
+    padding-left: 5px !important;
+}
+
+.padding-left-40 {
+    padding-left: 40px !important;
+}
+
 .padding-left-10-neg {
     padding-left: -10px !important;
 }
@@ -91,6 +102,11 @@ body {
 .padding-right-10 {
     padding-right: 10px !important;
 }
+
+.padding-right-10-neg {
+    padding-right: -10px !important;
+}
+
 
 .padding-top-0 {
     padding-top: 0px !important;
@@ -107,6 +123,14 @@ body {
 
 .padding-top-20 {
     padding-top: 20px !important;
+}
+
+.padding-top-25 {
+    padding-top: 25px !important;
+}
+
+.padding-top-30 {
+    padding-top: 30px !important;
 }
 
 .padding-top-40 {
@@ -172,7 +196,16 @@ body {
 }
 
 .navbar {
-    background-color: white !important;
+    background-color: rgb(24, 26, 27) !important;
+    color: #ffffff;
+}
+
+.link-gray {
+    color: rgb(164, 156, 144);
+}
+
+.link-gray:hover {
+    color: rgb(164, 156, 144);
 }
 
 .required-margin {
@@ -190,7 +223,6 @@ body {
 
 .sidebar {
     min-height: calc(100vh - 63px);
-    font-family: "Roboto", sans-serif;
     width: 270px;
     background: none;
     padding: 10px;
@@ -201,11 +233,24 @@ body {
 }
 
 .input-width {
-    min-width: 100px;
+    min-width: 100px !important;
+}
+
+.input-width-filter {
+    min-width: 70px !important;
 }
 
 .card-width-700 {
     min-width: 700px !important;
+}
+
+.card-width-800 {
+    min-width: 800px !important;
+}
+
+
+.no-border {
+    border: 0;
 }
 
 .filter-price-other {
@@ -237,6 +282,20 @@ body {
     border-top: 3px solid #bbb;
     margin-top: 5px;
     padding-top: 10px;
+}
+
+.horizontal-space{
+    border-top: 0 solid #bbb !important;
+    margin-top: 5px;
+    padding-top: 10px;
+}
+
+.horizontal-line-header {
+    border-top: 2px solid #bbb;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .border-blue {
@@ -315,6 +374,10 @@ body {
     margin-top: -5px;
 }
 
+.margin-10 {
+    margin: 10px !important;
+}
+
 .line-height-2 {
     line-height: 2px;
 }
@@ -322,6 +385,10 @@ body {
 .select-disabled {
     background-color: #fff;
     -webkit-appearance: none;
+}
+
+.mdi-icon {
+    color: white;
 }
 
 .white-textarea {
@@ -355,6 +422,9 @@ body {
     flex-direction: column;
 }
 
+.btn.disabled, .btn:disabled {
+    opacity: 1 !important;
+}
 .border-gray {
     border-color: #808080 !important;
 }
@@ -392,7 +462,7 @@ body {
 }
 
 .add-hotel {
-    width: 100px;
+    width: 105px;
     height: 40px;
     margin-top: 11px;
 }
@@ -406,6 +476,3 @@ body {
     white-space: nowrap;
 }
 
-.btn {
-    text-align: center !important;
-}

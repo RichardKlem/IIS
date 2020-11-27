@@ -63,15 +63,6 @@ export class BookingItem extends Component {
                 <td><input
                     className="width-auto text-center form-control form-control-sm"
                     type='text'
-                    name='id_reservation'
-                    placeholder='Reservation ID'
-                    value={this.state.id_reservation}
-                    onChange={this.onChange}
-                    readOnly
-                /></td>
-                <td><input
-                    className="width-auto text-center form-control form-control-sm"
-                    type='text'
                     name='name'
                     placeholder='User Name'
                     value={this.state.name}

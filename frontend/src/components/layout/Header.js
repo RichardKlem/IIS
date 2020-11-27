@@ -38,13 +38,20 @@ export class Header extends Component {
 
     render() {
         const {isLoading} = this.state;
-        if (isLoading) {
+        if (this.state.isLoadingError) {
+            return (
+                <header className="header-offset">
+                    <nav
+                        className="navbar border border-dark width-calc-100 align-items-center justify-content-between d-flex fixed-top">
+                    <div>ERROR, please sign out and reload page</div>
+                    <button className="btn btn-block btn-primary" onClick={this.signOut}>
+                        Sign Out </button>
+                    </nav>
+                </header>
+            );
+        } else if (isLoading) {
             return (
                 <div className="App">Loading...</div>
-            );
-        } else if (this.state.isLoadingError) {
-            return (
-                <div className="App">ERROR, please reload page</div>
             );
         } else {
             return (
@@ -63,7 +70,8 @@ export class Header extends Component {
         }
     }
 
-    signOut = () => {
+    signOut = (e) => {
+        e.preventDefault()
         cookies.remove('CookieUserID');
         this.setState({status: "Logged out successfully"});
         cookieUserID = undefined;
@@ -102,7 +110,7 @@ export class Header extends Component {
                 <li>
                     <Dropdown>
                         <Dropdown.Toggle
-                            variant="toggle-arrow-hide navbar-toggler align-self-center border border-blue">
+                            variant="toggle-arrow-hide navbar-toggler align-self-center border border-blue white-textarea">
                             <div className="d-flex">
                                 <h4 className="profile-name align-self-center">
                                     {this.state.userName}
@@ -116,12 +124,13 @@ export class Header extends Component {
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             <Dropdown.Item as={Link} to={'/account'}>
-                                Manage Account
+                                My Account
                             </Dropdown.Item>
                             <Dropdown.Item as={Link} to={'/bookings'}>
-                                Bookings
+                                My Bookings
                             </Dropdown.Item>
                             {this.adminSettings()}
+                            <hr className="horizontal-line-header"/>
                             <Dropdown.Item as={Link} to={'/'} onClick={this.signOut}>
                                 Sign Out
                             </Dropdown.Item>
@@ -146,7 +155,7 @@ export class Header extends Component {
                     </Dropdown>
                     <div className="d-flex">
                         <div className="navbar-toggler link-padding">
-                            <Link to="/">Home Page</Link>
+                            <Link to="/" className="link-gray">Home Page</Link>
                         </div>
                     </div>
                 </div>
@@ -169,6 +178,7 @@ export class Header extends Component {
         if (this.state.role === 0) {
             return (
                 <>
+                    <hr className="horizontal-line-header"/>
                     <Dropdown.Item as={Link} to={'/admin'}>
                         Manage Users
                     </Dropdown.Item>
@@ -184,6 +194,7 @@ export class Header extends Component {
         } else if (this.state.role === 1) {
             return (
                 <>
+                    <hr className="horizontal-line-header"/>
                     <Dropdown.Item as={Link} to={'/adminHotels'}>
                         Manage Hotels
                     </Dropdown.Item>
@@ -196,6 +207,7 @@ export class Header extends Component {
         } else if (this.state.role === 2) {
             return (
                 <>
+                    <hr className="horizontal-line-header"/>
                     <Dropdown.Item as={Link} to={'/adminBookings'}>
                         Manage Bookings
                     </Dropdown.Item>

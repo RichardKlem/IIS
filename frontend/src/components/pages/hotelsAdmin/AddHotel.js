@@ -25,6 +25,7 @@ export class AddHotel extends Component {
             gym: false,
             spa: false,
             swimming_pool: false,
+            is_available: true,
             /* File upload variables */
             image: undefined,
             fileUploadErrMsg: '',
@@ -165,6 +166,23 @@ export class AddHotel extends Component {
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="padding-bottom-20">
+                                        <div className="form-group">
+                                            Is available
+                                        </div>
+                                        <div className="margin-top-5-neg d-flex">
+                                            <div className="form-check padding-right-10">
+                                                <label className="form-check-label">
+                                                    <input className="checkmark" name="is_available"
+                                                           defaultChecked={this.state.is_available}
+                                                           defaultValue={this.state.is_available} type="checkbox"
+                                                           onChange={this.onChangeCheckbox}/>
+                                                    <span className="checkmark"> </span>
+                                                    Is available
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="form-group">
                                         <input
                                             type="submit"
@@ -218,7 +236,8 @@ export class AddHotel extends Component {
                             free_wifi: this.state.free_wifi,
                             gym: this.state.gym,
                             spa: this.state.spa,
-                            swimming_pool: this.state.swimming_pool
+                            swimming_pool: this.state.swimming_pool,
+                            is_available: this.state.is_available
                         })
                             .then(res => {
                                 id_hotel = res.data

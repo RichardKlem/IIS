@@ -2,8 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types';
 import {Form} from "react-bootstrap";
 import axios from "axios";
-import {Redirect} from "react-router";
-import moment from "moment";
+import {Link} from "react-router-dom";
 
 export class BookingPubItem extends Component {
 
@@ -22,6 +21,7 @@ export class BookingPubItem extends Component {
             end_date: this.props.booking.end_date,
             check_in: this.props.booking.check_in,
             check_out: this.props.booking.check_out,
+            room_count: this.props.booking.room_count,
             isLoading: true,
             isBookingOpen: false
         }
@@ -42,33 +42,43 @@ export class BookingPubItem extends Component {
             return <div className="App">Loading...</div>;
         } else {
             return (
-                <div className="card padding-10">
-                    <div className="d-flex border">
+                <div className="card card-width-800 padding-10 margin-bottom-10">
+                    <div className="border border-info rounded d-flex">
                         <div className="item-list-style">
                             <img src={`data:image/*;base64,${this.state.image}`} alt="hotel"
-                                 className="item-list-style-img"/>
+                                 className="item-list-style-img-200"/>
                         </div>
                         <div className="card-body">
                             <div className="d-flex">
-                                <h3>{this.props.booking.hotel_name}: {this.props.booking.room_name}</h3>
+                                <Link to={{
+                                    pathname: `/hotel/${this.props.booking.hotel_id}`,
+                                }}>
+                                    <h3>{this.props.booking.hotel_name}</h3>
+                                </Link>
+                                <h3 className="padding-right-10">:</h3>
+                                <Link to={{
+                                    pathname: `/room/${this.props.booking.id_room}`,
+                                }}>
+                                    <h3>{this.props.booking.room_name}</h3>
+                                </Link>
                             </div>
                             <form>
                                 <div>
                                     <Form.Group>
-                                        <div className="d-flex">
+                                        <div className="d-flex padding-left-40">
                                             <div className="padding-10">
-                                                Start Date
+                                                Start Date:
                                                 <input name="start_date" defaultValue={this.props.booking.start_date}
                                                        placeholder="Start date"
-                                                       className="text-center form-control form-control-sm" type="date"
+                                                       className="text-center form-control form-control-lg white-textarea no-border" type="date"
                                                        onChange={this.props.onChange}
                                                        disabled/>
                                             </div>
                                             <div className="padding-10">
-                                                End Date
+                                                End Date:
                                                 <input name="end_date" defaultValue={this.props.booking.end_date}
                                                        placeholder="Start date"
-                                                       className="text-center form-control form-control-sm" type="date"
+                                                       className="text-center form-control form-control-lg white-textarea no-border" type="date"
                                                        onChange={this.props.onChange}
                                                        disabled/>
                                             </div>
@@ -79,6 +89,7 @@ export class BookingPubItem extends Component {
                                     <div className="justify-content-between d-flex">
                                         <div className="padding-left-10 line-height-sm">
                                             <p>Status: {this.props.booking.approved === 1 ? "Approved" : "Waiting for approval"}</p>
+                                            <p>Reserved: {this.props.booking.room_count + " room(s)"}</p>
                                             <p>Total price: {this.props.booking.total_price} Kč</p>
                                             <p>{this.props.booking.pre_price !== 0 && this.props.booking.approved === 0 ? "Needs to be paid:" + this.props.booking.pre_price + "Kč" : ""}</p>
                                         </div>

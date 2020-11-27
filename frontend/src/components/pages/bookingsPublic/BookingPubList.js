@@ -44,22 +44,22 @@ class BookingPubList extends Component {
 
 
     render() {
-        const {isLoading} = this.state;
-        if (isLoading) {
-            return (
-                <div className="App">Loading...</div>
-            );
-        } else if (this.state.isLoadingError) {
+        if (this.state.isLoadingError) {
             return (
                 <div className="App">ERROR, please log-out and log-in</div>
+            );
+        } else if (this.state.isLoading) {
+            return (
+                <div className="App">Loading...</div>
             );
         } else {
             return (
                 <div className="hotels-list-padding">
-                    <h1 className="text-center">Bookings List</h1>
-                    <div className="border">
+                    <h1 className="text-center padding-bottom-10">My Bookings</h1>
+                    <div>
+                        {this.state.bookings.length === 0 ? "No bookings" :
                         <BookingPublic
-                            bookings={this.state.bookings}/>
+                            bookings={this.state.bookings}/>}
                     </div>
                 </div>
             );

@@ -12,6 +12,7 @@ class BookingTable extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingError: false,
             bookings: [],
             orig_bookings: []
         }
@@ -27,23 +28,27 @@ class BookingTable extends Component {
                             this.setState({orig_hotels: res.data})
                             this.setState({isLoading: false})
                         }
-                    );
+                    ).catch(() => {
+                    this.setState({isLoadingError: true});
+                });
             } else if (window.location.pathname === "/adminBookings") {
                 axios.post('/getAllBookings', {CookieUserID: cookieUserID})
                     .then(res => {
 
                             this.setState({bookings: res.data});
-                            this.setState({orig_hotels: res.data})
-                            this.setState({isLoading: false})
+                            this.setState({orig_hotels: res.data});
+                            this.setState({isLoading: false});
                         }
-                    );
+                    ).catch(() => {
+                        this.setState({isLoadingError: true});
+                });
             }
         }
     }
 
     filterTableColumnFunction = () => {
         let rowWasHidden = false;
-        const keys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+        const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
         for (let key of keys) {
             let input, filter, table, tr, td, i, txtValue;
             input = document.getElementById(key);
@@ -73,8 +78,11 @@ class BookingTable extends Component {
     }
 
     render() {
-        const {isLoading} = this.state;
-        if (isLoading) {
+        if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
+            );
+        } else if (this.state.isLoading) {
             return (
                 <div className="App">Loading...</div>
             );
@@ -83,23 +91,15 @@ class BookingTable extends Component {
                 <div>
                     <div className="card">
                         <div className="card-body">
-                            <h2 className="card-title">Bookings</h2>
-                            <h4 className="card-description"> Bookings table:</h4>
+                            <h2 className="card-title">Manage Bookings</h2>
+                            <h4 className="card-description">Bookings table</h4>
                             <div className="table-responsive">
                                 <table className="table table-hover" id="bookingTable">
                                     <thead>
                                     <tr>
                                         <th>
                                             <div className="padding-bottom-5">
-                                                Reservation ID
-                                            </div>
-                                            <input
-                                                className="input-width text-center form-control form-control-sm"
-                                                type="text" id="0"
-                                                onKeyUp={this.filterTableColumnFunction}/></th>
-                                        <th>
-                                            <div className="padding-bottom-5">
-                                                Name
+                                                Customer's Name
                                             </div>
                                             <input
                                                 className="input-width text-center form-control form-control-sm"
@@ -124,7 +124,7 @@ class BookingTable extends Component {
                                         </th>
                                         <th>
                                             <div className="padding-bottom-5">
-                                                Birth Date
+                                                 Birth Date
                                             </div>
                                             <input
                                                 className="input-width text-center form-control form-control-sm"
@@ -183,7 +183,7 @@ class BookingTable extends Component {
                                         </th>
                                         <th>
                                             <div className="padding-bottom-5">
-                                                Paid price
+                                                Pre-price
                                             </div>
                                             <input
                                                 className="input-width text-center form-control form-control-sm"

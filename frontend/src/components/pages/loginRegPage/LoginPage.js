@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import axios from "axios";
 import Cookies from 'universal-cookie';
 import Required from "../../other/Required";
 
 const cookies = new Cookies();
+let cookieUserID = cookies.get('CookieUserID');
 
 export class LoginPage extends Component {
 
@@ -16,17 +17,20 @@ export class LoginPage extends Component {
             password: undefined,
             status: undefined,
             status_code: undefined,
-            cookie_id: undefined
         }
     }
 
     componentDidMount() {
-        const cookieUserID = cookies.get('CookieUserID');
-        if (typeof cookieUserID !== 'undefined') {
-            this.props.history.push('/');
-        }
+        this.setState({cookie_id : cookies.get('CookieUserID')})
         this.setState({isLoading: false})
     }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (typeof (cookies.get('CookieUserID')) !== "undefined"){
+            this.props.history.push('/');
+        }
+    }
+
 
     onChange = (e) => {
         this.setState({[e.target.name]: e.target.value})

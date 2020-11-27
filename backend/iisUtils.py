@@ -14,7 +14,7 @@ DEFAULT_IMG = os.getcwd() + "/static/default.png"
 IMG_EXTENSION = ".jpg"
 IMG_FORMAT = "JPEG"
 COLOR_FILTER = "RGB"
-IMG_QUALITY = 80
+IMG_QUALITY = 60
 IMG_SIZE = (250, 250)
 
 
@@ -49,8 +49,8 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None):
         path = USERS_PATH + str(user_id)
     else:
         path = HOTELS_PATH + str(hotel_id)
-    if not os.path.isdir(path):
-        os.makedirs(path)
+    if not os.path.isdir(path.split["/"][:-1]):
+        os.makedirs(path.split["/"][:-1])
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 
