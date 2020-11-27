@@ -50,15 +50,26 @@ export class HotelsList extends Component {
             swimming_pool: "false",
             searched: false,
             status: "",
+            location: 0
         }
     }
 
     componentDidMount() {
+        this.getHotels();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevState.location !== window.location.pathname) {
+            this.getHotels();
+        }
+    }
+
+    getHotels() {
+        this.setState({location: window.location.pathname})
         if (window.location.pathname === "/adminHotels") {
             axios.get('/getHotelsAdmin')
                 .then(res => {
                         this.setState({hotels: res.data});
-                        this.setState({orig_hotels: res.data})
                         this.setState({isLoading: false});
                     }
                 ).catch(() => {
@@ -68,7 +79,6 @@ export class HotelsList extends Component {
             axios.get('/getHotels')
                 .then(res => {
                         this.setState({hotels: res.data});
-                        this.setState({orig_hotels: res.data})
                         this.setState({isLoading: false});
                     }
                 ).catch(() => {
@@ -90,7 +100,6 @@ export class HotelsList extends Component {
         } else {
             return (
                 <div className="hotels-list-padding">
-                    <h1 className="text-center">Hotels List</h1>
                     {this.showEditOptions()}
 
                 </div>
@@ -103,21 +112,19 @@ export class HotelsList extends Component {
 
     searchHotel = async (e) => {
         e.preventDefault();
+        let resHotel = await axios.get('/getHotels', {})
         let new_hotels;
         new_hotels = []
-        for (const hotel of this.state.hotels) {
+        for (const hotel of resHotel.data) {
             let res = await axios.post('/searchHotels', {
+                filter: this.state.filter,
                 hotel_id: hotel.hotel_id,
                 adult_count: this.state.adult_count,
                 start_date: this.state.start_date,
                 end_date: this.state.end_date
             })
             if (res.data.available === true) {
-                if (this.state.filter !== '' && (hotel.name.toUpperCase().includes(this.state.filter.toUpperCase()) || hotel.address.toUpperCase().includes(this.state.filter.toUpperCase()))) {
-                    new_hotels.push(hotel)
-                } else if (this.state.filter === '') {
-                    new_hotels.push(hotel)
-                }
+                new_hotels.push(hotel)
                 this.setState({searched: true})
             }
         }
@@ -206,6 +213,8 @@ export class HotelsList extends Component {
     showEditOptions = () => {
         if (window.location.pathname === "/adminHotels") {
             return (
+                <>
+                    <h1 className="text-center">Manage Hotels</h1>
                 <div>
                     <div className="d-flex justify-content-between">
                         <div className="table-responsive table-no-border padding-bottom-10">
@@ -223,7 +232,7 @@ export class HotelsList extends Component {
                             </table>
                         </div>
                         <div className="padding-left-10">
-                            <Link to="/addHotel" className="btn btn-primary d-flex add-hotel text-center">Add
+                            <Link to="/addHotel" className="btn btn-block btn-primary add-hotel text-center d-flex">Add
                                 Hotel</Link>
                         </div>
                     </div>
@@ -238,13 +247,17 @@ export class HotelsList extends Component {
                             room_count={this.state.room_count}/>
                     </div>
                 </div>
+                    </>
             )
         } else {
             return (
+                <>
+                    <h1 className="text-center">Hotels List</h1>
                 <div className="d-flex">
                     <Sidebar
                         state={this.state}
                         filter={this.state.filter}
+                        searched={this.state.searched}
                         searchHotel={this.searchHotel}
                         onChangeCheckbox={this.onChangeCheckbox}
                         filterHotel={this.filterHotel}
@@ -259,6 +272,7 @@ export class HotelsList extends Component {
                                 room_count={this.state.room_count}/>
                     </div>
                 </div>
+                    </>
             )
         }
     }

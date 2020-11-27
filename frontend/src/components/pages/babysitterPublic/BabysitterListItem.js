@@ -113,12 +113,20 @@ export class BabysitterListItem extends Component {
                         query: {id_babysitter: this.props.babysitter.id_babysitter}
                     }} className="btn btn-block btn-primary">Edit Babysitter</Link>
                     <div className="padding-10"/>
-                    <button className="btn btn-block btn-danger" onClick={this.removeBabysitter}>Remove</button>
+                    {this.getButton()}
                 </div>
             )
         }
     }
 
+
+    getButton() {
+        if (this.props.babysitter.isReserved === true) {
+            return <button className="btn btn-block bg-transparent disabled border" disabled>This babysitter is reserved and cannot be removed.</button>;
+        } else {
+            return <button className="btn btn-block btn-danger" onClick={this.removeBabysitter}>Remove</button>;
+        }
+    }
 
     calculatePrice() {
         const hours = this.calculateHours();

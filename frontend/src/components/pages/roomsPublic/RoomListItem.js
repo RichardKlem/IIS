@@ -23,10 +23,16 @@ export class RoomListItem extends Component {
             isOpen: false,
             isRegistrationOpen: false,
             isBookingOpen: false,
+            isReserved: true,
         }
     }
 
     componentDidMount() {
+        axios.post('/isRoomReserved', {id_room: this.props.room.id_room})
+            .then( res => {
+                this.setState({isReserved: res.data.status});
+            });
+
         axios.post('/getRoomImage', {id_room: this.props.room.id_room, hotel_id: this.props.room.hotel_id})
             .then(res => {
                     this.setState({image: res.data});
@@ -123,7 +129,7 @@ export class RoomListItem extends Component {
                             "Price for  " + this.props.room_count.toString() + " room(s) for " + this.calculateNights() + " night(s): " + this.calculatePrice() : "Please select date of your stay to see price."}</p>
                     {this.props.start_date !== "" && this.props.end_date !== "" ?
                         <button className="btn btn-primary mr-2" onClick={this.handleBookingPopUp}>Reserve</button> :
-                        <button className="btn btn-primary btn-warning mr-2" disabled>Please select date</button>}
+                        <button className="btn btn-primary btn-success mr-2" disabled>Please select date first</button>}
 
                 </div>
             )
@@ -132,10 +138,18 @@ export class RoomListItem extends Component {
                 <div>
                     <Link to={{pathname: `/editRoom/${this.props.room.id_room}`}} className="btn btn-primary mr-2">Edit
                         Room</Link>
-                    <button className="btn btn-danger" onClick={this.removeHotel}>Remove</button>
+                    {this.getButton()}
                 </div>
             );
         }
+    }
+
+    getButton() {
+            if (this.state.isReserved === true) {
+                return <button className="btn bg-transparent disabled border" disabled>This room is reserved and cannot be removed.</button>;
+            } else {
+                return <button className="btn btn-danger" onClick={this.removeRoom}>Remove</button>;
+            }
     }
 
     prepaymentFields = () => {
@@ -182,7 +196,7 @@ export class RoomListItem extends Component {
         this.setState({isOpen: !this.state.isOpen})
     }
 
-    removeHotel = () => {
+    removeRoom = () => {
         axios.post('/removeRoom', {id_room: this.props.room.id_room})
             .then((res) => {
                 }

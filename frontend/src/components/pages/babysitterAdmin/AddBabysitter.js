@@ -22,6 +22,7 @@ export class AddBabysitter extends Component {
             image: undefined,
             fileUploadErMsg: '',
             selectedFile: undefined,
+            is_available: "true",
             /* User */
             role: 5,
         }
@@ -72,6 +73,23 @@ export class AddBabysitter extends Component {
                                                defaultValue={this.state.price_hour} onChange={this.onChange}
                                                required/>
                                     </div>
+                                    <div className="padding-bottom-20">
+                                        <div className="form-group">
+                                            Is available
+                                        </div>
+                                        <div className="margin-top-5-neg d-flex">
+                                            <div className="form-check padding-right-10">
+                                                <label className="form-check-label">
+                                                    <input className="checkmark" name="is_available"
+                                                           checked={this.state.is_available === "true" ? true : null}
+                                                           value={this.state.is_available} type="checkbox"
+                                                           onChange={this.onChangeCheckbox}/>
+                                                    <span className="checkmark"> </span>
+                                                    Is available
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="form-group">
                                         <input
                                             type="submit"
@@ -89,6 +107,14 @@ export class AddBabysitter extends Component {
                 </div>
             </div>
         )
+    }
+
+    onChangeCheckbox = (e) => {
+        if (e.target.value === "false") {
+            this.setState({[e.target.name]: true});
+        } else {
+            this.setState({[e.target.name]: false});
+        }
     }
 
     onChange = (e) => this.setState({[e.target.name]: e.target.value});
@@ -114,7 +140,8 @@ export class AddBabysitter extends Component {
                             description: this.state.description,
                             phone_number: this.state.phone_number,
                             age: this.state.age,
-                            price_hour: this.state.price_hour
+                            price_hour: this.state.price_hour,
+                            is_available: this.state.is_available ? 1 : 0
                         })
                             .then(res => {
                                 id_babysitter = res.data
@@ -131,7 +158,7 @@ export class AddBabysitter extends Component {
                                 this.props.history.push('/adminBabysitters');
                             })
                             .catch(err => {
-                                this.setState({status: this.state.status + "\nERROR: Room wasn't inserted, please contact support!"});
+                                this.setState({status: this.state.status + "\nERROR: Babysitter wasn't inserted, please contact support!"});
                             });
                     } else {
                         this.setState({status: this.state.status + "\nERROR: You don't have required permission to add new babysitter!"});

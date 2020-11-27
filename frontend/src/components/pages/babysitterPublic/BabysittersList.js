@@ -23,14 +23,26 @@ export class BabysittersList extends Component {
     }
 
     componentDidMount() {
-        axios.get('/getBabysitters')
-            .then(res => {
-                    this.setState({babysitters: res.data});
-                    this.setState({isLoading: false});
-                }
-            ).catch(() => {
-            this.setState({status: "ERROR, please reload page", isLoadingError: true})
-        });
+        if (window.location.pathname === "/adminBabysitters") {
+            axios.get('/getBabysittersAdmin')
+                .then(res => {
+                        this.setState({babysitters: res.data});
+                        this.setState({isLoading: false});
+                    }
+                ).catch(() => {
+                this.setState({status: "ERROR, please reload page", isLoadingError: true})
+            });
+        } else {
+            axios.get('/getBabysitters')
+                .then(res => {
+                        this.setState({babysitters: res.data});
+                        this.setState({isLoading: false});
+                    }
+                ).catch(() => {
+                this.setState({status: "ERROR, please reload page", isLoadingError: true})
+            });
+        }
+
     }
 
     render() {

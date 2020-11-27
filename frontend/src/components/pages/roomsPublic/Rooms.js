@@ -20,8 +20,7 @@ class Rooms extends Component {
                 start_date={this.props.start_date !== undefined ? this.props.start_date : ""}
                 end_date={this.props.end_date !== undefined ? this.props.end_date : ""}
                 adult_count={this.props.adult_count}
-                child_count={this.props.child_count}
-                room_count={Math.ceil((parseInt(this.props.adult_count) + parseInt(this.props.child_count)) / room.bed_count)}
+                room_count={Math.ceil((parseInt(this.props.adult_count)) / room.bed_count)}
                 room={room}
             />)
         } else {
@@ -31,7 +30,6 @@ class Rooms extends Component {
                 start_date={this.props.start_date}
                 end_date={this.props.end_date}
                 adult_count={this.props.adult_count}
-                child_count={this.props.child_count}
                 room={room}
             />)
         }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Form} from 'react-bootstrap';
 import axios from "axios";
-import PropTypes from "prop-types";
 
 export class OpenRoom extends Component {
 
@@ -34,7 +33,10 @@ export class OpenRoom extends Component {
 
 
     componentDidMount() {
-        const id = this.props.id_room;
+        let id = this.props.id_room;
+        if (typeof id === "undefined") {
+            id = window.location.pathname.split("/")[2]
+        }
         this.setState({id_room: id})
         axios.post('/getRoom', {id_room: id})
             .then((res) => {
@@ -125,10 +127,6 @@ export class OpenRoom extends Component {
             )
         }
     }
-}
-
-OpenRoom.propTypes = {
-    id_room: PropTypes.number.isRequired,
 }
 
 export default OpenRoom

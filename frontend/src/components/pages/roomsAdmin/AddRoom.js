@@ -16,18 +16,19 @@ export class AddHotel extends Component {
             isLoading: true,
             /* room data */
             name: undefined,
-            bed_count: undefined,
+            bed_count: 2,
             description: undefined,
             price_night: undefined,
             category: "1",
             bed_type: "1",
             meal: "1",
-            room_size: undefined,
+            room_size: 35,
             free_breakfast: false,
             hotel_id: pathName[2],
-            count: 1,
+            count: 10,
             pre_price: 0,
             no_prepayment: 0,
+            is_available: "true",
             /* File upload variables */
             image: undefined,
             fileUploadErrMsg: '',
@@ -132,11 +133,28 @@ export class AddHotel extends Component {
                                                 <div className="form-check padding-right-10">
                                                     <label className="form-check-label">
                                                         <input className="checkmark" name="free_breakfast"
-                                                               defaultChecked={this.state.free_breakfast}
-                                                               defaultValue={this.state.free_breakfast} type="checkbox"
+                                                               checked={this.state.free_breakfast === "true" ? true : null}
+                                                               value={this.state.free_breakfast} type="checkbox"
                                                                onChange={this.onChangeCheckbox}/>
                                                         <span className="checkmark"> </span>
                                                         Free breakfast
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="padding-bottom-20">
+                                            <div className="form-group">
+                                                Is available
+                                            </div>
+                                            <div className="margin-top-5-neg d-flex">
+                                                <div className="form-check padding-right-10">
+                                                    <label className="form-check-label">
+                                                        <input className="checkmark" name="is_available"
+                                                               checked={this.state.is_available === "true" ? true : null}
+                                                               value={this.state.is_available} type="checkbox"
+                                                               onChange={this.onChangeCheckbox}/>
+                                                        <span className="checkmark"> </span>
+                                                        Is available
                                                     </label>
                                                 </div>
                                             </div>
@@ -174,13 +192,7 @@ export class AddHotel extends Component {
     AddRoomHandler = (e) => {
         e.preventDefault();
         let room_id = null;
-        let free_breakfast = null;
         if (typeof (cookieUserID) !== "undefined") {
-            if (this.state.free_breakfast === true) {
-                free_breakfast = 1;
-            } else {
-                free_breakfast = 0;
-            }
             axios.post('/getUserRole', {CookieUserID: cookieUserID})
                 .then(res => {
                     this.setState({role: res.data.role});
@@ -193,8 +205,9 @@ export class AddHotel extends Component {
                             category: this.state.category,
                             room_size: this.state.room_size,
                             bed_type: this.state.bed_type,
-                            free_breakfast: free_breakfast,
+                            free_breakfast: this.state.free_breakfast ? 1 : 0,
                             count: this.state.count,
+                            is_available: this.state.is_available ? 1 : 0,
                             pre_price: this.state.pre_price,
                             hotel_id: this.state.hotel_id,
                         })

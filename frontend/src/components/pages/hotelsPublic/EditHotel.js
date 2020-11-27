@@ -30,6 +30,7 @@ export class EditHotel extends Component {
             gym: true,
             spa: true,
             swimming_pool: true,
+            is_available: "true",
             /* File upload variables */
             image: undefined,
             newImageWasUploaded: false,
@@ -68,7 +69,8 @@ export class EditHotel extends Component {
                         free_wifi: res.data.free_wifi ? "true" : "false",
                         gym: res.data.gym ? "true" : "false",
                         spa: res.data.spa ? "true" : "false",
-                        swimming_pool: res.data.swimming_pool ? "true" : "false"
+                        swimming_pool: res.data.swimming_pool ? "true" : "false",
+                        is_available: res.data.is_available ? "true" : "false"
                     });
                     axios.post('/getHotelImage', {hotel_id: id})
                         .then(res => {
@@ -175,6 +177,7 @@ export class EditHotel extends Component {
                                                     <option value="5">Casino Hotel</option>
                                                     <option value="6">Studio</option>
                                                     <option value="7">Conference Hotel</option>
+                                                    <option value="8">Economy Hotel</option>
                                                 </select>
                                             </div>
                                             <div className="padding-bottom-20">
@@ -244,6 +247,23 @@ export class EditHotel extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="padding-bottom-20">
+                                                <div className="form-group">
+                                                    Is available
+                                                </div>
+                                                <div className="margin-top-5-neg d-flex">
+                                                    <div className="form-check padding-right-10">
+                                                        <label className="form-check-label">
+                                                            <input className="checkmark" name="is_available"
+                                                                   checked={this.state.is_available === "true" ? true : null}
+                                                                   value={this.state.is_available} type="checkbox"
+                                                                   onChange={this.onChangeCheckbox}/>
+                                                            <span className="checkmark"> </span>
+                                                            Is available
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             {this.getSubmitOption()}
                                         </form>
                                     </fieldset>
@@ -288,7 +308,8 @@ export class EditHotel extends Component {
                     free_wifi: this.state.free_wifi,
                     gym: this.state.gym,
                     spa: this.state.spa,
-                    swimming_pool: this.state.swimming_pool
+                    swimming_pool: this.state.swimming_pool,
+                    is_available: this.state.is_available
                 }).then(() => {
                     this.setState({status: "Hotel successfully updated."});
                     if (this.state.image !== undefined && this.state.selectedFile !== undefined && this.state.newImageWasUploaded) {

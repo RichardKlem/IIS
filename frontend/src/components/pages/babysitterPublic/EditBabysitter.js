@@ -22,6 +22,7 @@ export class EditBabysitter extends Component {
             phone_number: undefined,
             age: undefined,
             price_hour: undefined,
+            is_available: "true",
             /* File upload variables */
             image: undefined,
             newImageWasUploaded: false,
@@ -53,6 +54,7 @@ export class EditBabysitter extends Component {
                         phone_number: res.data.phone_number,
                         age: res.data.age,
                         price_hour: res.data.price_hour,
+                        is_available: res.data.is_available ? "true" : "false"
                     })
                     axios.post('/getBabysitterImg', {id_babysitter: id})
                         .then(res => {
@@ -139,6 +141,23 @@ export class EditBabysitter extends Component {
                                                        defaultValue={this.state.price_hour} onChange={this.onChange}
                                                        required/>
                                             </div>
+                                            <div className="padding-bottom-20">
+                                                <div className="form-group">
+                                                    Is available
+                                                </div>
+                                                <div className="margin-top-5-neg d-flex">
+                                                    <div className="form-check padding-right-10">
+                                                        <label className="form-check-label">
+                                                            <input className="checkmark" name="is_available"
+                                                                   checked={this.state.is_available === "true" ? true : null}
+                                                                   value={this.state.is_available} type="checkbox"
+                                                                   onChange={this.onChangeCheckbox}/>
+                                                            <span className="checkmark"> </span>
+                                                            Is available
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             {this.getSubmitOption()}
                                         </form>
                                     </fieldset>
@@ -157,6 +176,14 @@ export class EditBabysitter extends Component {
 
     onChange = (e) => this.setState({[e.target.name]: e.target.value});
 
+    onChangeCheckbox = (e) => {
+        if (e.target.value === "false") {
+            this.setState({[e.target.name]: true});
+        } else {
+            this.setState({[e.target.name]: false});
+        }
+    }
+
 
     editBabysitterHandler = (e) => {
         if (this.state.name !== "" && this.state.phone_number !== "" && this.state.price_hour !== "") {
@@ -168,7 +195,8 @@ export class EditBabysitter extends Component {
                     description: this.state.description,
                     phone_number: this.state.phone_number,
                     age: this.state.age,
-                    price_hour: this.state.price_hour
+                    price_hour: this.state.price_hour,
+                    is_available: this.state.is_available  ? 1 : 0
                 }).then(() => {
                     this.setState({status: " Babysitter updated successfully."});
                     if (this.state.image !== undefined && this.state.selectedFile !== undefined && this.state.newImageWasUploaded) {

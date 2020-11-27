@@ -13,12 +13,13 @@ class Sidebar extends Component {
         return (
             <div className="padding-right-10">
                 <div className="sidebar border border-gray">
-                    <form onSubmit={this.props.searchHotel}>
-                        <h4 className="text-center padding-top-10">Search</h4>
+                    <div className="border border-info rounded">
+                    <form className="padding-10" onSubmit={this.props.searchHotel}>
+                        <h4 className="text-center padding-top-10 padding-bottom-10">Search</h4>
                         <div className="form-group font-weight-light">
                             <Required text="Hotel name or location:"/>
                             <input name="filter" defaultValue={this.props.state.filter}
-                                   placeholder="Search for hotel name or location"
+                                   placeholder="Search hotel name or location"
                                    className="text-center form-control form-control-sm input-width" type="text"
                                    required
                                    onChange={this.props.onChange}/>
@@ -27,7 +28,9 @@ class Sidebar extends Component {
                             <Required text="Check-in date:"/>
                             <input name="start_date" defaultValue={this.props.state.start_date} placeholder="Start date"
                                    className="text-center form-control form-control-sm input-width" type="date"
-                                   max={moment().add(1, "year").format("YYYY-MM-DD")}
+                                   max={this.props.state.end_date !== "" ?
+                                       moment(this.props.state.end_date).add(-1, "day").format("YYYY-MM-DD")
+                                       : moment().add(1, "year").format("YYYY-MM-DD")}
                                    min={moment().format("YYYY-MM-DD")}
                                    required
                                    onChange={this.props.onChange}/>
@@ -64,22 +67,25 @@ class Sidebar extends Component {
                             />
                         </div>
                     </form>
-                    <hr className="horizontal-line"/>
-                    <form onSubmit={this.props.filterHotel}>
-                        <h4 className="text-center">Filter</h4>
+                        </div>
+                    <hr className="horizontal-space"/>
+                    {this.props.searched === true ?
+                        <div className="border border-info rounded">
+                    <form className="padding-10" onSubmit={this.props.filterHotel}>
+                        <h4 className="text-center padding-top-10 padding-bottom-10">Filter</h4>
                         <div className="form-group font-weight-light">
                             Price per night:
-                            <div className="d-flex">
+                            <div className="d-flex padding-left-5">
                                 <input name="start_range" defaultValue={this.props.state.start_range}
                                        placeholder="Min"
-                                       className="text-center form-control form-control-sm input-width" type="number"
+                                       className="text-center form-control form-control-sm input-width-filter padding-left-10" type="number"
                                        onChange={this.props.onChange}/>
                                 <div className="filter-price-other">
                                     -
                                 </div>
                                 <input name="end_range" defaultValue={this.props.state.end_range}
                                        placeholder="Max"
-                                       className="text-center form-control form-control-sm input-width" type="number"
+                                       className="text-center form-control form-control-sm input-width-filter padding-left-10" type="number"
                                        onChange={this.props.onChange}/>
                                 <div className="filter-price-other">
                                     Kč
@@ -296,7 +302,7 @@ class Sidebar extends Component {
                                 className="btn btn-block btn-primary"
                             />
                         </div>
-                    </form>
+                    </form></div> : <></> }
                 </div>
             </div>
         )

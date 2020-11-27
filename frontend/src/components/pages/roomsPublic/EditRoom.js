@@ -27,6 +27,7 @@ export class EditRoom extends Component {
             free_breakfast: "false",
             hotel_id: undefined,
             count: undefined,
+            is_available: "false",
             pre_price: 0,
             /* File upload variables */
             image: undefined,
@@ -66,6 +67,7 @@ export class EditRoom extends Component {
                         meal: res.data.meal,
                         count: res.data.count,
                         pre_price: res.data.pre_price,
+                        is_available: res.data.is_available ? "true" : "false",
                         free_breakfast: res.data.free_breakfast ? "true" : "false"
                     });
                     axios.post('/getHotel', {hotel_id: res.data.hotel_id})
@@ -205,6 +207,23 @@ export class EditRoom extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="padding-bottom-20">
+                                                <div className="form-group">
+                                                    Is available
+                                                </div>
+                                                <div className="margin-top-5-neg d-flex">
+                                                    <div className="form-check padding-right-10">
+                                                        <label className="form-check-label">
+                                                            <input className="checkmark" name="is_available"
+                                                                   checked={this.state.is_available === "true" ? true : null}
+                                                                   value={this.state.is_available} type="checkbox"
+                                                                   onChange={this.onChangeCheckbox}/>
+                                                            <span className="checkmark"/>
+                                                            Is available
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             {this.getSubmitOption()}
                                         </form>
                                     </fieldset>
@@ -247,13 +266,7 @@ export class EditRoom extends Component {
     editRoomHandler = (e) => {
         if (this.state.name !== "" && this.state.bed_count !== "" && this.state.price_night !== "" && this.state.count !== "") {
             e.preventDefault()
-            let free_breakfast = null;
             if (this.state.role < 2) {
-                if (this.state.free_breakfast === true) {
-                    free_breakfast = 1;
-                } else {
-                    free_breakfast = 0;
-                }
                 axios.post('/editRoom', {
                     id_room: this.state.id_room,
                     name: this.state.name,
@@ -264,7 +277,8 @@ export class EditRoom extends Component {
                     category: this.state.category,
                     room_size: this.state.room_size,
                     bed_type: this.state.bed_type,
-                    free_breakfast: free_breakfast,
+                    free_breakfast: this.state.free_breakfast ? 1 : 0,
+                    is_available: this.state.is_available ? 1 : 0,
                     count: this.state.count
                 }).then(() => {
                     this.setState({status: "Room successfully updated."});

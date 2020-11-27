@@ -69,7 +69,7 @@ export class RegistrationPage extends Component {
                                     </div>
                                     <div className="form-group">
                                         <Required text="Email"/>
-                                        <input type="tel" className="form-control" name='email'
+                                        <input type="email" className="form-control" name='email'
                                                placeholder="Email" defaultValue={this.state.email}
                                                onChange={this.onChange} required/>
                                     </div>

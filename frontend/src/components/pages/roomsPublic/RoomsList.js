@@ -5,10 +5,6 @@ import Rooms from "./Rooms";
 import PropTypes from "prop-types";
 import moment from "moment";
 
-const today = new Date();
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1)
-
 export class RoomsList extends Component {
 
     constructor(props) {
@@ -20,8 +16,8 @@ export class RoomsList extends Component {
             hotel_id: undefined,
             rooms: [],
             /* Date */
-            start_date: this.props.start_date !== undefined ? this.props.start_date : today.toISOString().substring(0, 10),
-            end_date: this.props.end_date !== undefined ? this.props.end_date : tomorrow.toISOString().substring(0, 10),
+            start_date: this.props.start_date !== undefined ? this.props.start_date : "",
+            end_date: this.props.end_date !== undefined ? this.props.end_date : "",
             adult_count: this.props.adult_count,
             child_count: "0",
             room_count: this.props.room_count,
@@ -29,7 +25,11 @@ export class RoomsList extends Component {
     }
 
     componentDidMount() {
-        axios.post('/getHotelRooms', {hotel_id: this.props.hotel_id})
+        let url = '/getHotelRooms';
+        if (window.location.pathname.startsWith("/editHotel/")){
+            url = '/getHotelRoomsAdmin';
+        }
+        axios.post(url, {hotel_id: this.props.hotel_id})
             .then(res => {
                     this.setState({rooms: res.data});
                     this.setState({hotel_id: this.props.hotel_id})
@@ -87,7 +87,9 @@ export class RoomsList extends Component {
                                                  placeholder="Start date"
                                                  className="width-calc-100 text-center form-control form-control-sm"
                                                  type="date" id="1"
-                                                 max={moment().add(1, "year").format("YYYY-MM-DD")}
+                                                 max={this.state.end_date !== "" ?
+                                                     moment(this.state.end_date).add(-1, "day").format("YYYY-MM-DD")
+                                                     : moment().add(1, "year").format("YYYY-MM-DD")}
                                                  min={moment().format("YYYY-MM-DD")}
                                                  onChange={this.onChange} required/>
                             </div>
