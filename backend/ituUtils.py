@@ -61,7 +61,7 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None, id_babysitter=No
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 
-def sanitize_string(data):
+def serialize_string(data):
     if data and isinstance(data, datetime.date):
         return data.strftime("%Y-%m-%d")
     elif (data == "None") or (data is None):

@@ -3,6 +3,7 @@ import axios from "axios";
 import Hotels from "./Hotels";
 import {Link} from "react-router-dom";
 import Sidebar from "../../sidebar/Sidebar";
+import moment from "moment";
 
 export class HotelsList extends Component {
     constructor(props) {
@@ -14,8 +15,8 @@ export class HotelsList extends Component {
             orig_hotels: [],
             /* Filter */
             filter: '',
-            start_date: '',
-            end_date: '',
+            start_date: moment().format("YYYY-MM-DD"),
+            end_date: moment().add(1, "day").format("YYYY-MM-DD"),
             adult_count: '2',
             child_count: "0",
             start_range: 0,

@@ -16,8 +16,8 @@ export class RoomsList extends Component {
             hotel_id: undefined,
             rooms: [],
             /* Date */
-            start_date: this.props.start_date !== undefined ? this.props.start_date : "",
-            end_date: this.props.end_date !== undefined ? this.props.end_date : "",
+            start_date: this.props.start_date !== undefined ? this.props.start_date : moment().format("YYYY-MM-DD"),
+            end_date: this.props.end_date !== undefined ? this.props.end_date : moment().add(1, "day").format("YYYY-MM-DD"),
             adult_count: this.props.adult_count,
             child_count: "0",
             room_count: this.props.room_count,
