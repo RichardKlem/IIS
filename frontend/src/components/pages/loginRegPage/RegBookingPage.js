@@ -14,7 +14,7 @@ export class RegBookingPage extends Component {
             signUpText: "BOOK Room",
             name: undefined,
             phone_number: undefined,
-            birth_date: undefined,
+            birth_date: "1970-01-01",
             address: undefined,
             email: undefined,
             password: undefined,

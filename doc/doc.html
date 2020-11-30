@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0070)https://www.fit.vutbr.cz/study/courses/IIS/private/projekt/doc.html.cs -->
+<html class=" aaxfusc idc0_321"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+    
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>2. Hotel: rezervace a správa ubytování</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>Martin Haderka <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+		<a href="mailto:xhader00@stud.fit.vutbr.cz">xhader00@stud.fit.vutbr.cz</a> -
+		<ul>
+			<li>Zajištění hostinu a doménového jména</li>
+			<li>Návrh a testování UI</li>
+			<li>Spolupráce na Flask controlleru</li>
+			<li>Vytvoření front-end části (ReactJS aplikace)</li>
+		</ul>
+	</dd>
+	<dd>Richard Klem <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+		<a href="mailto:xklemr00@stud.fit.vutbr.cz">xklemr00@stud.fit.vutbr.cz</a> - 
+		<ul>
+			<li>Vytvoření MySQL databáze a testovacích dat</li>
+			<li>Spolupráce na Flask controlleru</li>
+			<li>Testování controlleru</li>
+			<li>Testování front-end části</li>
+		</ul>
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="http://iis-projekt.ddns.net/">http://iis-projekt.ddns.net/</a></dd>
+	<dd><a href="http://93.153.43.141/">http://93.153.43.141/</a></dd>
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+<p>Uveďte prosím existující zástupce <strong>všech rolí uživatelů</strong>.</p>
+<table>
+<tbody><tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin@iis-hotel.cz</td><td>1234</td><td>administrátor</td></tr>
+<tr><td>vlastnik@iis-hotel.cz</td><td>1234</td><td>vlastník</td></tr>
+<tr><td>recepcni@iis-hotel.cz</td><td>1234</td><td>recepční</td></tr>
+<tr><td>martin@email.cz</td><td>1234</td><td>zákazník</td></tr>
+<tr><td>john.appleseed@apple.com</td><td>1234</td><td>zákazník</td></tr>
+</tbody></table> 
+
+<h2>Implementace</h2>
+<p>Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují jednotlivé případy použití.</p>
+<h3>Flask framework - controller</h3>
+<h4>__init__.py</h4>
+<p>Soubor s proměnnými přístupových údajů a adresou databáze</p>
+<h4>databaseConnector.py</h4>
+<p>Modul zajišťující připojení a zasílání příkazů do databáze.</p>
+<h4>iisUtils.py</h4>
+<p>Modul s podpůrnými funkcemi pro práci s hlavním modulem.</br>
+Zajišťuje následující funkcionalitu:
+<ul>
+	<li>zahashování přijatého hesla funkcí <b>#hash_password</b></li>
+	<li>zkontrolování hesla pomocí pomocí <b>#verify_password</b></p></li>
+	<li>vygenerování náhodného identifikátoru pro přihlášeného uživatele <b>#random_uuid</b></li>
+	<li>ukládání vložených obrázků <b>#save_image</b></li>
+	<li>zpracování nevhodných vstupů <b>#serializa_string</b></li>
+	<li>často používané požadavky zasílané databázi</li>
+</ul>
+<h4>api.py</h4>
+<p>Hlavní modul, který zpracovává příchozí GET/POST požadavky.</br>
+Výpis hlavních funkcí:
+<ul>
+	<li>funkce pro přidání nového zákazníka<b>#registration</b></li>
+	<li>funkce pro ověření hesla zákazníka, který se přihlašuje<b>#login</b></li>
+	<li>funkce pro získání a úpravu dat z DB o účtu přihlášeného zákazníka<b>#account</b>, <b>#get_user_name</b>, <b>#get_role</b>, a <b>#update_account</b></li>
+	<li>funkce pro administrátora pro správu uživatelů<b>#get_users</b>, <b>#update_user_request</b> a <b>#remove_user</b></li>
+	<li>funkce pro správu obrázků<b>#upload_user_image</b>, <b>#get_profile_image</b>, <b>#upload_hotel_image</b>, <b>#get_hotel_image</b>, <b>#upload_room_image</b> a <b>#get_room_image</b></li>
+	<li>funkce zajišťující zobrazení nabídky a správu hotelů<b>#get_available_hotels</b>, <b>#get_hotels_admin</b>, <b>#get_hotels</b>, <b>#remove_hotel</b>, <b>#is_hotel_reserved</b>, <b>#edit_hotel</b> a <b>#edit_hotel</b></li>
+	<li>funkce zajišťující zobrazení nabídky a správu pokojů<b>#get_room_by_hotel_id</b>, <b>#is_room_reserved</b>, <b>#get_room_by_hotel_id_admin</b>, <b>#get_room</b>, <b>#remove_room</b>, <b>#add_room</b> a <b>#edit_room</b></li>
+
+</ul>
+
+<h3>Databáze</h3>
+
+Zde vložte grafické schéma relační databáze (tabulek v databázi).
+
+<h2>Instalace</h2>
+
+Stručně popište: 
+<ul>
+<li>postup instalace na server,</li>
+<li>softwarové požadavky (verze PHP apod.),</li>
+<li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>
+</ul>
+
+<h2>Známé problémy</h2>
+<p>Zde popište, které body zadání nejsou implementovány a z jakého důvodu. Např. &#8222;Z časových důvodů nebyla implementována správa uživatelů.&#8221; Pomůžete tím zrychlit hodnocení, když neimplementované funkce nebudeme muset dlouze hledat.</p>
+
+
+
+</body></html>

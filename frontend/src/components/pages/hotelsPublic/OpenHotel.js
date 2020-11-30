@@ -94,6 +94,7 @@ export class OpenHotel extends Component {
                                         <div className="rating-padding padding-top-5">
                                             <StarRatings
                                                 rating={this.state.rating}
+                                                starRatedColor="#FFD700"
                                                 starDimension="20px"
                                                 starSpacing="2px"
                                             />

@@ -1,6 +1,5 @@
 import base64
 import os
-from datetime import datetime
 
 from flask import Flask, jsonify, request
 from flask_restful import Api
@@ -17,7 +16,6 @@ from backend.iisUtils import (
     save_image,
     get_room_reservation_count,
     get_total_room_count,
-    sanitize_string,
     get_user_role,
     get_user_name_by_email,
     register_user,
@@ -28,7 +26,7 @@ from backend.iisUtils import (
     IMG_EXTENSION,
     DEFAULT_IMG,
     USERS_PATH,
-    update_user,
+    update_user, serialize_string, calculate_price_and_book, register_before_booking,
 )
 
 app = Flask(__name__)
@@ -36,8 +34,14 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 api = Api(app)
 
 
+# Login and Registration
 @app.route("/registration", methods=["POST"])
 def registration():
+    """
+    Registration handler
+    checks email validity, adds new user to database
+    :return: status - msg for user, statusCode - error code
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     result = get_user_name_by_email(data.get("email"))
     if result:
@@ -72,6 +76,11 @@ def registration():
 
 @app.route("/login", methods=["POST"])
 def login():
+    """
+    Login handler
+    checks credentials validity
+    :return: status - msg for user, statusCode - error code, cookie_id - unique session id
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
         f'SELECT uzivatel.id_user FROM uzivatel WHERE (email="{data.get("email")}");'
@@ -106,8 +115,13 @@ def login():
             return jsonify({"status": "Login not successful"})
 
 
+# User account management functions
 @app.route("/account", methods=["POST"])
 def account():
+    """
+    Account information handler
+    :return: user data from database
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
         f"SELECT uzivatel.name, uzivatel.email, uzivatel.phone_number, uzivatel.address, uzivatel.birth_date, uzivatel.role "
@@ -117,93 +131,18 @@ def account():
     result = Connector().query(query)
     if result:
         for key in result[0]:
-            result[0][key] = sanitize_string(result[0][key])
+            result[0][key] = serialize_string(result[0][key])
         return jsonify(result[0])
     else:
         return jsonify([])
 
 
-@app.route("/updateAccount", methods=["POST"])
-def update_account():
-    data = json.loads(request.get_data().decode("utf-8"))
-    result = get_user_id_by_session(data.get("CookieUserID"))[0]
-    update_user(
-        data.get("name"),
-        data.get("email"),
-        data.get("phone_number"),
-        data.get("birth_date"),
-        data.get("address"),
-        result.get("id_user"),
-    )
-    return jsonify("User information updated successfully.")
-
-
-@app.route("/updateUser", methods=["POST"])
-def update_user_request():
-    data = json.loads(request.get_data().decode("utf-8"))
-    update_user(
-        data.get("name"),
-        data.get("email"),
-        data.get("phone_number"),
-        data.get("birth_date"),
-        data.get("address"),
-        data.get("id_user"),
-    )
-    return jsonify("User information updated successfully.")
-
-
-@app.route("/removeUser", methods=["POST"])
-def remove_user():
-    data = json.loads(request.get_data().decode("utf-8"))
-    query = f'DELETE FROM uzivatel WHERE id_user = "{data.get("id_user")}";'
-    Connector().query(query, expecting_result=False)
-    return jsonify("User removed successfully.")
-
-
-@app.route("/getUsers", methods=["POST"])
-def get_users():
-    if request.method == "POST":
-        db = Connector()
-        data = json.loads(request.get_data().decode("utf-8"))
-        query = (
-            f"SELECT uzivatel.role "
-            f"FROM uzivatel NATURAL JOIN session_table "
-            f'WHERE (session_table.id_session = "{data.get("CookieUserID")}");'
-        )
-        result = db.query(query, disconnect=False)
-        if result and result[0]["role"] == 0:
-            result = db.query("SELECT * FROM uzivatel WHERE role != 0;")
-            for user in result:
-                for key in user:
-                    user[key] = sanitize_string(user[key])
-            return jsonify(result)
-        else:
-            return jsonify(False)
-
-
-@app.route("/upload/<id>", methods=["POST"])
-def upload_user_image(id):
-    file = request.files["file"]
-    user_id_res = get_user_id_by_session(id)[0]
-    if file:
-        save_image(file, user_id=user_id_res.get("id_user"))
-    return jsonify("ok")
-
-
-@app.route("/getProfileImage", methods=["POST"])
-def get_profile_image():
-    data = json.loads(request.get_data().decode("utf-8"))
-    user_id_res = get_user_id_by_session(data.get("CookieUserID"))[0]
-    img_file = USERS_PATH + str(user_id_res.get("id_user")) + IMG_EXTENSION
-    if not os.path.isfile(img_file):
-        img_file = DEFAULT_IMG
-    with open(img_file, "rb") as f:
-        im_b64 = base64.b64encode(f.read())
-    return im_b64
-
-
 @app.route("/getUserName", methods=["POST"])
 def get_user_name():
+    """
+    User name handler
+    :return: user name
+    """
     db = Connector()
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
@@ -217,47 +156,153 @@ def get_user_name():
 
 @app.route("/getUserRole", methods=["POST"])
 def get_role():
+    """
+    User role handler
+    :return: user role
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     return jsonify(get_user_role(data.get("CookieUserID")))
 
 
-@app.route("/getHotels", methods=["GET"])
-def get_hotel_by_id():
-    query = (
-        f"SELECT hotels_table.*, MIN(rooms_table.price_night) AS price_night FROM "
-        f"hotels_table JOIN rooms_table WHERE hotels_table.hotel_id = rooms_table.hotel_id AND "
-        f"hotels_table.is_available = 1 and rooms_table.is_available = 1 "
-        f"GROUP BY hotels_table.hotel_id;"
-    )
-    hotels = Connector().query(query)
-    for hotel in hotels:
-        for key in hotel:
-            hotel[key] = sanitize_string(hotel[key])
-    return jsonify(hotels)
-
-
-@app.route("/getHotelsAdmin", methods=["GET"])
-def get_hotels_admin():
-    query = f"SELECT * FROM hotels_table;"
-    hotels = Connector().query(query)
-    for hotel in hotels:
-        for key in hotel:
-            hotel[key] = sanitize_string(hotel[key])
-    return jsonify(hotels)
-
-
-@app.route("/getHotel", methods=["POST"])
-def get_hotels():
+@app.route("/updateAccount", methods=["POST"])
+def update_account():
+    """
+    Update account handler
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
-    query = f'SELECT * FROM hotels_table WHERE (hotel_id = "{data.get("hotel_id")}" );'
-    hotel = Connector().query(query)[0]
-    for key in hotel:
-        hotel[key] = sanitize_string(hotel[key])
-    return jsonify(hotel)
+    result = get_user_id_by_session(data.get("CookieUserID"))[0]
+    try:
+        update_user(
+            data.get("name"),
+            data.get("email"),
+            data.get("phone_number"),
+            data.get("birth_date"),
+            data.get("address"),
+            result.get("id_user"),
+        )
+        return jsonify("User information updated successfully.")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Update failed, please contact support.")
+
+
+# Administrators user management functions
+@app.route("/getUsers", methods=["POST"])
+def get_users():
+    """
+    Get users handler
+    :return: List of existing users
+    """
+    if request.method == "POST":
+        db = Connector()
+        data = json.loads(request.get_data().decode("utf-8"))
+        query = (
+            f"SELECT uzivatel.role "
+            f"FROM uzivatel NATURAL JOIN session_table "
+            f'WHERE (session_table.id_session = "{data.get("CookieUserID")}");'
+        )
+        result = db.query(query, disconnect=False)
+        if result and result[0]["role"] == 0:
+            result = db.query("SELECT * FROM uzivatel WHERE role != 0;")
+            for user in result:
+                for key in user:
+                    user[key] = serialize_string(user[key])
+            return jsonify(result)
+        else:
+            return jsonify(False)
+
+
+@app.route("/updateUser", methods=["POST"])
+def update_user_request():
+    """
+    Update user handler
+    :return: message for user
+    """
+    data = json.loads(request.get_data().decode("utf-8"))
+    try:
+        update_user(
+            data.get("name"),
+            data.get("email"),
+            data.get("phone_number"),
+            data.get("birth_date"),
+            data.get("address"),
+            data.get("id_user"),
+        )
+        return jsonify("User information updated successfully.")
+    except Exception as ex:
+        print(ex)
+        return jsonify("User information update has failed, please contact support.")
+
+
+@app.route("/removeUser", methods=["POST"])
+def remove_user():
+    """
+    Remove user handler
+    :return: message for user
+    """
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = f'DELETE FROM uzivatel WHERE id_user = "{data.get("id_user")}";'
+    try:
+        Connector().query(query, expecting_result=False)
+        return jsonify("User removed successfully.")
+    except Exception as ex:
+        print(ex)
+        return jsonify("User removal successfully has failed, please contact support.")
+
+
+# Image functions
+@app.route("/upload/<user_id>", methods=["POST"])
+def upload_user_image(user_id):
+    """
+    Upload User profile photo handler
+    :return: message for user
+    """
+    file = request.files["file"]
+    try:
+        user_id_res = get_user_id_by_session(user_id)[0]
+        if file:
+            save_image(file, user_id=user_id_res.get("id_user"))
+        return jsonify("Profile photo successfully uploaded")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Profile photo upload has failed, , please contact support.")
+
+
+@app.route("/getProfileImage", methods=["POST"])
+def get_profile_image():
+    """
+    User profile photo handler
+    :return: message for user
+    """
+    data = json.loads(request.get_data().decode("utf-8"))
+    user_id_res = get_user_id_by_session(data.get("CookieUserID"))[0]
+    img_file = USERS_PATH + str(user_id_res.get("id_user")) + IMG_EXTENSION
+    if not os.path.isfile(img_file):
+        img_file = DEFAULT_IMG
+    with open(img_file, "rb") as f:
+        im_b64 = base64.b64encode(f.read())
+    return im_b64
+
+
+@app.route("/uploadHotelImg/<id_hotel>", methods=["POST"])
+def upload_hotel_image(id_hotel):
+    """
+    Upload hotel photo handler
+    :return: image in base64 encoding
+    """
+    file = request.files["file"]
+    if file:
+        save_image(file, hotel_id=id_hotel)
+    return jsonify("ok")
 
 
 @app.route("/getHotelImage", methods=["POST"])
 def get_hotel_image():
+    """
+    Hotel photo handler
+    :return: image in base64 encoding
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     img_file = HOTELS_PATH + str(data.get("hotel_id")) + IMG_EXTENSION
     if not os.path.isfile(img_file):
@@ -267,8 +312,94 @@ def get_hotel_image():
     return im_b64
 
 
+@app.route("/uploadRoomImg/<room_id>", methods=["POST"])
+def upload_room_image(room_id):
+    """
+    Upload room photo handler
+    :return: image in base64 encoding
+    """
+    file = request.files["file"]
+    id_hotel = room_id.split("_")[0]
+    room_id = room_id.split("_")[1]
+    if file:
+        save_image(file, hotel_id=id_hotel, room_id=room_id)
+    return jsonify("ok")
+
+
+@app.route("/getRoomImage", methods=["POST"])
+def get_room_image():
+    """
+    Room photo handler
+    :return: image in base64 encoding
+    """
+    data = json.loads(request.get_data().decode("utf-8"))
+    hotel_id = data.get("hotel_id")
+    if not data.get("hotel_id"):
+        hotel_id = hotel_id_by_room(data.get("id_room"))
+    img_file = (
+        HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
+    )
+    if not os.path.isfile(img_file):
+        img_file = DEFAULT_IMG
+    with open(img_file, "rb") as f:
+        im_b64 = base64.b64encode(f.read())
+    return im_b64
+
+
+# Hotel functions
+@app.route("/getHotels", methods=["GET"])
+def get_available_hotels():
+    """
+    Hotels handler
+    :return: hotels data
+    """
+    query = (
+        f"SELECT hotels_table.*, MIN(rooms_table.price_night) AS price_night FROM "
+        f"hotels_table JOIN rooms_table WHERE hotels_table.hotel_id = rooms_table.hotel_id AND "
+        f"hotels_table.is_available = 1 and rooms_table.is_available = 1 "
+        f"GROUP BY hotels_table.hotel_id;"
+    )
+    hotels = Connector().query(query)
+    for hotel in hotels:
+        for key in hotel:
+            hotel[key] = serialize_string(hotel[key])
+    return jsonify(hotels)
+
+
+@app.route("/getHotelsAdmin", methods=["GET"])
+def get_hotels_admin():
+    """
+    Hotels management handler
+    :return: all hotels data
+    """
+    query = f"SELECT * FROM hotels_table;"
+    hotels = Connector().query(query)
+    for hotel in hotels:
+        for key in hotel:
+            hotel[key] = serialize_string(hotel[key])
+    return jsonify(hotels)
+
+
+@app.route("/getHotel", methods=["POST"])
+def get_hotels():
+    """
+    Hotel management handler
+    :return: hotel data by id
+    """
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = f'SELECT * FROM hotels_table WHERE (hotel_id = "{data.get("hotel_id")}" );'
+    hotel = Connector().query(query)[0]
+    for key in hotel:
+        hotel[key] = serialize_string(hotel[key])
+    return jsonify(hotel)
+
+
 @app.route("/removeHotel", methods=["POST"])
 def remove_hotel():
+    """
+    Remove hotel handler
+    :return:
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     img_file = HOTELS_PATH + str(data.get("hotel_id")) + IMG_EXTENSION
     if os.path.exists(img_file):
@@ -279,6 +410,10 @@ def remove_hotel():
 
 @app.route("/isHotelReserved", methods=["POST"])
 def is_hotel_reserved():
+    """
+    Hotel reservation checker
+    :return: status if hotel has rooms which are reserved
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT reservation_table.* FROM reservation_table JOIN rooms_table ON reservation_table.id_room = rooms_table.id_room JOIN hotels_table ON rooms_table.hotel_id = hotels_table.hotel_id WHERE hotels_table.hotel_id = "{data.get("hotel_id")}" AND reservation_table.end_date > NOW();'
     reserved = Connector().query(query)
@@ -288,19 +423,12 @@ def is_hotel_reserved():
         return jsonify({"status": True})
 
 
-@app.route("/isRoomReserved", methods=["POST"])
-def is_room_reserved():
-    data = json.loads(request.get_data().decode("utf-8"))
-    query = f'SELECT reservation_table.* FROM reservation_table JOIN rooms_table ON reservation_table.id_room = rooms_table.id_room WHERE rooms_table.hotel_id = "{data.get("id_room")}" AND reservation_table.end_date > NOW();'
-    reserved = Connector().query(query)
-    if not reserved:
-        return jsonify({"status": False})
-    else:
-        return jsonify({"status": True})
-
-
 @app.route("/addHotel", methods=["POST"])
 def add_hotel():
+    """
+    Add hotel handler
+    :return: new hotel id
+    """
     db = Connector()
     data = json.loads(request.get_data().decode("utf-8"))
     rating = 0
@@ -319,16 +447,12 @@ def add_hotel():
     return jsonify(str(db.get_last_row_id()))
 
 
-@app.route("/uploadHotelImg/<id_hotel>", methods=["POST"])
-def upload_hotel_image(id_hotel):
-    file = request.files["file"]
-    if file:
-        save_image(file, hotel_id=id_hotel)
-    return jsonify("ok")
-
-
 @app.route("/editHotel", methods=["POST"])
 def edit_hotel():
+    """
+    Edit hotel handler
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     rating = 0
     if data.get("rating") is not None:
@@ -351,60 +475,65 @@ def edit_hotel():
         f'is_available = {data.get("is_available")} '
         f'WHERE (hotel_id = "{data.get("hotel_id")}");'
     )
-    Connector().query(query, expecting_result=False)
-    return jsonify("OK")
+    try:
+        Connector().query(query, expecting_result=False)
+        return jsonify("Hotel update successful")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Hotel update successful")
 
 
+# Room functions
 @app.route("/getHotelRooms", methods=["POST"])
 def get_room_by_hotel_id():
+    """
+    Rooms by hotel id handler
+    :return: Rooms list for requested hotel (only available rooms)
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT * FROM rooms_table WHERE rooms_table.hotel_id = "{data.get("hotel_id")}" and rooms_table.is_available = 1;'
     rooms = Connector().query(query)
     for room in rooms:
         for key in room:
-            room[key] = sanitize_string(room[key])
+            room[key] = serialize_string(room[key])
     return jsonify(rooms)
 
 
 @app.route("/getHotelRoomsAdmin", methods=["POST"])
 def get_room_by_hotel_id_admin():
+    """
+    Rooms by hotel id handler
+    :return: Rooms list for requested hotel
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT * FROM rooms_table WHERE rooms_table.hotel_id = "{data.get("hotel_id")}";'
     rooms = Connector().query(query)
     for room in rooms:
         for key in room:
-            room[key] = sanitize_string(room[key])
+            room[key] = serialize_string(room[key])
     return jsonify(rooms)
 
 
 @app.route("/getRoom", methods=["POST"])
 def get_room():
+    """
+    Room information handler
+    :return: room info requested by id
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT * FROM rooms_table WHERE id_room = "{data.get("id_room")}";'
     room = Connector().query(query)[0]
     for key in room:
-        room[key] = sanitize_string(room[key])
+        room[key] = serialize_string(room[key])
     return jsonify(room)
-
-
-@app.route("/getRoomImage", methods=["POST"])
-def get_room_image():
-    data = json.loads(request.get_data().decode("utf-8"))
-    hotel_id = data.get("hotel_id")
-    if not data.get("hotel_id"):
-        hotel_id = hotel_id_by_room(data.get("id_room"))
-    img_file = (
-        HOTELS_PATH + str(hotel_id) + "/" + str(data.get("id_room")) + IMG_EXTENSION
-    )
-    if not os.path.isfile(img_file):
-        img_file = DEFAULT_IMG
-    with open(img_file, "rb") as f:
-        im_b64 = base64.b64encode(f.read())
-    return im_b64
 
 
 @app.route("/removeRoom", methods=["POST"])
 def remove_room():
+    """
+    Remove room by id handler
+    :return:
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     hotel_id = data.get("hotel_id")
     if not data.get("hotel_id"):
@@ -418,8 +547,28 @@ def remove_room():
     return jsonify(Connector().query(query, expecting_result=False))
 
 
+@app.route("/isRoomReserved", methods=["POST"])
+def is_room_reserved():
+    """
+    Room reservation checker
+    :return: status if room is reserved
+    """
+    data = json.loads(request.get_data().decode("utf-8"))
+    query = f'SELECT reservation_table.* FROM reservation_table JOIN rooms_table ON reservation_table.id_room = rooms_table.id_room WHERE rooms_table.hotel_id = "{data.get("id_room")}" AND reservation_table.end_date > NOW();'
+    reserved = Connector().query(query)
+    if not reserved:
+        return jsonify({"status": False})
+    else:
+        return jsonify({"status": True})
+
+
+
 @app.route("/addRoom", methods=["POST"])
 def add_room():
+    """
+    Add room handler
+    :return: new room id
+    """
     db = Connector()
     data = json.loads(request.get_data().decode("utf-8"))
     room_size = 0
@@ -438,19 +587,12 @@ def add_room():
     return jsonify(str(db.get_last_row_id()))
 
 
-@app.route("/uploadRoomImg/<id>", methods=["POST"])
-def upload_room_image(id):
-    file = request.files["file"]
-    id_hotel = id.split("_")[0]
-    room_id = id.split("_")[1]
-    if file:
-        save_image(file, hotel_id=id_hotel, room_id=room_id)
-    return jsonify("ok")
-
-
 @app.route("/editRoom", methods=["POST"])
 def edit_room():
-    db = Connector()
+    """
+    Edit room handler
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
         f"UPDATE rooms_table "
@@ -464,102 +606,66 @@ def edit_room():
         f'pre_price = "{data.get("pre_price")}" '
         f'WHERE (id_room = "{data.get("id_room")}");'
     )
-    db.query(query, expecting_result=False, disconnect=False)
-    return jsonify(str(db.get_last_row_id()))
+    try:
+        Connector().query(query, expecting_result=False)
+        return jsonify("Room update successful")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Room update successful")
 
 
+
+# Booking functions
 @app.route("/bookRoom", methods=["POST"])
 def book_room():
+    """
+    Room booking handler (registered user)
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
         f"SELECT id_user "
         f"FROM uzivatel NATURAL JOIN session_table "
         f'WHERE (session_table.id_session = "{data.get("CookieUserID")}");'
     )
-    id_user = Connector().query(query)[0]["id_user"]
-    calculate_price_and_book(data, id_user)
-    return jsonify("Reservation completed")
+    try:
+        id_user = Connector().query(query)[0]["id_user"]
+        calculate_price_and_book(data, id_user)
+        return jsonify("Reservation completed")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Reservation failed")
 
 
 @app.route("/nonRegBooking", methods=["POST"])
 def non_reg_booking():
+    """
+    Room booking handler (without registration)
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     return register_before_booking(data, register=False)
 
 
 @app.route("/regBooking", methods=["POST"])
 def reg_booking():
+    """
+    Room booking handler (with registration)
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     return register_before_booking(data, register=True)
 
 
-def register_before_booking(data, register):
-    result = get_user_name_by_email(data.get("email"))
-    if result:
-        return jsonify(
-            {
-                "status": "Given email is already registered, please login",
-                "statusCode": 300,
-            }
-        )
-    else:
-        try:
-            id_user = register_user(
-                data.get("name"),
-                data.get("birth_date"),
-                data.get("phone_number"),
-                data.get("address"),
-                data.get("email"),
-            )
-            if register:
-                register_password(id_user, data.get("password"))
-            calculate_price_and_book(data, id_user)
-        except Exception as ex:
-            print(ex)
-            return jsonify(
-                {"status": "Booking Failed, please contact support", "statusCode": 500}
-            )
-        return jsonify({"status": "Booking completed", "statusCode": 200})
-
-
-def calculate_price_and_book(data, id_user):
-    db = Connector()
-    query = (
-        f"SELECT price_night, pre_price "
-        f"FROM rooms_table "
-        f'WHERE (rooms_table.id_room = "{data.get("id_room")}");'
-    )
-    prices = db.query(query, disconnect=False)[0]
-    price_per_night = prices["price_night"]
-    pre_price_per_night = prices["pre_price"]
-    start_date = datetime.strptime(data.get("start_date"), "%Y-%m-%d")
-    end_date = datetime.strptime(data.get("end_date"), "%Y-%m-%d")
-    total_price = (
-        int((end_date - start_date).days)
-        * int(price_per_night)
-        * int(data.get("room_count"))
-    )
-    total_pre_price = (
-        int((end_date - start_date).days)
-        * int(pre_price_per_night)
-        * int(data.get("room_count"))
-    )
-    query = (
-        f"INSERT INTO reservation_table (id_user, id_room, start_date, end_date, "
-        f"adult_count, room_count, total_price, approved, pre_price) "
-        f'VALUES ({id_user}, {data.get("id_room")}, "{data.get("start_date")}", "{data.get("end_date")}", '
-        f'{data.get("adult_count")}, {data.get("room_count")}, {total_price}, '
-        f'{data.get("approved")}, {total_pre_price});'
-    )
-    db.query(query, expecting_result=False, disconnect=False)
-
-
 @app.route("/getBookings", methods=["POST"])
 def get_bookings():
+    """
+    Get all users bookings handler (logged-in user)
+    :return: bookings list
+    """
     if request.method == "POST":
         db = Connector()
         data = json.loads(request.get_data().decode("utf-8"))
-        # quotes around session_key are required!
         query = (
             f"SELECT hotels_table.hotel_id, hotels_table.free_cancellation, uzivatel.*, reservation_table.*, "
             f"rooms_table.name as room_name, hotels_table.name as hotel_name "
@@ -571,12 +677,16 @@ def get_bookings():
         bookings = db.query(query, disconnect=False)
         for booking in bookings:
             for key in booking:
-                booking[key] = sanitize_string(booking[key])
+                booking[key] = serialize_string(booking[key])
         return jsonify(bookings)
 
 
 @app.route("/getAllBookings", methods=["POST"])
 def get_all_bookings():
+    """
+    Get all bookings handler (administrator/reception)
+    :return: bookings list
+    """
     if request.method == "POST":
         db = Connector()
         data = json.loads(request.get_data().decode("utf-8"))
@@ -591,7 +701,7 @@ def get_all_bookings():
             bookings = db.query(query, disconnect=False)
             for booking in bookings:
                 for key in booking:
-                    booking[key] = sanitize_string(booking[key])
+                    booking[key] = serialize_string(booking[key])
             return jsonify(bookings)
         else:
             return jsonify([])
@@ -599,17 +709,29 @@ def get_all_bookings():
 
 @app.route("/removeBooking", methods=["POST"])
 def remove_booking():
+    """
+    Remove booking handler
+    :return: message for user
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
         f"DELETE FROM reservation_table "
         f'WHERE id_reservation={data.get("id_reservation")};'
     )
-    Connector().query(query, expecting_result=False)
-    return jsonify("Booking removed successfully")
+    try:
+        Connector().query(query, expecting_result=False)
+        return jsonify("Booking removed successfully.")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Booking removal has failed.")
 
 
 @app.route("/updateBooking", methods=["POST"])
 def update_booking():
+    """
+    Update booking handler
+    :return: message for user
+    """
     db = Connector()
     data = json.loads(request.get_data().decode("utf-8"))
     query = (
@@ -619,12 +741,21 @@ def update_booking():
         f'approved = "{data.get("approved")}" '
         f'WHERE id_reservation="{data.get("id_reservation")}";'
     )
-    db.query(query, expecting_result=False)
-    return jsonify("Booking updated successfully.")
+    try:
+        db.query(query, expecting_result=False)
+        return jsonify("Booking updated successfully.")
+    except Exception as ex:
+        print(ex)
+        return jsonify("Booking update has failed.")
 
 
+# Search and availability function
 @app.route("/checkDates", methods=["POST"])
 def check_dates():
+    """
+    Check availability in date range handler
+    :return: available
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     reserved_rooms_count = get_room_reservation_count(
         data.get("id_room"), data.get("start_date"), data.get("end_date")
@@ -638,6 +769,10 @@ def check_dates():
 
 @app.route("/searchHotels", methods=["POST"])
 def search_hotel():
+    """
+    Check availability in date range handler from search action
+    :return: available
+    """
     data = json.loads(request.get_data().decode("utf-8"))
     if data.get("filter") == "":
         query = (

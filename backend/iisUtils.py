@@ -5,6 +5,7 @@ import os
 import datetime
 
 from PIL import Image
+from flask import jsonify
 
 from backend.databaseConnector import Connector
 
@@ -58,13 +59,75 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None):
     im.save(path + IMG_EXTENSION, IMG_FORMAT, quality=IMG_QUALITY)
 
 
-def sanitize_string(data):
+def serialize_string(data):
     if data and isinstance(data, datetime.date):
         return data.strftime("%Y-%m-%d")
     elif (data == "None") or (data is None):
         return ""
     else:
         return data
+
+
+def calculate_price_and_book(data, id_user):
+    db = Connector()
+    query = (
+        f"SELECT price_night, pre_price "
+        f"FROM rooms_table "
+        f'WHERE (rooms_table.id_room = "{data.get("id_room")}");'
+    )
+    prices = db.query(query, disconnect=False)[0]
+    price_per_night = prices["price_night"]
+    pre_price_per_night = prices["pre_price"]
+    start_date = datetime.datetime.strptime(data.get("start_date"), "%Y-%m-%d")
+    end_date = datetime.datetime.strptime(data.get("end_date"), "%Y-%m-%d")
+    total_price = (
+        int((end_date - start_date).days)
+        * int(price_per_night)
+        * int(data.get("room_count"))
+    )
+    total_pre_price = (
+        int((end_date - start_date).days)
+        * int(pre_price_per_night)
+        * int(data.get("room_count"))
+    )
+    query = (
+        f"INSERT INTO reservation_table (id_user, id_room, start_date, end_date, "
+        f"adult_count, room_count, total_price, approved, pre_price) "
+        f'VALUES ({id_user}, {data.get("id_room")}, "{data.get("start_date")}", "{data.get("end_date")}", '
+        f'{data.get("adult_count")}, {data.get("room_count")}, {total_price}, '
+        f'{data.get("approved")}, {total_pre_price});'
+    )
+    db.query(query, expecting_result=False, disconnect=False)
+
+
+
+def register_before_booking(data, register):
+    result = get_user_name_by_email(data.get("email"))
+    if result:
+        return jsonify(
+            {
+                "status": "Given email is already registered, please login",
+                "statusCode": 300,
+            }
+        )
+    else:
+        try:
+            id_user = register_user(
+                data.get("name"),
+                data.get("birth_date"),
+                data.get("phone_number"),
+                data.get("address"),
+                data.get("email"),
+            )
+            if register:
+                register_password(id_user, data.get("password"))
+            calculate_price_and_book(data, id_user)
+        except Exception as ex:
+            print(ex)
+            return jsonify(
+                {"status": "Booking Failed, please contact support", "statusCode": 500}
+            )
+        return jsonify({"status": "Booking completed", "statusCode": 200})
 
 
 def get_room_reservation_count(id_room, start_date, end_date):
