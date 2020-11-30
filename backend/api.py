@@ -1,7 +1,6 @@
 import base64
-import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flask_restful import Api
 from flask_cors import CORS
 
@@ -9,25 +8,7 @@ import json
 import sys
 
 from backend import FLASK_HOST
-from backend.databaseConnector import Connector
-from backend.iisUtils import (
-    verify_password,
-    random_uuid,
-    save_image,
-    get_room_reservation_count,
-    get_total_room_count,
-    get_user_role,
-    get_user_name_by_email,
-    register_user,
-    register_password,
-    get_user_id_by_session,
-    hotel_id_by_room,
-    HOTELS_PATH,
-    IMG_EXTENSION,
-    DEFAULT_IMG,
-    USERS_PATH,
-    update_user, serialize_string, calculate_price_and_book, register_before_booking,
-)
+from backend.iisUtils import *
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -151,7 +132,9 @@ def get_user_name():
         f'WHERE (session_table.id_session = "{data.get("CookieUserID")}");'
     )
     result = db.query(query)
-    return jsonify(result[0])
+    if result:
+        return jsonify(result[0])
+    return "Username"
 
 
 @app.route("/getUserRole", methods=["POST"])
@@ -171,7 +154,10 @@ def update_account():
     :return: message for user
     """
     data = json.loads(request.get_data().decode("utf-8"))
-    result = get_user_id_by_session(data.get("CookieUserID"))[0]
+    try:
+        result = get_user_id_by_session(data.get("CookieUserID"))[0]
+    except IndexError:
+        result = dict()
     try:
         update_user(
             data.get("name"),
@@ -289,8 +275,11 @@ def get_profile_image():
     :return: message for user
     """
     data = json.loads(request.get_data().decode("utf-8"))
-    user_id_res = get_user_id_by_session(data.get("CookieUserID"))[0]
-    img_file = USERS_PATH + str(user_id_res.get("id_user")) + IMG_EXTENSION
+    try:
+        user_id_res = get_user_id_by_session(data.get("CookieUserID"))[0]
+        img_file = USERS_PATH + str(user_id_res.get("id_user")) + IMG_EXTENSION
+    except IndexError:
+        img_file = DEFAULT_IMG
     if not os.path.isfile(img_file):
         img_file = DEFAULT_IMG
     with open(img_file, "rb") as f:
@@ -331,11 +320,14 @@ def upload_room_image(room_id):
     Upload room photo handler
     :return: image in base64 encoding
     """
-    file = request.files["file"]
-    id_hotel = room_id.split("_")[0]
-    room_id = room_id.split("_")[1]
-    if file:
-        save_image(file, hotel_id=id_hotel, room_id=room_id)
+    try:
+        file = request.files["file"]
+        id_hotel = room_id.split("_")[0]
+        room_id = room_id.split("_")[1]
+        if file:
+            save_image(file, hotel_id=id_hotel, room_id=room_id)
+    except IndexError:
+        return jsonify("not ok")
     return jsonify("ok")
 
 
@@ -401,10 +393,11 @@ def get_hotels():
     """
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT * FROM hotels_table WHERE (hotel_id = "{data.get("hotel_id")}" );'
-    hotel = Connector().query(query)[0]
-    for key in hotel:
-        hotel[key] = serialize_string(hotel[key])
-    return jsonify(hotel)
+    hotel = Connector().query(query)
+    if hotel:
+        for key in hotel[0]:
+            hotel[key] = serialize_string(hotel[key])
+        return jsonify(hotel)
 
 
 @app.route("/removeHotel", methods=["POST"])
@@ -535,10 +528,11 @@ def get_room():
     """
     data = json.loads(request.get_data().decode("utf-8"))
     query = f'SELECT * FROM rooms_table WHERE id_room = "{data.get("id_room")}";'
-    room = Connector().query(query)[0]
-    for key in room:
-        room[key] = serialize_string(room[key])
-    return jsonify(room)
+    room = Connector().query(query)
+    if room:
+        for key in room[0]:
+            room[key] = serialize_string(room[key])
+        return jsonify(room)
 
 
 @app.route("/removeRoom", methods=["POST"])
