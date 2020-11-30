@@ -221,14 +221,27 @@ def update_user_request():
     """
     data = json.loads(request.get_data().decode("utf-8"))
     try:
-        update_user(
-            data.get("name"),
-            data.get("email"),
-            data.get("phone_number"),
-            data.get("birth_date"),
-            data.get("address"),
-            data.get("id_user"),
+        query = (
+            f"UPDATE uzivatel "
+            f'SET name = "{data.get("name")}", '
+            f'email = "{data.get("email")}", '
+            f'phone_number = "{data.get("phone_number")}", '
+            f'address = "{data.get("address")}", '
+            f'role = "{data.get("role")}" '
+            f'WHERE (id_user = "{data.get("id_user")}");'
         )
+        if data.get("birth_date") is not None:
+            query = (
+                f"UPDATE uzivatel "
+                f'SET name = "{data.get("name")}", '
+                f'email = "{data.get("email")}", '
+                f'phone_number = "{data.get("phone_number")}", '
+                f'address = "{data.get("address")}", '
+                f'role = "{data.get("role")}", '
+                f'birth_date = "{data.get("birth_date")}" '
+                f'WHERE (id_user = "{data.get("id_user")}");'
+            )
+        Connector().query(query, expecting_result=False)
         return jsonify("User information updated successfully.")
     except Exception as ex:
         print(ex)

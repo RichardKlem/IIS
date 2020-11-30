@@ -216,7 +216,7 @@ def update_user(name, email, phone_number, birth_date, address, id_user):
         f'SET name = "{name}", '
         f'email = "{email}", '
         f'phone_number = "{phone_number}", '
-        f'address = "{address}", '
+        f'address = "{address}" '
         f'WHERE (id_user = "{id_user}");'
     )
     if birth_date is not None:

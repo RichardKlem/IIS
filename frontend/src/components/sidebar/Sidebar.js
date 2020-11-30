@@ -28,12 +28,9 @@ class Sidebar extends Component {
                             <Required text="Check-in date:"/>
                             <input name="start_date" defaultValue={this.props.state.start_date} placeholder="Start date"
                                    className="text-center form-control form-control-sm input-width" type="date"
-                                   max={this.props.state.end_date !== "" ?
-                                       moment(this.props.state.end_date).add(-1, "day").format("YYYY-MM-DD")
-                                       : moment().add(1, "year").format("YYYY-MM-DD")}
                                    min={moment().format("YYYY-MM-DD")}
                                    required
-                                   onChange={this.props.onChange}/>
+                                   onChange={this.props.onChangeDate}/>
                         </div>
                         <div className="form-group font-weight-light">
                             <Required text="Check-out date:"/>
@@ -47,7 +44,7 @@ class Sidebar extends Component {
                                        moment(this.props.state.start_date).add(1, "day").format("YYYY-MM-DD")
                                        : moment().add(1, "day").format("YYYY-MM-DD")}
                                    required
-                                   onChange={this.props.onChange}/>
+                                   onChange={this.props.onChangeDate}/>
                         </div>
                         <div className="form-group font-weight-light">
                             <Required text="Adults:"/>

@@ -193,20 +193,20 @@ values (1,
 
 # Test hotel data
 INSERT INTO `hotels_table`
-VALUES (1, 'Hotel', 'Business hotel v centru Brna', 2, 'Náměstí svobody 0, Brno 614 00, Česká Republika',
-        'info@hotel-brno.cz', '+4200000000000', 5, 1, 1, 1, 1, 1, 1, 1),
-       (2, 'Hotel 1', 'Standard Hotel in Brno', 1, 'Ulice 1, Brno 612 00, CZ', 'hotel1@is-hotel.cz', '+420000000000', 4,
-        1, 0, 1, 1, 1, 1, 1),
-       (3, 'Hotel 2', 'Airport Hotel Prague', 3, 'Příčná 498/7, Praha 276 01, CZ ', 'hotel2@is-hotel.cz',
-        '+420000000000', 3, 0, 0, 1, 1, 1, 1, 1),
-       (4, 'Hotel 3', 'Hotel 3 - Casino Hotel', 5, 'Ulice 1, Zlín 760 01, CZ', 'hotel3@is-hotel.cz', '+420000000000', 2,
-        0, 0, 0, 1, 1, 1, 1),
-       (5, 'Hotel 4', 'Hotel 4 - Studio hotel', 6, 'Ulice 1, Praha 100 00, CZ', 'hotel4@is-hotel.cz', '+420000000000',
-        1, 0, 0, 0, 1, 0, 1, 1),
-       (6, 'Hotel 5', 'Hotel 5 - London hotel', 7, 'Street 1, London WC2N 5DU, UK', 'hotel5@is-hotel.cz',
-        ' +44000000000', 5, 0, 0, 0, 0, 0, 1, 1),
-       (7, 'Hotel 6', 'Economy hotel', 8, 'Ulice 42, Vsetín 75501, CZ', 'hotel6@is-hotel.cz', '+420000000000', 0, 0, 1,
-        0, 0, 0, 0, 1);
+VALUES (1, 'Hotel Crowne Plaza', 'Business hotel v centru Brna', 2, 'Náměstí svobody 0, Brno 614 00, Česká Republika',
+        'info@hotel-brno.cz', '+420761349825', 5, 1, 1, 1, 1, 1, 1, 1),
+       (2, 'Hotel Sunset Lodge', 'Standard Hotel in Brno', 1, 'Kounicova 13a, Brno 602 00, CZ', 'info@is-hotel.cz',
+        '+4200734612895', 4, 1, 0, 1, 1, 1, 1, 1),
+       (3, 'Hotel Knights Inn', 'Airport Hotel Prague', 3, 'Příčná 498/7, Praha 276 01, CZ ',
+        'hotelknights@is-hotel.cz', '+420545800621', 3, 0, 0, 1, 1, 1, 1, 1),
+       (4, 'Urban Boutique Hotel', 'Urban Boutique Hotel - Casino Hotel', 5, 'Ulice 1, Zlín 760 01, CZ',
+        'hotel-ub@is-hotel.cz', '+420606521307', 2, 0, 0, 0, 1, 1, 1, 1),
+       (5, 'The Elet Hotel', 'The Elet Hotel - Studio hotel', 6, 'Vinohradská 135, Praha 130 00, CZ',
+        'hotelelet@is-hotel.cz', '+420746532198', 1, 0, 0, 0, 1, 0, 1, 1),
+       (6, 'Hotel Elite', 'Hotel Elite - London hotel', 7, 'Street 1, London WC2N 5DU, UK', 'hotel5@is-hotel.uk',
+        '+44000000000', 5, 0, 0, 1, 1, 1, 1, 1),
+       (7, 'Roadside Motel', 'Roadside Motel - Economy motel', 8, 'Ulice 42, Vsetín 75501, CZ', 'motel@is-hotel.cz',
+        '+420543362584', 0, 0, 1, 0, 0, 0, 0, 1);
 
 # Test rooms data
 INSERT INTO `rooms_table`

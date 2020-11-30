@@ -110,6 +110,18 @@ export class HotelsList extends Component {
 
     onChange = (e) => this.setState({[e.target.name]: e.target.value});
 
+    onChangeDate = (e) => {
+        this.setState({[e.target.name]: e.target.value});
+
+        console.log(e.target.name)
+        console.log(moment(e.target.value) > moment(this.state.end_date))
+
+        if ((e.target.name === "start_date") && (moment(e.target.value) > moment(this.state.end_date))) {
+            console.log("ti")
+            this.setState( {end_date : ""} );
+        }
+    }
+
 
     searchHotel = async (e) => {
         e.preventDefault();
@@ -262,7 +274,8 @@ export class HotelsList extends Component {
                         searchHotel={this.searchHotel}
                         onChangeCheckbox={this.onChangeCheckbox}
                         filterHotel={this.filterHotel}
-                        onChange={this.onChange}/>
+                        onChange={this.onChange}
+                        onChangeDate={this.onChangeDate}/>
                     <div className="main-panel border border-gray padding-top-0">
                         <Hotels hotels={this.state.hotels}
                                 searched={this.state.searched}

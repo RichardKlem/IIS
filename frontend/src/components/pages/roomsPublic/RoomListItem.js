@@ -70,13 +70,13 @@ export class RoomListItem extends Component {
                         <div className="border border-light d-flex">
                             <div className="item-list-style">
                                 <img src={`data:image/*;base64,${this.state.image}`} alt="hotel"
-                                     className="item-list-style-img" onClick={this.handlePopUp}/>
+                                     className="item-list-style-img"/>
                             </div>
                             <div className="card-body">
                                 <div className="d-flex">
-                                    <button className="btn btn-link" onClick={this.handlePopUp}>
+                                    <div className="padding-left-10 not-btn">
                                         <h3>{this.props.room.name}</h3>
-                                    </button>
+                                    </div>
                                     <div className="width-auto padding-bottom-10 margin-top-5-neg padding-top-10">
                                         <select
                                             name="category" value={this.props.room.category}
@@ -90,6 +90,13 @@ export class RoomListItem extends Component {
                                             <option value="7">Suite</option>
                                         </select>
                                     </div>
+                                    <div className="width-auto padding-bottom-10 margin-top-5-neg padding-top-10 padding-left-10">
+                                    <select name="bed_type" defaultValue={this.props.room.bed_type}
+                                            className="form-control select-disabled white-textarea" disabled>
+                                        <option value="1">Separate beds</option>
+                                        <option value="2">Double beds</option>
+                                    </select>
+                                    </div>
                                 </div>
                                 <form>
                                     <Form.Group>
@@ -100,10 +107,18 @@ export class RoomListItem extends Component {
                                     </Form.Group>
                                     <div className="d-flex justify-content-between">
                                         <div className="line-height-sm">
-                                            <p className="color-green">{this.props.room.free_breakfast === 1 ? "Offered with free breakfast" : ""}</p>
-                                            <p>Beds count: {this.props.room.bed_count}</p>
-                                            <p>{(this.props.start_date !== "" && this.props.end_date !== "") ? "Price per night: " + this.props.room.price_night + "Kč" : ""}</p>
-                                            <p>{this.props.room.pre_price === 0 ? "" : "Pre-price per night: " + this.props.room.pre_price + "Kč"}</p>
+                                            <div className="d-flex">
+                                                <div style={{marginTop: "-5px"}}>
+                                                    <p className="padding-left-5">Beds count: {this.props.room.bed_count}</p>
+                                                    <p className="padding-left-5">{"Room size:" + this.props.room.room_size + "m"}<sup>2</sup></p>
+
+                                                </div>
+                                                <div className="padding-left-10" style={{marginTop: "-5px"}}>
+                                                    <p>{(this.props.start_date !== "" && this.props.end_date !== "") ? "Price per night: " + this.props.room.price_night + "Kč (reservation fee included)" : ""}</p>
+                                                    <b className="padding-top-5">{(this.props.start_date !== "" && this.props.end_date !== "") ? "Reservation fee (per night): " + this.props.room.pre_price + "Kč": ""}</b>
+                                                    <p className="padding-top-20 color-green">{this.props.room.free_breakfast === 1 ? "Offered with free breakfast" : ""}</p>
+                                                </div>
+                                            </div>
                                             {this.prepaymentFields()}
                                         </div>
                                         {this.setUrl()}
@@ -282,7 +297,7 @@ export class RoomListItem extends Component {
                             </div>
                             <div>
                                 <button className="btn btn-primary mr-2"
-                                        onClick={this.reservationHandle}>{this.props.no_prepayment === 1 ? (typeof cookieUserID !== "undefined" ? "Book" : "Register & Book") : (typeof cookieUserID !== "undefined" ? "Book (pay: " + this.calculatePrePrice() + ")" : "Register & Book (pay: " + this.calculatePrePrice() + ")")}</button>
+                                        onClick={this.reservationHandle}>{this.props.no_prepayment === 1 ? (typeof cookieUserID !== "undefined" ? "Book" : "Register & Book") : (typeof cookieUserID !== "undefined" ? "Book (pay " + this.calculatePrePrice() + "and reservation fee)" : "Register & Book (pay " + this.calculatePrePrice() + " reservation fee)")}</button>
                             </div>
                         </div>
                     </div>

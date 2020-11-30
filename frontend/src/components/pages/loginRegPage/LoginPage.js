@@ -48,9 +48,7 @@ export class LoginPage extends Component {
             .then(res => {
                     this.setState({status: res.data.status});
                     if (res.data.status_code === 200) {
-                        let d = new Date();
-                        d.setTime(d.getTime() + (60 * 60 * 1000));
-                        cookies.set('CookieUserID', res.data.cookie_id, {path: '/', expires: d});
+                        cookies.set('CookieUserID', res.data.cookie_id, {path: '/', maxAge: 7200});
                         window.location.reload(false);
                     }
                 }

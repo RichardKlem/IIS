@@ -27,6 +27,7 @@ export class UserListItem extends Component {
             birth_date: this.state.birth_date,
             email: this.state.email,
             address: this.state.address,
+            role: this.state.role,
             phone_number: this.state.phone_number,
         }).then(res => {
                 this.setState({status: res.data});
