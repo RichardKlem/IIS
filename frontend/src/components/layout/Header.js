@@ -4,7 +4,6 @@ import {Link} from "react-router-dom";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import HomeIcon from "mdi-react/HomeIcon";
-import {Redirect} from "react-router";
 
 const cookies = new Cookies();
 let cookieUserID = cookies.get('CookieUserID');
@@ -43,9 +42,10 @@ export class Header extends Component {
                 <header className="header-offset">
                     <nav
                         className="navbar border border-dark width-calc-100 align-items-center justify-content-between d-flex fixed-top">
-                    <div>ERROR, please sign out and reload page</div>
-                    <button className="btn btn-block btn-primary" onClick={this.signOut}>
-                        Sign Out </button>
+                        <div>ERROR, please sign out and reload page</div>
+                        <button className="btn btn-block btn-primary" onClick={this.signOut}>
+                            Sign Out
+                        </button>
                     </nav>
                 </header>
             );
@@ -75,7 +75,7 @@ export class Header extends Component {
         cookies.remove('CookieUserID');
         this.setState({status: "Logged out successfully"});
         cookieUserID = undefined;
-        return <Redirect to="/"/>
+        window.location.reload(false);
     }
 
     userLoginAction = () => {

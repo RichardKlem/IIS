@@ -20,12 +20,12 @@ export class LoginPage extends Component {
     }
 
     componentDidMount() {
-        this.setState({cookie_id : cookies.get('CookieUserID')})
+        this.setState({cookie_id: cookies.get('CookieUserID')})
         this.setState({isLoading: false})
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (typeof (cookies.get('CookieUserID')) !== "undefined"){
+        if (typeof (cookies.get('CookieUserID')) !== "undefined") {
             this.props.history.push('/');
         }
     }

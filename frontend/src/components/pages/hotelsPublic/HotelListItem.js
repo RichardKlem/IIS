@@ -18,7 +18,7 @@ export class HotelListItem extends Component {
 
     componentDidMount() {
         axios.post('/isHotelReserved', {hotel_id: this.props.hotel.hotel_id})
-            .then( res => {
+            .then(res => {
                 this.setState({isReserved: res.data.status});
             });
 
@@ -32,8 +32,8 @@ export class HotelListItem extends Component {
 
     removeHotel = () => {
         axios.post('/removeHotel', {hotel_id: this.props.hotel.hotel_id})
-            .then((res) => {
-                console.log(res.data.status)
+            .then(() => {
+
                 }
             );
     }
@@ -127,7 +127,7 @@ export class HotelListItem extends Component {
             return <div className="line-height-2">
                 <p className="color-green">{this.props.hotel.no_prepayment === 1 ? "Offers rooms with no pre-payment" : ""}</p>
                 <p className="color-green">{this.props.hotel.free_cancellation === 1 ? "Offers rooms with free cancellation" : ""}</p>
-                <p>{this.props.searched !== false ? "Prices from:" + this.props.hotel.price_night + "Kč" : ""}</p>
+                <p>{this.props.searched !== false ? "Prices from: " + this.props.hotel.price_night + "Kč" : ""}</p>
             </div>;
         }
     }
@@ -161,7 +161,9 @@ export class HotelListItem extends Component {
                     <Link to={{
                         pathname: `/editHotel/${this.props.hotel.hotel_id}`,
                         query: {hotel_id: this.props.hotel.hotel_id}
-                    }} className="btn btn-primary"><div>Edit Hotel</div></Link>
+                    }} className="btn btn-primary">
+                        <div>Edit Hotel</div>
+                    </Link>
                     <div className="padding-10"/>
                     {this.getButton()}
                 </div>
@@ -171,7 +173,8 @@ export class HotelListItem extends Component {
 
     getButton() {
         if (this.state.isReserved === true) {
-            return <button className="btn btn-block bg-transparent disabled border" disabled>This hotel is reserved and cannot be removed.</button>;
+            return <button className="btn btn-block bg-transparent disabled border" disabled>This hotel is reserved and
+                cannot be removed.</button>;
         } else {
             return <button className="btn btn-block btn-danger" onClick={this.removeHotel}>Remove</button>;
         }

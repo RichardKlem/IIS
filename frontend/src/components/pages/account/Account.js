@@ -78,11 +78,11 @@ export class Account extends Component {
 
     render() {
         const {isLoading} = this.state;
-     if (this.state.isLoadingError) {
-         return (
-             <div className="App">ERROR, please log-out and log-in</div>
-         );
-     }else if (isLoading) {
+        if (this.state.isLoadingError) {
+            return (
+                <div className="App">ERROR, please log-out and log-in</div>
+            );
+        } else if (isLoading) {
             return (
                 <div className="App">Loading...</div>
             );
@@ -226,10 +226,10 @@ export class Account extends Component {
         data.append('file', this.state.selectedFile)
         const cookies = new Cookies();
         axios.post('/upload/' + cookies.get('CookieUserID'), data)
-            .then(res => { // then print response status
+            .then(() => { // then print response status
                 window.location.reload(false);
             })
-            .catch(err => { // then print response status
+            .catch(() => { // then print response status
                 this.setState({
                     selectedFile: null,
                     fileUploadAvailable: false,

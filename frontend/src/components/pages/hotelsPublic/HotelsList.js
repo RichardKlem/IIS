@@ -16,7 +16,7 @@ export class HotelsList extends Component {
             /* Filter */
             filter: '',
             start_date: moment().format("YYYY-MM-DD"),
-            end_date: moment().add(1,"day").format("YYYY-MM-DD"),
+            end_date: moment().add(1, "day").format("YYYY-MM-DD"),
             adult_count: '2',
             child_count: "0",
             start_range: 0,
@@ -113,12 +113,8 @@ export class HotelsList extends Component {
     onChangeDate = (e) => {
         this.setState({[e.target.name]: e.target.value});
 
-        console.log(e.target.name)
-        console.log(moment(e.target.value) > moment(this.state.end_date))
-
         if ((e.target.name === "start_date") && (moment(e.target.value) > moment(this.state.end_date))) {
-            console.log("ti")
-            this.setState( {end_date : ""} );
+            this.setState({end_date: ""});
         }
     }
 
@@ -228,65 +224,66 @@ export class HotelsList extends Component {
             return (
                 <>
                     <h1 className="text-center">Manage Hotels</h1>
-                <div>
-                    <div className="d-flex justify-content-between">
-                        <div className="table-responsive table-no-border padding-bottom-10">
-                            <table className="table table-no-border" id="myTable">
-                                <thead className="thead-no-border">
-                                <tr className="tr-no-border">
-                                    <th className="th-no-border"><input name="filter" defaultValue={this.state.filter}
-                                                                        placeholder="Search for hotel"
-                                                                        className="input-width text-center form-control"
-                                                                        type="text"
-                                                                        onChange={this.onChange}
-                                                                        onKeyUp={this.filterHotelName}/></th>
-                                </tr>
-                                </thead>
-                            </table>
+                    <div>
+                        <div className="d-flex justify-content-between">
+                            <div className="table-responsive table-no-border padding-bottom-10">
+                                <table className="table table-no-border" id="myTable">
+                                    <thead className="thead-no-border">
+                                    <tr className="tr-no-border">
+                                        <th className="th-no-border"><input name="filter"
+                                                                            defaultValue={this.state.filter}
+                                                                            placeholder="Search for hotel"
+                                                                            className="input-width text-center form-control"
+                                                                            type="text"
+                                                                            onChange={this.onChange}
+                                                                            onKeyUp={this.filterHotelName}/></th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div className="padding-left-10">
+                                <Link to="/addHotel" className="btn btn-block btn-primary add-hotel text-center d-flex">Add
+                                    Hotel</Link>
+                            </div>
                         </div>
-                        <div className="padding-left-10">
-                            <Link to="/addHotel" className="btn btn-block btn-primary add-hotel text-center d-flex">Add
-                                Hotel</Link>
-                        </div>
-                    </div>
-                    <div className="border border-gray">
-                        <Hotels
-                            hotels={this.state.hotels}
-                            searched={this.state.searched}
-                            start_date={this.state.start_date}
-                            end_date={this.state.end_date}
-                            adult_count={this.state.adult_count}
-                            child_count={this.state.child_count}
-                            room_count={this.state.room_count}/>
-                    </div>
-                </div>
-                    </>
-            )
-        } else {
-            return (
-                <>
-                    <h1 className="text-center">Hotels List</h1>
-                <div className="d-flex">
-                    <Sidebar
-                        state={this.state}
-                        filter={this.state.filter}
-                        searched={this.state.searched}
-                        searchHotel={this.searchHotel}
-                        onChangeCheckbox={this.onChangeCheckbox}
-                        filterHotel={this.filterHotel}
-                        onChange={this.onChange}
-                        onChangeDate={this.onChangeDate}/>
-                    <div className="main-panel border border-gray padding-top-0">
-                        <Hotels hotels={this.state.hotels}
+                        <div className="border border-gray">
+                            <Hotels
+                                hotels={this.state.hotels}
                                 searched={this.state.searched}
                                 start_date={this.state.start_date}
                                 end_date={this.state.end_date}
                                 adult_count={this.state.adult_count}
                                 child_count={this.state.child_count}
                                 room_count={this.state.room_count}/>
+                        </div>
                     </div>
-                </div>
-                    </>
+                </>
+            )
+        } else {
+            return (
+                <>
+                    <h1 className="text-center">Hotels List</h1>
+                    <div className="d-flex">
+                        <Sidebar
+                            state={this.state}
+                            filter={this.state.filter}
+                            searched={this.state.searched}
+                            searchHotel={this.searchHotel}
+                            onChangeCheckbox={this.onChangeCheckbox}
+                            filterHotel={this.filterHotel}
+                            onChange={this.onChange}
+                            onChangeDate={this.onChangeDate}/>
+                        <div className="main-panel border border-gray padding-top-0">
+                            <Hotels hotels={this.state.hotels}
+                                    searched={this.state.searched}
+                                    start_date={this.state.start_date}
+                                    end_date={this.state.end_date}
+                                    adult_count={this.state.adult_count}
+                                    child_count={this.state.child_count}
+                                    room_count={this.state.room_count}/>
+                        </div>
+                    </div>
+                </>
             )
         }
     }

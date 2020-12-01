@@ -7,6 +7,7 @@ import Cookies from "universal-cookie";
 import OpenRoom from "./OpenRoom";
 import {Redirect} from "react-router";
 import RegBookingPage from "../loginRegPage/RegBookingPage";
+import moment from "moment";
 
 const cookies = new Cookies();
 let cookieUserID = cookies.get('CookieUserID');
@@ -29,7 +30,7 @@ export class RoomListItem extends Component {
 
     componentDidMount() {
         axios.post('/isRoomReserved', {id_room: this.props.room.id_room})
-            .then( res => {
+            .then(res => {
                 this.setState({isReserved: res.data.status});
             });
 
@@ -90,12 +91,13 @@ export class RoomListItem extends Component {
                                             <option value="7">Suite</option>
                                         </select>
                                     </div>
-                                    <div className="width-auto padding-bottom-10 margin-top-5-neg padding-top-10 padding-left-10">
-                                    <select name="bed_type" defaultValue={this.props.room.bed_type}
-                                            className="form-control select-disabled white-textarea" disabled>
-                                        <option value="1">Separate beds</option>
-                                        <option value="2">Double beds</option>
-                                    </select>
+                                    <div
+                                        className="width-auto padding-bottom-10 margin-top-5-neg padding-top-10 padding-left-10">
+                                        <select name="bed_type" defaultValue={this.props.room.bed_type}
+                                                className="form-control select-disabled white-textarea" disabled>
+                                            <option value="1">Separate beds</option>
+                                            <option value="2">Double beds</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <form>
@@ -106,17 +108,18 @@ export class RoomListItem extends Component {
                                                   readOnly>{this.state.description}</textarea>
                                     </Form.Group>
                                     <div className="d-flex justify-content-between">
-                                        <div className="line-height-sm">
+                                        <div>
                                             <div className="d-flex">
-                                                <div style={{marginTop: "-5px"}}>
-                                                    <p className="padding-left-5">Beds count: {this.props.room.bed_count}</p>
-                                                    <p className="padding-left-5">{"Room size:" + this.props.room.room_size + "m"}<sup>2</sup></p>
-
+                                                <div>
+                                                    <p className="padding-left-5 margin-0">Beds
+                                                        count: {this.props.room.bed_count}</p>
+                                                    <p className="padding-left-5 margin-0">{"Room size:" + this.props.room.room_size + "m"}<sup>2</sup>
+                                                    </p>
+                                                    <p className="padding-left-5 margin-0 color-green flex-wrap-reverse">{this.props.room.free_breakfast === 1 ? "Offered with free breakfast" : ""}</p>
                                                 </div>
-                                                <div className="padding-left-10" style={{marginTop: "-5px"}}>
-                                                    <p>{(this.props.start_date !== "" && this.props.end_date !== "") ? "Price per night: " + this.props.room.price_night + "Kč (reservation fee included)" : ""}</p>
-                                                    <b className="padding-top-5">{(this.props.start_date !== "" && this.props.end_date !== "") ? "Reservation fee (per night): " + this.props.room.pre_price + "Kč": ""}</b>
-                                                    <p className="padding-top-20 color-green">{this.props.room.free_breakfast === 1 ? "Offered with free breakfast" : ""}</p>
+                                                <div className="padding-left-10">
+                                                    <p className="margin-0">{(this.props.start_date !== "" && this.props.end_date !== "") ? "Price per night: " + this.props.room.price_night + "Kč (reservation fee included)" : ""}</p>
+                                                    <b className="margin-0">{(this.props.start_date !== "" && this.props.end_date !== "") ? "Reservation fee (per night): " + this.props.room.pre_price + "Kč" : ""}</b>
                                                 </div>
                                             </div>
                                             {this.prepaymentFields()}
@@ -139,13 +142,11 @@ export class RoomListItem extends Component {
         if (window.location.pathname.startsWith("/hotel/")) {
             return (
                 <div>
-                    <p>{
-                        (this.props.start_date !== "" && this.props.end_date !== "") ?
-                            "Price for  " + this.props.room_count.toString() + " room(s) for " + this.calculateNights() + " night(s): " + this.calculatePrice() : "Please select date of your stay to see price."}</p>
-                    {this.props.start_date !== "" && this.props.end_date !== "" ?
+                    <p>{((this.props.start_date !== "" && this.props.end_date !== "") && (moment(this.props.start_date) < moment(this.props.end_date))) ?
+                        "Price for  " + this.props.room_count.toString() + " room(s) for " + this.calculateNights() + " night(s): " + this.calculatePrice() : "Please select date of your stay to see price."}</p>
+                    {((this.props.start_date !== "" && this.props.end_date !== "") && (moment(this.props.start_date) < moment(this.props.end_date))) ?
                         <button className="btn btn-primary mr-2" onClick={this.handleBookingPopUp}>Reserve</button> :
                         <button className="btn btn-primary btn-success mr-2" disabled>Please select date first</button>}
-
                 </div>
             )
         } else {
@@ -160,11 +161,12 @@ export class RoomListItem extends Component {
     }
 
     getButton() {
-            if (this.state.isReserved === true) {
-                return <button className="btn bg-transparent disabled border" disabled>This room is reserved and cannot be removed.</button>;
-            } else {
-                return <button className="btn btn-danger" onClick={this.removeRoom}>Remove</button>;
-            }
+        if (this.state.isReserved === true) {
+            return <button className="btn bg-transparent disabled border" disabled>This room is reserved and cannot be
+                removed.</button>;
+        } else {
+            return <button className="btn btn-danger" onClick={this.removeRoom}>Remove</button>;
+        }
     }
 
     prepaymentFields = () => {
@@ -213,7 +215,7 @@ export class RoomListItem extends Component {
 
     removeRoom = () => {
         axios.post('/removeRoom', {id_room: this.props.room.id_room})
-            .then((res) => {
+            .then(() => {
                 }
             );
     }
@@ -248,8 +250,10 @@ export class RoomListItem extends Component {
                     child_count: this.props.child_count,
                     approved: this.props.room.pre_price === 0 ? "1" : "0"
                 }
-            ).then(res => {
+            ).then(() => {
                 this.setState({isBooked: true})
+            }).catch(() => {
+                this.setState({isBooked: false})
             });
         }
     }
@@ -265,9 +269,9 @@ export class RoomListItem extends Component {
 
     registerRoomPopUp() {
         return (<div>
-                {this.state.isRegistrationOpen && <div className="popup-box">
-                    <div className="box">
-                        <span className="close-icon" onClick={this.handleRegistrationPopUp}>x</span>
+                {this.state.isRegistrationOpen && <div className="popup-box popover">
+                    <div className="box-lg">
+                        <span className="close-icon-lg" onClick={this.handleRegistrationPopUp}>x</span>
                         <RegBookingPage id_room={this.props.room.id_room}
                                         handlePopUp={this.handlePopUp}
                                         start_date={this.props.start_date}
@@ -285,7 +289,7 @@ export class RoomListItem extends Component {
 
     bookingRoomPopUp() {
         return (<div>
-                {this.state.isBookingOpen && <div className="popup-box">
+                {this.state.isBookingOpen && <div className="popup-box popover">
                     <div className="box d-flex">
                         <span className="close-icon" onClick={this.handleBookingPopUp}>x</span>
                         <div>
@@ -297,7 +301,7 @@ export class RoomListItem extends Component {
                             </div>
                             <div>
                                 <button className="btn btn-primary mr-2"
-                                        onClick={this.reservationHandle}>{this.props.no_prepayment === 1 ? (typeof cookieUserID !== "undefined" ? "Book" : "Register & Book") : (typeof cookieUserID !== "undefined" ? "Book (pay " + this.calculatePrePrice() + "and reservation fee)" : "Register & Book (pay " + this.calculatePrePrice() + " reservation fee)")}</button>
+                                        onClick={this.reservationHandle}>{this.props.no_prepayment === 1 ? (typeof cookieUserID !== "undefined" ? "Book" : "Register & Book") : (typeof cookieUserID !== "undefined" ? "Book (pay " + this.calculatePrePrice() + " reservation fee)" : "Register & Book (pay " + this.calculatePrePrice() + " reservation fee)")}</button>
                             </div>
                         </div>
                     </div>

@@ -23,11 +23,12 @@ body {
 .popup-box {
     position: fixed !important;
     background: #00000050 !important;
-    width: 100%  !important;
-    height: 100vmax  !important;
+    width: 100% !important;
+    height: 100% !important;
     top: 0 !important;
     left: 0 !important;
 }
+
 
 #page-content-wrapper {
     min-width: 0;
@@ -38,8 +39,24 @@ body {
     content: 'x';
     cursor: pointer;
     position: fixed;
-    right: calc(15% - 30px);
-    top: calc(100vh - 85vh - 33px);
+    right: calc(40vw);
+    top: calc(25vh - 33px);
+    background: #ededed;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    line-height: 20px;
+    text-align: center;
+    border: 1px solid #999;
+    font-size: 20px;
+}
+
+.close-icon-lg {
+    content: 'x';
+    cursor: pointer;
+    position: fixed;
+    right: calc(27vw);
+    top: calc(25vh - 30px);
     background: #ededed;
     width: 25px;
     height: 25px;
@@ -109,7 +126,7 @@ body {
 
 
 .padding-top-0 {
-    padding-top: 0px !important;
+    padding-top: 0 !important;
 }
 
 
@@ -289,7 +306,7 @@ body {
     padding-top: 10px;
 }
 
-.horizontal-space{
+.horizontal-space {
     border-top: 0 solid #bbb !important;
     margin-top: 5px;
     padding-top: 10px;
@@ -383,6 +400,10 @@ body {
     margin: 10px !important;
 }
 
+.margin-0 {
+    margin: 0 !important;
+}
+
 .line-height-2 {
     line-height: 2px;
 }
@@ -430,6 +451,7 @@ body {
 .btn.disabled, .btn:disabled {
     opacity: 1 !important;
 }
+
 .border-gray {
     border-color: #808080 !important;
 }
@@ -450,16 +472,39 @@ body {
 
 .box {
     position: relative;
-    width: 70%;
-    margin: 0 auto;
+    min-width: 200px;
+    min-height: 60px;
+    width: 16%;
     height: auto;
     max-height: 70vh;
-    margin-top: calc(100vh - 85vh - 20px);
+    margin-top: calc(25vh - 20px);
+    margin-left: calc(40vw);
     background: #fff;
     border-radius: 4px;
     padding: 20px;
     border: 1px solid #999;
     overflow: auto;
+}
+
+.box-lg {
+    position: relative;
+    min-width: 800px;
+    min-height: 600px;
+    width: 16%;
+    height: auto;
+    max-height: 70vh;
+    margin-top: calc(25vh - 20px);
+    margin-left: calc(30vw);
+    background: #fff;
+    border-radius: 4px;
+    padding: 20px;
+    border: 1px solid #999;
+    overflow: auto;
+}
+
+.popover {
+    max-width: 200vh !important;
+    min-width: 200vh !important;
 }
 
 .input-role {

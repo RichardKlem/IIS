@@ -70,7 +70,8 @@ export class BookingPubItem extends Component {
                                                 Start Date:
                                                 <input name="start_date" defaultValue={this.props.booking.start_date}
                                                        placeholder="Start date"
-                                                       className="text-center form-control form-control-lg white-textarea no-border" type="date"
+                                                       className="text-center form-control form-control-lg white-textarea no-border"
+                                                       type="date"
                                                        onChange={this.props.onChange}
                                                        disabled/>
                                             </div>
@@ -78,7 +79,8 @@ export class BookingPubItem extends Component {
                                                 End Date:
                                                 <input name="end_date" defaultValue={this.props.booking.end_date}
                                                        placeholder="Start date"
-                                                       className="text-center form-control form-control-lg white-textarea no-border" type="date"
+                                                       className="text-center form-control form-control-lg white-textarea no-border"
+                                                       type="date"
                                                        onChange={this.props.onChange}
                                                        disabled/>
                                             </div>
@@ -91,7 +93,7 @@ export class BookingPubItem extends Component {
                                             <p>Status: {this.props.booking.approved === 1 ? "Approved" : "Waiting for approval"}</p>
                                             <p>Reserved: {this.props.booking.room_count + " room(s)"}</p>
                                             <p>Total price: {this.props.booking.total_price} Kč</p>
-                                            <p>{this.props.booking.pre_price !== 0 && this.props.booking.approved === 0 ? "Needs to be paid:" + this.props.booking.pre_price + "Kč" : ""}</p>
+                                            <p>{this.props.booking.pre_price !== 0 && this.props.booking.approved === 0 ? "Needs to be paid: " + this.props.booking.pre_price + "Kč (reservation fee)" : ""}</p>
                                         </div>
                                         <div className="d-flex">
                                             <button className="align-self-center btn btn-danger"
@@ -110,7 +112,7 @@ export class BookingPubItem extends Component {
     removeReservation = (e) => {
         e.preventDefault();
         axios.post('/removeBooking', {id_reservation: this.props.booking.id_reservation})
-            .then((res) => {
+            .then(() => {
                     window.location.reload(false);
                 }
             );

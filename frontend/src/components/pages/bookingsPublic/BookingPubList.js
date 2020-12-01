@@ -58,8 +58,8 @@ class BookingPubList extends Component {
                     <h1 className="text-center padding-bottom-10">My Bookings</h1>
                     <div>
                         {this.state.bookings.length === 0 ? "No bookings" :
-                        <BookingPublic
-                            bookings={this.state.bookings}/>}
+                            <BookingPublic
+                                bookings={this.state.bookings}/>}
                     </div>
                 </div>
             );
