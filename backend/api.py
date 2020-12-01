@@ -190,7 +190,9 @@ def get_users():
         )
         result = db.query(query, disconnect=False)
         if result and result[0]["role"] == 0:
-            result = db.query("SELECT * FROM uzivatel WHERE role != 0;")
+            result = db.query(
+                "SELECT * FROM uzivatel WHERE role != 0 ORDER BY id_user;"
+            )
             for user in result:
                 for key in user:
                     user[key] = serialize_string(user[key])
@@ -216,7 +218,7 @@ def update_user_request():
             f'role = "{data.get("role")}" '
             f'WHERE (id_user = "{data.get("id_user")}");'
         )
-        if data.get("birth_date") is not None:
+        if data.get("birth_date") is not None and data.get("birth_date") != "":
             query = (
                 f"UPDATE uzivatel "
                 f'SET name = "{data.get("name")}", '
@@ -395,7 +397,8 @@ def get_hotels():
     query = f'SELECT * FROM hotels_table WHERE (hotel_id = "{data.get("hotel_id")}" );'
     hotel = Connector().query(query)
     if hotel:
-        for key in hotel[0]:
+        hotel = hotel[0]
+        for key in hotel:
             hotel[key] = serialize_string(hotel[key])
         return jsonify(hotel)
 
@@ -530,7 +533,8 @@ def get_room():
     query = f'SELECT * FROM rooms_table WHERE id_room = "{data.get("id_room")}";'
     room = Connector().query(query)
     if room:
-        for key in room[0]:
+        room = room[0]
+        for key in room:
             room[key] = serialize_string(room[key])
         return jsonify(room)
 
@@ -567,7 +571,6 @@ def is_room_reserved():
         return jsonify({"status": False})
     else:
         return jsonify({"status": True})
-
 
 
 @app.route("/addRoom", methods=["POST"])
@@ -619,7 +622,6 @@ def edit_room():
     except Exception as ex:
         print(ex)
         return jsonify("Room update successful")
-
 
 
 # Booking functions

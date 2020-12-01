@@ -50,7 +50,7 @@ def save_image(file, hotel_id=None, room_id=None, user_id=None):
         path = USERS_PATH + str(user_id)
     else:
         path = HOTELS_PATH + str(hotel_id)
-    
+
     folder_path = ""
     for folder in path.split("/")[:-1]:
         folder_path = folder_path + "/" + folder
@@ -98,7 +98,6 @@ def calculate_price_and_book(data, id_user):
         f'{data.get("approved")}, {total_pre_price});'
     )
     db.query(query, expecting_result=False, disconnect=False)
-
 
 
 def register_before_booking(data, register):
@@ -182,7 +181,7 @@ def register_user(name, birth_date, phone_number, address, email):
         f'"{address}", '
         f'"{email}");'
     )
-    if birth_date is not None:
+    if birth_date is not None and birth_date != "":
         query = (
             f"INSERT INTO uzivatel(name, birth_date, phone_number, address, email) VALUES ("
             f'"{name}", '
@@ -219,7 +218,7 @@ def update_user(name, email, phone_number, birth_date, address, id_user):
         f'address = "{address}" '
         f'WHERE (id_user = "{id_user}");'
     )
-    if birth_date is not None:
+    if birth_date is not None and birth_date != "":
         query = (
             f"UPDATE uzivatel "
             f'SET name = "{name}", '

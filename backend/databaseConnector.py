@@ -6,7 +6,6 @@ from backend import HOST, USER, PASSWORD, DATABASE, AUTH_PLUGIN
 class Connector:
     def __init__(self, secure=False):
         if secure:
-            # Todo add new user credentials
             self.connection = mysql.connector.connect(
                 host=HOST,
                 user=USER,
