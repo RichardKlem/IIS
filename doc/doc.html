@@ -19,7 +19,7 @@
 <dl>
 	<dt>Autoøi</dt>
 	<dd>Martin Haderka <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
-		<a href="mailto:xhader00@stud.fit.vutbr.cz">xhader00@stud.fit.vutbr.cz</a> -
+		<a href="mailto:xhader00@stud.fit.vutbr.cz">xhader00@stud.fit.vutbr.cz</a>
 		<ul>
 			<li>Zaji¹tìní hostinu a doménového jména.</li>
 			<li>Návrh a testování UI.</li>
@@ -28,7 +28,7 @@
 		</ul>
 	</dd>
 	<dd>Richard Klem <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
-		<a href="mailto:xklemr00@stud.fit.vutbr.cz">xklemr00@stud.fit.vutbr.cz</a> - 
+		<a href="mailto:xklemr00@stud.fit.vutbr.cz">xklemr00@stud.fit.vutbr.cz</a>
 		<ul>
 			<li>Vytvoøení MySQL databáze a testovacích dat</li>
 			<li>Spolupráce na Flask controlleru</li>
@@ -40,7 +40,7 @@
 	<dd><a href="http://iis-projekt.ddns.net/">http://iis-projekt.ddns.net/</a></dd>
 	<dd><a href="http://93.153.43.141/">http://93.153.43.141/</a></dd>
 </dl>
-
+<br/>
 <h2>U¾ivatelé systému pro testování</h2>
 <table>
 <tbody><tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
@@ -50,7 +50,33 @@
 <tr><td>martin@email.cz</td><td>1234</td><td>zákazník</td></tr>
 <tr><td>john.appleseed@apple.com</td><td>1234</td><td>zákazník</td></tr>
 </tbody></table> 
+<br/>
+<br/>
+<h2>Softwarové po¾adavky</h2>
+<ul>
+	<li>python 3.7+</li>
+	<li>node v14.13.x</li>
+	<li>npm 6.14.x</li>
+</ul>
+<p>React aplikace byla testována na verzi node v14.13.1 a npm 6.14.8.<br/>
+V pøípadì pou¾ití podobných verzí by funkcionalita nemìla být poru¹ena, ale nelze to zaruèit</p>
 
+<h2>Instalace a spu¹tìní</h2>
+	<div>
+		Otevøete si dva terminály. V prvním pobì¾í Flask server, v druhém React aplikace.
+		Pøíkazy pro nastartování Flask serveru v prvním terminálu:
+		<ul>
+			<li><code>cd backend</code></li>
+			<li><code>python3 -m pip install -r requirements.txt</code></li>
+			<li><code>flask run</code></li>
+		</ul>
+		Pøíkazy pro nastartování React aplikace v druhém terminálu:
+		<ul>
+			<li><code>cd frontend</code></li>
+			<li><code>npm i</code></li>
+			<li><code>npm start</code></li>
+		</ul>
+	</div>
 <h2>Implementace</h2>
 <p>Struèná dokumentace k implementaci, která popisuje, které èásti projektu (napø. PHP skripty) implementují jednotlivé pøípady pou¾ití.</p>
 <h3>Flask framework - controller</h3>
@@ -73,39 +99,41 @@
 <p>Hlavní modul, který zpracovává pøíchozí GET/POST po¾adavky.<br/>
 	Výpis hlavních funkcí:</p>
 <ul>
-	<li>funkce pro pøidání nového zákazníka<b>#registration</b></li>
-	<li>funkce pro ovìøení hesla zákazníka, který se pøihla¹uje<b>#login</b></li>
-	<li>funkce pro získání a úpravu dat z DB o úètu pøihlá¹eného zákazníka<b>#account</b>, <b>#get_user_name</b>, <b>#get_role</b>, a <b>#update_account</b></li>
-	<li>funkce pro administrátora pro správu u¾ivatelù<b>#get_users</b>, <b>#update_user_request</b> a <b>#remove_user</b></li>
-	<li>funkce pro správu obrázkù<b>#upload_user_image</b>, <b>#get_profile_image</b>, <b>#upload_hotel_image</b>, <b>#get_hotel_image</b>, <b>#upload_room_image</b> a <b>#get_room_image</b></li>
-	<li>funkce zaji¹»ující zobrazení nabídky a správu hotelù<b>#get_available_hotels</b>, <b>#get_hotels_admin</b>, <b>#get_hotels</b>, <b>#remove_hotel</b>, <b>#is_hotel_reserved</b>, <b>#edit_hotel</b> a <b>#edit_hotel</b></li>
-	<li>funkce zaji¹»ující zobrazení nabídky a správu pokojù<b>#get_room_by_hotel_id</b>, <b>#is_room_reserved</b>, <b>#get_room_by_hotel_id_admin</b>, <b>#get_room</b>, <b>#remove_room</b>, <b>#add_room</b> a <b>#edit_room</b></li>
-
+	<li>funkce pro pøidání nového zákazníka <b>#registration</b></li>
+	<li>funkce pro ovìøení hesla zákazníka, který se pøihla¹uje <b>#login</b></li>
+	<li>funkce pro získání a úpravu dat z DB o úètu pøihlá¹eného zákazníka <b>#account</b>, <b>#get_user_name</b>, <b>#get_role</b>, a <b>#update_account</b></li>
+	<li>funkce pro administrátora pro správu u¾ivatelù <b>#get_users</b>, <b>#update_user_request</b> a <b>#remove_user</b></li>
+	<li>funkce pro správu obrázkù <b>#upload_user_image</b>, <b>#get_profile_image</b>, <b>#upload_hotel_image</b>, <b>#get_hotel_image</b>, <b>#upload_room_image</b> a <b>#get_room_image</b></li>
+	<li>funkce zaji¹»ující zobrazení nabídky a správu hotelù <b>#get_available_hotels</b>, <b>#get_hotels_admin</b>, <b>#get_hotels</b>, <b>#remove_hotel</b>, <b>#is_hotel_reserved</b>, <b>#edit_hotel</b> a <b>#edit_hotel</b></li>
+	<li>funkce zaji¹»ující zobrazení nabídky a správu pokojù <b>#get_room_by_hotel_id</b>, <b>#is_room_reserved</b>, <b>#get_room_by_hotel_id_admin</b>, <b>#get_room</b>, <b>#remove_room</b>, <b>#add_room</b> a <b>#edit_room</b></li>
+	<li>funkce správu rezervací <b>#book_room</b>, <b>#non_reg_booking</b>, <b>#reg_booking</b>, <b>#get_bookings</b>, <b>#get_all_bookings</b>, <b>#remove_booking</b> a <b>#update_booking</b></li>
+	<li>funkce zaji¹»ující vyhledání a kontrolu dostupnosti <b>#check_dates</b> a <b>#search_hotel</b></li>
 </ul>
-
+<br/>
+<h3>ReactSJ framework - frontend</h3>
+<p>Front-end aplikace je rozdìlená do nìkolika komponet, které reprezentují jednolitvé
+	èásti informaèního systému.<br/>
+	Výpis hlavních komponent:</p>
+<ul>
+	<li>správa a zobrazení hotelù - komponenty z adresáøù <b>hotelsAdmin</b> a <b>hotelsPublic</b></li>
+	<li>správa a zobrazení pokojù - komponenty z adresáøù <b>roomsAdmin</b> a <b>roomsPublic</b></li>
+	<li>registrace a pøihlá¹ení u¾ivatele - komponenty z adresáøù <b>loginRegPage</b></li>
+	<li>správa u¾ivatelù - komponenta z adresáøù <b>usersTable</b></li>
+	<li>správa a zobrazení rezervací - komponenty z adresáøù <b>bookingsPublic</b> a <b>bookings</b></li>
+	<li>správa zákaznického úètu - komponenta z adresáøù <b>account</b></li>
+</ul>
+</p>
+<br/>
 <h3>Databáze</h3>
 	<div><img src="DBschema.svg" height="1024px" alt="Database schema"></div>
-<h2>Instalace</h2>
-	<div>
-		Otevøete si dva terminály. V prvním pobì¾í Flask server, v druhém React aplikace.
-		Pøíkazy pro nastartování Flask serveru v prvním terminálu:
-		<ul>
-			<li><code>cd backend</code></li>
-			<li><code>python3 -m pip install -r requirements.txt</code></li>
-			<li><code>flask run</code></li>
-		</ul>
-		Pøíkazy pro nastartování React aplikace v druhém terminálu:
-		<ul>
-			<li><code>cd frontend</code></li>
-			<li><code>npm i</code></li>
-			<li><code>npm start</code></li>
-		</ul>
-	</div>
 
-Struènì popi¹te: 
+
+
+
+Struènì popi¹te:
 <ul>
 <li>postup instalace na server,</li>
-<li>softwarové po¾adavky (verze PHP apod.),</li>
+<li>softwarové po¾adavky</li>
 <li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>
 </ul>
 

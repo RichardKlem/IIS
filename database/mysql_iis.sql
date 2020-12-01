@@ -1,3 +1,7 @@
+drop database if exists myDB;
+create database myDB;
+drop user if exists 'xklemr00'@'localhost';
+CREATE USER 'xklemr00'@'localhost' IDENTIFIED BY 'password';
 use myDB;
 
 drop table if exists reservation_table;
