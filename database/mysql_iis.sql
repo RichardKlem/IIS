@@ -1,8 +1,9 @@
-drop database if exists myDB;
-create database myDB;
+drop database if exists `myDB`;
+create database `myDB`;
 drop user if exists 'xklemr00'@'localhost';
-CREATE USER 'xklemr00'@'localhost' IDENTIFIED BY 'password';
-use myDB;
+CREATE USER 'xklemr00'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+GRANT ALL ON myDB.* TO 'xklemr00'@localhost;
+use `myDB`;
 
 drop table if exists reservation_table;
 drop table if exists rooms_table;
@@ -85,7 +86,7 @@ create table rooms_table
     price_night    int  not null,
     bed_type       int  default 0,
     free_breakfast bool default false,
-    count          int  default 1,
+    `count`          int  default 1,
     is_available   bool default true,
 
     foreign key (hotel_id) REFERENCES hotels_table (hotel_id) on delete cascade,
@@ -144,18 +145,6 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
-
-# auto delete sessions
-SET GLOBAL event_scheduler = ON;
-CREATE EVENT IF NOT EXISTS myDB.sessionsHandler
-    ON SCHEDULE
-        EVERY 2 HOUR
-    COMMENT 'Delete in-active sessions every 2 hours'
-    DO
-    BEGIN
-        DELETE FROM myDB.session_table WHERE (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timestamp)) > 9000;
-    END;
-
 
 # Role data
 insert into role_table (id_role, role_name)
