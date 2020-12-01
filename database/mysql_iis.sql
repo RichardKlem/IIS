@@ -108,7 +108,6 @@ create table reservation_table
     primary key (id_reservation)
 );
 
-
 # Trigger user
 DELIMITER $$
 CREATE TRIGGER uzivatel_check
@@ -123,7 +122,6 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
-
 
 # Trigger hotel
 DELIMITER $$
@@ -148,13 +146,14 @@ SET GLOBAL event_scheduler = ON;
 CREATE EVENT IF NOT EXISTS myDB.sessionsHandler
     ON SCHEDULE
         EVERY 2 HOUR
-    COMMENT 'Delete active sessions every 2 hours'
+    COMMENT 'Delete in-active sessions every 2 hours'
     DO
     BEGIN
-        DELETE FROM myDB.session_table WHERE (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timestamp)) > 7200;
+        DELETE FROM myDB.session_table WHERE (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(timestamp)) > 9000;
     END;
 
-#Test data
+
+# Role data
 insert into role_table (id_role, role_name)
 values (0, 'administrátor');
 
@@ -170,7 +169,7 @@ values (3, 'zákazník');
 insert into role_table (id_role, role_name)
 values (4, 'neregistrovaný návštěvník');
 
-# Test user data
+# User data
 insert into uzivatel
 values (1, 'Admin', 'admin@iis-hotel.cz', 'Ulice 1, Brno 613 00, ČR', '+4200000000000', '1998-1-1', 0),
        (2, 'Vlastník', 'vlastnik@iis-hotel.cz', 'Ulice 2, Brno 613 00, ČR', '+420111222333', '1998-1-1', 1),
@@ -191,7 +190,7 @@ values (1,
        (5,
         '6c8d3a67536230be7b6a0f40c0cdb54e4e3dd8aa80a8e6869829274f8409c119113fd86e49c42e9bb96299e6b4e7272608d56e190af1b37b3966b9038d038c7310cfb98ffc7c1da60a19ba0eae10302788564c4ff7b5462e98cfecdf4a9b9e3f');
 
-# Test hotel data
+# Hotels data
 INSERT INTO `hotels_table`
 VALUES (1, 'Hotel Crowne Plaza', 'Business hotel v centru Brna', 2, 'Náměstí svobody 0, Brno 614 00, Česká Republika',
         'info@hotel-brno.cz', '+420761349825', 5, 1, 1, 1, 1, 1, 1, 1),
@@ -208,7 +207,7 @@ VALUES (1, 'Hotel Crowne Plaza', 'Business hotel v centru Brna', 2, 'Náměstí 
        (7, 'Roadside Motel', 'Roadside Motel - Economy motel', 8, 'Ulice 42, Vsetín 75501, CZ', 'motel@is-hotel.cz',
         '+420543362584', 0, 0, 1, 0, 0, 0, 0, 1);
 
-# Test rooms data
+# Rooms data
 INSERT INTO `rooms_table`
 VALUES (1, 1, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
        (2, 1, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
@@ -220,56 +219,56 @@ VALUES (1, 1, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
        (8, 1, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
        (9, 1, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
        (10, 1, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1),
-       (11, 2, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
-       (12, 2, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
-       (13, 2, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 0, 2000, 1, 0, 5, 1),
-       (14, 2, 'Business Single Room', 4, 1, 'Business Single Room', 40, 0, 4000, 1, 1, 5, 1),
-       (15, 2, 'Business Room', 2, 2, 'Premium Business Room', 50, 0, 4000, 2, 1, 10, 1),
-       (16, 2, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 5, 1),
-       (17, 2, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (18, 2, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (19, 2, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
-       (20, 2, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1),
-       (21, 3, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
-       (22, 3, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
-       (23, 3, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 0, 2000, 1, 0, 5, 1),
-       (24, 3, 'Business Single Room', 4, 1, 'Business Single Room', 40, 0, 4000, 1, 1, 5, 1),
-       (25, 3, 'Business Room', 2, 2, 'Premium Business Room', 50, 0, 4000, 2, 1, 10, 1),
-       (26, 3, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 5, 1),
-       (27, 3, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (28, 3, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (29, 3, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
-       (30, 3, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1),
-       (31, 4, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
-       (32, 4, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
-       (33, 4, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 0, 2000, 1, 0, 5, 1),
-       (34, 4, 'Business Single Room', 4, 1, 'Business Single Room', 40, 0, 4000, 1, 1, 5, 1),
-       (35, 4, 'Business Room', 2, 2, 'Premium Business Room', 50, 0, 4000, 2, 1, 10, 1),
-       (36, 4, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 5, 1),
-       (37, 4, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (38, 4, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (39, 4, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
-       (40, 4, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1),
-       (41, 5, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
-       (42, 5, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
-       (43, 5, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 0, 2000, 1, 0, 5, 1),
-       (44, 5, 'Business Single Room', 4, 1, 'Business Single Room', 40, 0, 4000, 1, 1, 5, 1),
-       (45, 5, 'Business Room', 2, 2, 'Premium Business Room', 50, 0, 4000, 2, 1, 10, 1),
-       (46, 5, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 5, 1),
-       (47, 5, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (48, 5, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (49, 5, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
-       (50, 5, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1),
-       (51, 6, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
-       (52, 6, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
-       (53, 6, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 0, 2000, 1, 0, 5, 1),
-       (54, 6, 'Business Single Room', 4, 1, 'Business Single Room', 40, 0, 4000, 1, 1, 5, 1),
-       (55, 6, 'Business Room', 2, 2, 'Premium Business Room', 50, 0, 4000, 2, 1, 10, 1),
-       (56, 6, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 5, 1),
-       (57, 6, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (58, 6, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 0, 7000, 1, 1, 10, 1),
-       (59, 6, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
-       (60, 6, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1),
+       (11, 2, 'Single Room', 1, 1, 'Single Room', 30, 100, 1000, 1, 1, 5, 1),
+       (12, 2, 'Double room', 1, 2, 'Standard room with nice view', 40, 98, 1500, 0, 1, 10, 1),
+       (13, 2, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 200, 2000, 1, 1, 5, 1),
+       (14, 2, 'Business Single Room', 4, 1, 'Business Single Room', 40, 100, 4000, 1, 1, 5, 1),
+       (15, 2, 'Business Room', 2, 2, 'Premium Business Room', 50, 400, 4000, 2, 1, 10, 1),
+       (16, 2, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 150, 7000, 1, 1, 5, 1),
+       (17, 2, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 650, 7000, 1, 1, 10, 1),
+       (18, 2, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 300, 7000, 1, 1, 10, 1),
+       (19, 2, 'Studio Room', 6, 5, 'Studio Room', 40, 1000, 10000, 1, 1, 3, 1),
+       (20, 2, 'Suite Room', 7, 10, 'Suite ', 40, 400, 40000, 1, 1, 1, 1),
+       (21, 3, 'Single Room', 1, 1, 'Single Room', 30, 50, 1000, 1, 1, 5, 1),
+       (22, 3, 'Double room', 1, 2, 'Standard room with nice view', 40, 150, 1500, 0, 1, 10, 1),
+       (23, 3, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 80, 2000, 1, 0, 5, 1),
+       (24, 3, 'Business Single Room', 4, 1, 'Business Single Room', 40, 200, 4000, 1, 1, 5, 1),
+       (25, 3, 'Business Room', 2, 2, 'Premium Business Room', 50, 300, 4000, 2, 1, 10, 1),
+       (26, 3, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 600, 7000, 1, 1, 5, 1),
+       (27, 3, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 650, 7000, 1, 1, 10, 1),
+       (28, 3, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 650, 7000, 1, 1, 10, 1),
+       (29, 3, 'Studio Room', 6, 5, 'Studio Room', 40, 1000, 10000, 1, 1, 3, 1),
+       (30, 3, 'Suite Room', 7, 10, 'Suite ', 40, 4000, 40000, 1, 0, 1, 1),
+       (31, 4, 'Single Room', 1, 1, 'Single Room', 30, 130, 1000, 1, 1, 5, 1),
+       (32, 4, 'Double room', 1, 2, 'Standard room with nice view', 40, 140, 1500, 0, 1, 10, 1),
+       (33, 4, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 200, 2000, 1, 0, 5, 1),
+       (34, 4, 'Business Single Room', 4, 1, 'Business Single Room', 40, 400, 4000, 1, 1, 5, 1),
+       (35, 4, 'Business Room', 2, 2, 'Premium Business Room', 50, 300, 4000, 2, 1, 10, 1),
+       (36, 4, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 600, 7000, 1, 1, 5, 1),
+       (37, 4, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 600, 7000, 1, 1, 10, 1),
+       (38, 4, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 600, 7000, 1, 1, 10, 1),
+       (39, 4, 'Studio Room', 6, 5, 'Studio Room', 40, 1000, 10000, 1, 1, 3, 1),
+       (40, 4, 'Suite Room', 7, 10, 'Suite ', 40, 4000, 40000, 1, 0, 1, 1),
+       (41, 5, 'Single Room', 1, 1, 'Single Room', 30, 100, 1000, 1, 1, 5, 1),
+       (42, 5, 'Double room', 1, 2, 'Standard room with nice view', 40, 250, 1500, 0, 1, 10, 1),
+       (43, 5, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 100, 2000, 1, 0, 5, 1),
+       (44, 5, 'Business Single Room', 4, 1, 'Business Single Room', 40, 400, 4000, 1, 1, 5, 1),
+       (45, 5, 'Business Room', 2, 2, 'Premium Business Room', 50, 400, 4000, 2, 1, 10, 1),
+       (46, 5, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 500, 7000, 1, 1, 5, 1),
+       (47, 5, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 500, 7000, 1, 1, 10, 1),
+       (48, 5, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 500, 7000, 1, 1, 10, 1),
+       (49, 5, 'Studio Room', 6, 5, 'Studio Room', 40, 1000, 10000, 1, 1, 3, 1),
+       (50, 5, 'Suite Room', 7, 10, 'Suite ', 40, 4000, 40000, 1, 0, 1, 1),
+       (51, 6, 'Single Room', 1, 1, 'Single Room', 30, 100, 1000, 1, 1, 5, 1),
+       (52, 6, 'Double room', 1, 2, 'Standard room with nice view', 40, 150, 1500, 0, 1, 10, 1),
+       (53, 6, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 200, 2000, 1, 0, 5, 1),
+       (54, 6, 'Business Single Room', 4, 1, 'Business Single Room', 40, 400, 4000, 1, 1, 5, 1),
+       (55, 6, 'Business Room', 2, 2, 'Premium Business Room', 50, 400, 4000, 2, 1, 10, 1),
+       (56, 6, 'Deluxe Singe Room', 5, 1, 'Deluxe Double Room', 20, 700, 7000, 1, 1, 5, 1),
+       (57, 6, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 700, 7000, 1, 1, 10, 1),
+       (58, 6, 'Deluxe Double Room', 5, 2, 'Deluxe Double Room', 20, 900, 7000, 1, 1, 10, 1),
+       (59, 6, 'Studio Room', 6, 5, 'Studio Room', 40, 1000, 10000, 1, 1, 3, 1),
+       (60, 6, 'Suite Room', 7, 10, 'Suite ', 40, 4000, 40000, 1, 0, 1, 1),
        (61, 7, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
        (62, 7, 'Double room', 1, 2, 'Standard room with nice view', 40, 0, 1500, 0, 1, 10, 1),
        (63, 7, 'Tripple room', 3, 3, 'Tripple room with nice view', 60, 0, 2000, 1, 0, 5, 1),
@@ -281,11 +280,11 @@ VALUES (1, 1, 'Single Room', 1, 1, 'Single Room', 30, 0, 1000, 1, 1, 5, 1),
        (69, 7, 'Studio Room', 6, 5, 'Studio Room', 40, 0, 10000, 1, 1, 3, 1),
        (70, 7, 'Suite Room', 7, 10, 'Suite ', 40, 0, 40000, 1, 0, 1, 1);
 
-# Test reservation data
+# Reservation data
 INSERT INTO `reservation_table`
-VALUES (1, 5, 1, '2020-10-23', '2020-10-24', 1, 1500, 0, 0, 1, 0, 0),
-       (3, 1, 51, '2021-01-19', '2021-01-26', 1, 7000, 0, 1, 1, 0, 0),
-       (4, 1, 2, '2020-12-02', '2020-12-05', 2, 4500, 0, 1, 1, 0, 0),
-       (5, 4, 45, '2020-12-22', '2020-12-25', 2, 12000, 0, 1, 1, 0, 0),
-       (6, 4, 58, '2021-02-22', '2021-02-25', 2, 21000, 0, 1, 1, 0, 0),
-       (7, 5, 65, '2020-11-27', '2020-11-30', 5, 36000, 0, 3, 1, 0, 0);
+VALUES (16, 1, 3, '2020-12-01', '2020-12-04', 2, 6000, 0, 1, 1, 0, 0),
+       (17, 1, 41, '2021-01-13', '2021-01-19', 1, 6000, 600, 1, 0, 0, 0),
+       (18, 4, 11, '2020-12-15', '2020-12-18', 3, 9000, 900, 3, 0, 0, 0),
+       (19, 4, 62, '2021-01-09', '2021-01-12', 2, 4500, 0, 1, 1, 0, 0),
+       (20, 5, 54, '2020-12-08', '2020-12-11', 2, 24000, 2400, 2, 0, 0, 0),
+       (21, 5, 27, '2020-12-04', '2020-12-07', 2, 21000, 1950, 1, 0, 0, 0);
