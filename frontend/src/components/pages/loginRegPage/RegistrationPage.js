@@ -11,7 +11,7 @@ export class RegistrationPage extends Component {
         this.state = {
             name: undefined,
             phone_number: "",
-            birth_date: "1970-01-01",
+            birth_date: "",
             address: "",
             email: undefined,
             password: undefined,

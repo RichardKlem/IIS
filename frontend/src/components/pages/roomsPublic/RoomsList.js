@@ -26,7 +26,7 @@ export class RoomsList extends Component {
 
     componentDidMount() {
         let url = '/getHotelRooms';
-        if (window.location.pathname.startsWith("/editHotel/")){
+        if (window.location.pathname.startsWith("/editHotel/")) {
             url = '/getHotelRoomsAdmin';
         }
         axios.post(url, {hotel_id: this.props.hotel_id})
@@ -83,18 +83,16 @@ export class RoomsList extends Component {
                         <h1>Rooms List</h1>
                         <div className="rooms-list">
                             <div>
-                                Start Date<input name="start_date" defaultValue={this.state.start_date}
+                                Start Date<input name="start_date" value={this.state.start_date}
                                                  placeholder="Start date"
                                                  className="width-calc-100 text-center form-control form-control-sm"
                                                  type="date" id="1"
-                                                 max={this.state.end_date !== "" ?
-                                                     moment(this.state.end_date).add(-1, "day").format("YYYY-MM-DD")
-                                                     : moment().add(1, "year").format("YYYY-MM-DD")}
                                                  min={moment().format("YYYY-MM-DD")}
                                                  onChange={this.onChange} required/>
                             </div>
                             <div>
-                                End Date<input name="end_date" defaultValue={this.state.end_date}
+                                End Date<input name="end_date"
+                                               value={moment(this.state.end_date) <= moment(this.state.start_date) ? "" : this.state.end_date}
                                                placeholder="End date"
                                                className="width-calc-100 text-center form-control form-control-sm"
                                                type="date" id="2"

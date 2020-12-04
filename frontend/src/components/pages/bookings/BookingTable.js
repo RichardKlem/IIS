@@ -40,7 +40,7 @@ class BookingTable extends Component {
                             this.setState({isLoading: false});
                         }
                     ).catch(() => {
-                        this.setState({isLoadingError: true});
+                    this.setState({isLoadingError: true});
                 });
             }
         }
@@ -124,7 +124,7 @@ class BookingTable extends Component {
                                         </th>
                                         <th>
                                             <div className="padding-bottom-5">
-                                                 Birth Date
+                                                Birth Date
                                             </div>
                                             <input
                                                 className="input-width text-center form-control form-control-sm"
