@@ -690,6 +690,29 @@ def get_bookings():
         return jsonify(bookings)
 
 
+@app.route("/getBookings/<cookie_id>", methods=["GET"])
+def get_bookings_by_id(cookie_id):
+    """
+    Get all users bookings handler (logged-in user)
+    :return: bookings list
+    """
+    if request.method == "GET":
+        db = Connector()
+        query = (
+            f"SELECT hotels_table.hotel_id, hotels_table.free_cancellation, uzivatel.*, reservation_table.*, "
+            f"rooms_table.name as room_name, hotels_table.name as hotel_name "
+            f"FROM session_table NATURAL JOIN uzivatel NATURAL JOIN reservation_table "
+            f"JOIN rooms_table ON reservation_table.id_room=rooms_table.id_room "
+            f"JOIN hotels_table ON rooms_table.hotel_id=hotels_table.hotel_id "
+            f'WHERE (session_table.id_session = "{str(cookie_id)}");'
+        )
+        bookings = db.query(query, disconnect=False)
+        for booking in bookings:
+            for key in booking:
+                booking[key] = serialize_string(booking[key])
+        return jsonify(bookings)
+
+
 @app.route("/getAllBookings", methods=["POST"])
 def get_all_bookings():
     """
